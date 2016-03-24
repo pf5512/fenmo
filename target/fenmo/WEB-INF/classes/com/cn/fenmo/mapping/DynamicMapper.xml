@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.fenmo.dao.DynamicMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.Dynamic" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="imgUrl" property="imgUrl" jdbcType="VARCHAR" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="zCount" property="zcount" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="DynamicAndUserResultMap" type="com.cn.fenmo.pojo.DynamicAndUser" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="zCount" property="zcount" jdbcType="INTEGER" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="headImgPath" property="headImgPath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    mainId, content, userName, createDate,zCount,state,imgUrl
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from fm_dynamic
+    where mainId = #{mainId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectBy" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select 
+    <include refid="Base_Column_List" />
+    from fm_dynamic
+    where mainId = #{mainId,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 获取自己所有的动态,联合fm_user找出发表动态人的性别，年龄，头像地址等 -->
+  <select id="selectDtCount" resultType="Integer" parameterType="java.util.Map">
+    select count(*)
+    from fm_dynamic a join fm_user b on a.userName = b.userName
+  </select>
+  
+  <select id="selectDtPageBy" resultMap="DynamicAndUserResultMap" parameterType="java.util.Map" >
+    select a.mainId, a.content, a.userName, a.createDate,a.zCount,a.imgUrl,
+    b.age,b.sex,b.nickname,b.headImgPath
+    from fm_dynamic a join fm_user b on a.userName=b.userName
+    where state = #{state,jdbcType=INTEGER}  
+    order by createDate desc
+    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+  </select>
+  
+   <!-- 获取自己发布的动态 -->
+   <select id="selectCount" resultType="Integer" parameterType="java.util.Map">
+    select count(*)
+    from fm_dynamic
+    where 1=1
+    <if test="userName!=null" >
+       and userName = #{userName,jdbcType=VARCHAR}
+    </if>
+    <if test="state!=null" >
+       and state = #{state,jdbcType=INTEGER}
+    </if>
+  </select>
+  
+  <select id="selectPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from fm_dynamic 
+    where 1=1
+    <if test="userName!=null" >
+       and userName = #{userName,jdbcType=VARCHAR}
+    </if>
+    <if test="state!=null" >
+       and state = #{state,jdbcType=INTEGER}
+    </if>
+    order by createDate DESC
+    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 依靠数据库的级联删除，将删除所有关于该动态的评论数据 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fm_dynamic
+    where mainId = #{mainId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cn.fenmo.pojo.Dynamic" >
+    insert into fm_dynamic (mainId, content, userName, createDate,state,zCount,imgUrl)
+    values (#{mainid,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+    #{createdate,jdbcType=TIMESTAMP},#{state,jdbcType=INTEGER},#{zcount,jdbcType=INTEGER},#{imgUrl,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateZCount" parameterType="java.util.Map" >
+    update fm_dynamic
+    set zCount = #{zcount,jdbcType=VARCHAR}
+    where mainId = #{mainId,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

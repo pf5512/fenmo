@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.fenmo.dao.FriendMapper">
+  <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.Friend">
+    <id column="mainId" jdbcType="BIGINT" property="mainid" />
+    <result column="userPhone" jdbcType="VARCHAR" property="userphone" />
+    <result column="friendPhone" jdbcType="VARCHAR" property="friendphone" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    mainId, userPhone, friendPhone, state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fm_friend
+    where mainId = #{mainid,jdbcType=BIGINT}
+  </select>
+  <select id="selectBy" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fm_friend
+    where userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from fm_friend
+    where mainId = #{mainid,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="deleteFriend" parameterType="java.util.Map">
+    delete from fm_friend
+    where userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cn.fenmo.pojo.Friend">
+    insert into fm_friend (mainId, userPhone, friendPhone,state)
+    values (#{mainid,jdbcType=BIGINT}, #{userphone,jdbcType=VARCHAR}, #{friendphone,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.cn.fenmo.pojo.Friend">
+    update fm_friend
+    <set>
+      <if test="userphone != null">
+        userPhone = #{userphone,jdbcType=VARCHAR},
+      </if>
+      <if test="friendphone != null">
+        friendPhone = #{friendphone,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where mainId = #{mainid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cn.fenmo.pojo.Friend">
+    update fm_friend
+    set userPhone = #{userphone,jdbcType=VARCHAR},
+      friendPhone = #{friendphone,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER}
+    where mainId = #{mainid,jdbcType=BIGINT}
+  </update>
+</mapper>

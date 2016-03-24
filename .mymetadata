@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="fenmo"
+  id="myeclipse.1451914086125"
+  context-root="/fenmo"
+  j2ee-spec="5.0"
+  archive="fenmo.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

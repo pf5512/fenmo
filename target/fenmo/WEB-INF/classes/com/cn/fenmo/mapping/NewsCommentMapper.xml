@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.fenmo.dao.NewsCommentMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.NewsComment" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="newsId" property="newsid" jdbcType="BIGINT" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="NewsCommentUserResultMap" type="com.cn.fenmo.pojo.NewsCommentUser" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="headImgPath" property="headImgPath" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    mainId, content, newsId, createDate, userName
+  </sql>
+  
+  <select id="selectCount" resultType="Integer"  parameterType="java.util.Map" >
+    select count(*) 
+    from fm_news_comment a join fm_user b on a.userName =  b.userName
+    where newsId = #{newsId,jdbcType=BIGINT}
+  </select>
+  
+  
+ <select id="selectPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select a.mainId,a.content,a.createDate,a.userName,
+    b.nickName,b.headImgPath,b.sex,b.age
+    from fm_news_comment a join fm_user b on a.userName = b.userName
+    where newsId = #{newsId,jdbcType=BIGINT} order by createDate DESC
+    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from fm_news_comment
+    where mainId = #{mainId,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fm_news_comment
+    where mainId = #{mainId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cn.fenmo.pojo.NewsComment" >
+      insert into fm_news_comment (mainId, content, newsId,createDate, userName)
+      values (#{mainid,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{newsid,jdbcType=BIGINT}, 
+      #{createdate,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR})
+  </insert>
+  
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.fenmo.dao.DynamicCommentMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.DynamicComment" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="dynamicId" property="dynamicid" jdbcType="BIGINT" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="DynamicCommentAndUserResultMap" type="com.cn.fenmo.pojo.DynamicCommentAndUser" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="headImgPath" property="headImgPath" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    mainId, dynamicId, createDate, userName,content
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fm_dynamic_comment
+    where mainId = #{mainId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cn.fenmo.pojo.DynamicComment" >
+    insert into fm_dynamic_comment (mainId, dynamicId, createDate,userName, content)
+    values (#{mainid,jdbcType=BIGINT}, #{dynamicid,jdbcType=BIGINT}, #{createdate,jdbcType=TIMESTAMP},#{userName,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from fm_dynamic_comment
+    where mainId = #{mainId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectCount"  parameterType="java.util.Map" resultType="Integer">
+    select  count(*)
+    from fm_dynamic_comment a join fm_user b on a.userName =  b.userName
+    where dynamicId = #{dynamicId,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="selectPage" resultMap="DynamicCommentAndUserResultMap" parameterType="java.util.Map" >
+    select  a.mainId, a.dynamicId, a.createDate, a.userName,a.content,
+    b.nickName,b.headImgPath,b.sex,b.age
+    from fm_dynamic_comment a join fm_user b on a.userName =  b.userName
+    where dynamicId = #{dynamicId,jdbcType=BIGINT} order by createDate DESC
+    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

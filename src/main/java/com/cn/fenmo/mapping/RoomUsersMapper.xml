@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.fenmo.dao.RoomUsersMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.RoomUsers" >
+    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="userRemark" property="userRemark" jdbcType="VARCHAR" />
+    <result column="groupId" property="groupId" jdbcType="VARCHAR" />
+    <result column="startDate" property="startdate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    mainId, userName, groupId,startDate,userRemark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from fm_room_users
+    where mainId = #{mainid,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteOneUserOfRoom" parameterType="java.lang.String" >
+    delete from fm_room_users
+    where userName = #{userName,jdbcType=VARCHAR} and groupId = #{groupId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.cn.fenmo.pojo.RoomUsers" >
+     insert into fm_room_users (mainId, userName, groupId, startDate, userRemark)
+     values (#{mainid,jdbcType=BIGINT}, #{userName,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, 
+     #{startdate,jdbcType=TIMESTAMP},#{userRemark,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert  id="insertBatchRecord" parameterType="java.util.List">  
+     insert into fm_room_users (mainId,userName,groupId,userRemark,startDate) values  
+     <foreach collection="list" item="item" index="index" separator=",">  
+        (#{item.mainid},#{item.userName},#{item.groupId},#{item.userRemark},#{item.startdate})  
+     </foreach>  
+  </insert> 
+  
+  
+</mapper>
