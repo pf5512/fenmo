@@ -2,13 +2,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" />
 	<title>Full Layout - jQuery EasyUI Demo</title>
-	<link rel="stylesheet" type="text/css" href="plugin/easyUI/themes/default/easyui.css">
-	<link rel="stylesheet" type="text/css" href="plugin/easyUI/themes/icon.css">
-	<link rel="stylesheet" type="text/css" href="plugin/easyUI/demo/demo.css">
-	<script type="text/javascript" src="plugin/easyUI/jquery.min.js"></script>
-	<script type="text/javascript" src="plugin/easyUI/jquery.easyui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./plugin/easyUI/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="./plugin/easyUI/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="./plugin/easyUI/demo/demo.css">
+	<script type="text/javascript" src="./plugin/easyUI/jquery.min.js"></script>
+	<script type="text/javascript" src="./plugin/easyUI/jquery.easyui.min.js"></script>
 	<script type="text/javascript">
 	
 	</script>
@@ -33,17 +33,13 @@
 	<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">south region</div>
 	<div data-options="region:'center',title:'面板'">
 	   	<table class="easyui-datagrid" title="群组管理" style="width:100%;height:100%;"
-			data-options="singleSelect:true,collapsible:true,url:'http://60.190.243.154:8080/fenmo/room/searchPageRooms.do',method:'get'">
+			data-options="singleSelect:true,collapsible:true,url:'/fenmo/news/getNews.do',method:'get'">
 			<thead>
 				<tr>
-					<th data-options="field:'groupId',width:100,align:'center',hide:'true'"></th>
-					<th data-options="field:'roomName',width:100,align:'center'">群组名称</th>
+					<th data-options="field:'mainid',width:100,align:'center',hide:'true'"></th>
+					<th data-options="field:'createdate',width:100,align:'center'">创建时间</th>
 					<th data-options="field:'userName',width:100,align:'center'">创建者</th>
-					<th data-options="field:'unitcost',width:100,align:'center'">群组类型</th>
-					<th data-options="field:'createDate',width:100,align:'center'">创建时间</th>
-					<th data-options="field:'maxusers',width:100,align:'center'">群组上限</th>
-					<th data-options="field:'subject',width:100,align:'center'">群组主题</th>
-				    <th data-options="field:'membersonlyStr',width:160,align:'center'">是否只允许群成员发言</th>
+					<th data-options="field:'content',width:100,align:'center'">新闻内容</th>
 				</tr>
 			</thead>
 	    </table>

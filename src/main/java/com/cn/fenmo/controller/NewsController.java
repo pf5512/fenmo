@@ -1,6 +1,7 @@
 package com.cn.fenmo.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cn.fenmo.pojo.Dynamic;
 import com.cn.fenmo.pojo.DynamicComment;
 import com.cn.fenmo.pojo.News;
@@ -243,4 +245,53 @@ public class NewsController extends ToJson {
     toViewPage(response,viewPage);
   }
   
+  /**
+   * 
+   * @Description: 获取新闻列表
+   * @param request
+   * @param response
+   * @throws IOException
+   * @return void
+   * @throws
+   */
+  @RequestMapping("/getNews")
+  public void getNews(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//	    String start = request.getParameter("start");
+//	    String limit = request.getParameter("limit");
+	    Map<String,Object> params = new HashMap<String,Object>();
+//	    ViewPage viewPage = new ViewPage();
+//	    if(StringUtil.isNumeric(start)){
+//	      params.put("start", Integer.parseInt(start));
+//	    }else{
+//	      params.put("start", viewPage.getPageStart());
+//	    }
+//	    if(StringUtil.isNumeric(limit)){
+//	      params.put("limit", limit);
+//	    }else{
+//	      params.put("limit", viewPage.getPageLimit());
+//	    }
+	    int count = this.newsCommentService.getNewsComentCount(params);
+	    List list = null;
+	    Map<String,Object> result = new HashMap<String, Object>();
+	    if(count>0){
+//	      viewPage.setTotalCount(count);
+	      list = this.newsCommentService.getNewsComentPage(params);
+	      result.put("rows", list);
+	      result.put("total", count);
+//	      viewPage.setListResult(list);
+	    }
+//	    toViewPage(response,viewPage);
+	    
+	    response.setContentType("text/html;charset=utf-8");
+	    JSONObject jsonObj = new JSONObject(result);
+	    PrintWriter out = null;
+	    try {
+	      out = response.getWriter();
+	      out.println(jsonObj.toString());
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    }finally{
+	      out.close();
+	    };
+	  }
 }

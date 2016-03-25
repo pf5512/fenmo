@@ -27,7 +27,9 @@
   <select id="selectCount" resultType="Integer"  parameterType="java.util.Map" >
     select count(*) 
     from fm_news_comment a join fm_user b on a.userName =  b.userName
+    <if test="newsId !=null "> 
     where newsId = #{newsId,jdbcType=BIGINT}
+    </if>
   </select>
   
   
@@ -35,8 +37,10 @@
     select a.mainId,a.content,a.createDate,a.userName,
     b.nickName,b.headImgPath,b.sex,b.age
     from fm_news_comment a join fm_user b on a.userName = b.userName
-    where newsId = #{newsId,jdbcType=BIGINT} order by createDate DESC
-    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+    <if test="newsId !=null ">  
+	    where newsId = #{newsId,jdbcType=BIGINT} order by createDate DESC
+	    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+    </if> 
   </select>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
