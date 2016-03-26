@@ -3,12 +3,14 @@ package com.cn.fenmo.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cn.fenmo.util.DateUtil;
+
 public class DynamicComment implements Serializable {
     private Long mainid;
 
     private Long dynamicid;
 
-    private Date createdate;
+    private String createdate;
 
     private String  userName;
 
@@ -32,12 +34,12 @@ public class DynamicComment implements Serializable {
         this.dynamicid = dynamicid;
     }
 
-    public Date getCreatedate() {
-        return createdate;
+    public String getCreatedate() {
+       return createdate;
     }
 
     public void setCreatedate(Date createdate) {
-        this.createdate = createdate;
+       this.createdate =  DateUtil.getDateSecondDashFormat(createdate);
     }
     
 

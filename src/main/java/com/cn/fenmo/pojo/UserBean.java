@@ -3,6 +3,8 @@ package com.cn.fenmo.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cn.fenmo.util.DateUtil;
+
 public class UserBean implements Serializable {
     private Long mainid;
     
@@ -22,7 +24,7 @@ public class UserBean implements Serializable {
 
     private Integer sex;
 
-    private Long phone;
+    private long phone;
 
     private String constellation;
 
@@ -40,20 +42,42 @@ public class UserBean implements Serializable {
     
     private String occupation;
     
-    private Date birthday;
+    private String birthday;
     
-    private double lat;//Î³¶È
+    private String registerTime;
     
-    private double lng;//Î³¶È
+    private int starLevel;
+    
+    private double lat;//Î³ï¿½ï¿½
+    
+    private double lng;//Î³ï¿½ï¿½
+    
+    private double distance;
     
     private static final long serialVersionUID = 1L;
     
+    public int getStarLevel() {
+      return starLevel;
+    }
+
+    public void setStarLevel(int starLevel) {
+      this.starLevel = starLevel;
+    }
+
+    public String getRegisterTime() {
+      return registerTime;
+    }
+
+    public void setRegisterTime(Date registerTime) {
+      this.registerTime =  DateUtil.getDateSecondDashFormat(registerTime);
+    }
+
     public String getHeadImgPath() {
       return headImgPath;
     }
 
     public void setHeadImgPath(String headImgPath) {
-      this.headImgPath = headImgPath;
+      this.headImgPath = headImgPath!=null?headImgPath:"";
     }
 
     public String getFmNo() {
@@ -136,11 +160,11 @@ public class UserBean implements Serializable {
         this.sex = sex;
     }
 
-    public Long getPhone() {
+    public long getPhone() {
         return phone;
     }
 
-    public void setPhone(Long phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
     public String getConstellation() {
@@ -191,12 +215,12 @@ public class UserBean implements Serializable {
       this.occupation = occupation;
     }
 
-    public Date getBirthday() {
+    public String  getBirthday() {
       return birthday;
     }
 
     public void setBirthday(Date birthday) {
-      this.birthday = birthday;
+      this.birthday =  DateUtil.getDateDayDashFormat(birthday);
     }
 
     public double getLat() {
@@ -214,4 +238,14 @@ public class UserBean implements Serializable {
     public void setLng(double lng) {
       this.lng = lng;
     }
+
+    public double getDistance() {
+      return distance;
+    }
+
+    public void setDistance(double distance) {
+      this.distance = distance;
+    }
+    
+    
 }

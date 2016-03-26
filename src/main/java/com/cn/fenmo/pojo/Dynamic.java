@@ -3,6 +3,8 @@ package com.cn.fenmo.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cn.fenmo.util.DateUtil;
+
 public class Dynamic implements Serializable {
     private Long mainid;
 
@@ -12,7 +14,7 @@ public class Dynamic implements Serializable {
 
     private String userName;
 
-    private Date createdate;
+    private String createdate;
     
     private int zcount;
     
@@ -68,12 +70,12 @@ public class Dynamic implements Serializable {
       this.userName = userName;
     }
 
-    public Date getCreatedate() {
+    public String getCreatedate() {
         return createdate;
     }
 
     public void setCreatedate(Date createdate) {
-        this.createdate = createdate;
+      this.createdate =  DateUtil.getDateSecondDashFormat(createdate);
     }
  
 }

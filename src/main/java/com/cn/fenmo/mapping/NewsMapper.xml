@@ -12,15 +12,15 @@
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
     <result column="zcount" property="zcount" jdbcType="INTEGER" />
+    <result column="comments" property="comments" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List">
-    mainId, title, newSrc, newsType, summary, userName, createDate,state,content,zcount
+     mainId, title, newSrc, newsType, summary, userName, createDate,state,content,zcount
   </sql>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from fm_news
+    SELECT p.*,(select COUNT(1) FROM fm_news_comment t where t.newsId = p.mainId) comments
+    From fm_news p
     where mainId = #{mainId,jdbcType=BIGINT}
   </select>
   
@@ -44,10 +44,18 @@
    </select>
   
    <select id="selectPageBy" resultMap="BaseResultMap" parameterType="java.util.Map">
-	    select  <include refid="Base_Column_List" />
-	    from fm_news
-	    where userName = #{userName,jdbcType=VARCHAR} and state = #{state,jdbcType=INTEGER}
-	    LIMIT #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+	     SELECT p.*,(select COUNT(1) FROM fm_news_comment t where t.newsId = p.mainId) comments
+         From fm_news p
+	     WHERE userName = #{userName,jdbcType=VARCHAR} and state = #{state,jdbcType=INTEGER}
+	     ORDER BY p.createDate 
+	     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+   </select>
+   
+   <select id="selectNewsHeadPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+	     SELECT * FROM From fm_news 
+	     WHERE STATE = #{state,jdbcType=INTEGER}
+	     ORDER BY createDate DESC 
+	     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
    </select>
    
    <update id="update" parameterType="com.cn.fenmo.pojo.News" >

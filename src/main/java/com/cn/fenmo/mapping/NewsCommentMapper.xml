@@ -7,6 +7,11 @@
     <result column="newsId" property="newsid" jdbcType="BIGINT" />
     <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
     <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="headImgPath" property="headImgPath" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="zcount" property="zcount" jdbcType="INTEGER" />
   </resultMap>
   
   <resultMap id="NewsCommentUserResultMap" type="com.cn.fenmo.pojo.NewsCommentUser" >
@@ -21,26 +26,22 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    mainId, content, newsId, createDate, userName
+    mainId, content, newsId, createDate, userName,zcount
   </sql>
   
   <select id="selectCount" resultType="Integer"  parameterType="java.util.Map" >
     select count(*) 
     from fm_news_comment a join fm_user b on a.userName =  b.userName
-    <if test="newsId !=null "> 
     where newsId = #{newsId,jdbcType=BIGINT}
-    </if>
   </select>
   
   
  <select id="selectPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select a.mainId,a.content,a.createDate,a.userName,
+    select a.mainId,a.content,a.createDate,a.userName,a.zcount,
     b.nickName,b.headImgPath,b.sex,b.age
     from fm_news_comment a join fm_user b on a.userName = b.userName
-    <if test="newsId !=null ">  
-	    where newsId = #{newsId,jdbcType=BIGINT} order by createDate DESC
-	    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
-    </if> 
+    where newsId = #{newsId,jdbcType=BIGINT} order by createDate DESC
+    limit #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
   </select>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -60,5 +61,9 @@
       values (#{mainid,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{newsid,jdbcType=BIGINT}, 
       #{createdate,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR})
   </insert>
+  <update id="update"  parameterType="java.util.Map">
+      update fm_news_comment set zcount= #{zcount,jdbcType=INTEGER}
+      where mainId = #{mainId,jdbcType=BIGINT}
+  </update>
   
 </mapper>

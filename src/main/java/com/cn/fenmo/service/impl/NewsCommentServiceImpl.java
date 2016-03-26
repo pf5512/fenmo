@@ -1,5 +1,6 @@
 package com.cn.fenmo.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,23 @@ public class NewsCommentServiceImpl implements NewsCommentService{
 
   public List<NewsCommentUser> getNewsComentPage(Map<String, Object> params) {
     return this.newsCommentMapper.selectPage(params);
+  }
+
+  public boolean updateZcount(long mainId) {
+    NewsComment newsComment = this.newsCommentMapper.selectByPrimaryKey(mainId);
+    if(newsComment==null){
+      return false;
+    }else{
+      int zcount = newsComment.getZcount();
+      Map<String,Object> parmsMap = new HashMap<String, Object>();
+      parmsMap.put("zcount", zcount);
+      parmsMap.put("mainId", mainId);
+      if(this.newsCommentMapper.update(parmsMap)==1){
+        return true;
+      };
+    }
+    return false;
+    
   }
 
 }

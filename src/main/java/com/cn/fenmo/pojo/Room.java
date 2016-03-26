@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.cn.fenmo.util.DateUtil;
 import com.cn.fenmo.util.RoomCnst;
+import com.cn.fenmo.util.StringUtil;
 
 public class Room implements Serializable {
     private Long mainid;
@@ -126,8 +128,7 @@ public class Room implements Serializable {
     }
 
     public void setCreatedate(Date createdate) {
-      SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      this.createdate = sdf.format(createdate);
+      this.createdate =  DateUtil.getDateSecondDashFormat(createdate);
     }
 
     public String getHeadImgePath() {
@@ -135,7 +136,7 @@ public class Room implements Serializable {
     }
 
     public void setHeadImgePath(String headImgePath) {
-      this.headImgePath = headImgePath;
+      this.headImgePath = headImgePath==null?"":headImgePath;
     }
 
     public String getGroupId() {

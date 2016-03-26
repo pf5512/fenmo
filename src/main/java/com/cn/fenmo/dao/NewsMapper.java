@@ -18,7 +18,9 @@ public interface NewsMapper {
     
     int selectCount(Map<String, Object> params);
     
-    List<? extends News> selectPageBy(Map<String, Object> params);
+    List<News> selectPageBy(Map<String, Object> params);
+    
+    List<News> selectNewsHeadPage(Map<String, Object> params);
     
     int updateZCount(Map<String, Object> params);
 }

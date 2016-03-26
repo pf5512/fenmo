@@ -16,7 +16,8 @@ public interface NewsCommentService {
   
   public boolean delete(long mainId);
   
-  
+  public boolean updateZcount(long mainId);
+
   public NewsComment getBeanById(long mainId);
   
   public int getNewsComentCount(Map<String, Object> params);

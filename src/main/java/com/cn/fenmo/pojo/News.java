@@ -3,6 +3,8 @@ package com.cn.fenmo.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cn.fenmo.util.DateUtil;
+
 public class News implements Serializable {
     private Long mainid;
 
@@ -18,11 +20,15 @@ public class News implements Serializable {
 
     private String userName;
 
-    private Date createdate;
+    private String createdate;
 
     private String content;
     
+    private String newHeadImgUrl;
+    
     private int zcount;
+    
+    private int comments;
 
     private static final long serialVersionUID = 1L;
 
@@ -90,12 +96,13 @@ public class News implements Serializable {
       this.userName = userName;
     }
 
-    public Date getCreatedate() {
+    public String getCreatedate() {
         return createdate;
     }
 
     public void setCreatedate(Date createdate) {
-        this.createdate = createdate;
+        this.createdate =  DateUtil.getDateSecondDashFormat(createdate);
+
     }
 
     public String getContent() {
@@ -105,4 +112,22 @@ public class News implements Serializable {
     public void setContent(String content) {
       this.content = content;
     }
+
+    public String getNewHeadImgUrl() {
+      return newHeadImgUrl;
+    }
+
+    public void setNewHeadImgUrl(String newHeadImgUrl) {
+      this.newHeadImgUrl = newHeadImgUrl;
+    }
+
+    public int getComments() {
+      return comments;
+    }
+
+    public void setComments(int comments) {
+      this.comments = comments;
+    }
+    
+    
 }

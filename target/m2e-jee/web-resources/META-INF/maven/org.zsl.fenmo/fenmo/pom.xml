@@ -250,8 +250,26 @@
 		        <version>1.1.0</version>
 		    </dependency>
 		<!-- swagger 配置 end -->
+		
+		<!-- ueditor依赖jar包 start -->
+			<!-- <dependency>   
+		       <groupId>com.baidu</groupId>   
+		       <artifactId>ueditor</artifactId>   
+		       <version>1.1.2</version>   
+		       <scope>system</scope>   
+		       <systemPath>${project.basedir}/lib/ueditor-1.1.2.jar</systemPath>   
+		   </dependency>  -->
+		   <dependency>   
+		       <groupId>org.json</groupId>   
+		       <artifactId>json</artifactId>   
+		       <version>1.0</version>   
+		       <scope>system</scope>   
+		       <systemPath>${project.basedir}/lib/json.jar</systemPath>   
+		   </dependency> 
+	   <!-- ueditor依赖jar包 end -->
 	</dependencies>
 	<build>
 		<finalName>fenmo</finalName>
+		<defaultGoal>compile</defaultGoal>
 	</build>
 </project>

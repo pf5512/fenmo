@@ -1,11 +1,14 @@
 package com.cn.fenmo.util;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -383,7 +386,7 @@ public class StringUtil extends StringUtils {
   }
 
   public static boolean isMobileNO(String mobiles){ 
-    Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$"); 
+    Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9])|(17[0,6-8]))\\d{8}$"); 
     Matcher m = p.matcher(mobiles);  
     return m.matches();  
   }
@@ -400,6 +403,38 @@ public class StringUtil extends StringUtils {
       fmNumString=fmNumString+chars.charAt((int)(Math.random() * 36));
     }
     return fmNumString;
+  }
+  
+  public static final  Pattern PATTERN   =   Pattern.compile("<img\\s+(?:[^>]*)src\\s*=\\s*([^>]+)",Pattern.CASE_INSENSITIVE|Pattern.MULTILINE);  
+  public static String getImgStr(String htmlStr) {
+    String imrUrl = "";
+    if(StringUtil.isNull(htmlStr)){
+      return "";
+    }
+    Matcher matcher = PATTERN.matcher(htmlStr);  
+    List<String> list = new ArrayList<String>();  
+    while(matcher.find()){  
+        String   group   =   matcher.group(1);  
+        if(group   ==   null)   {  
+          continue;  
+        }  
+        if(group.startsWith("'")){  
+          list.add(group.substring(1,group.indexOf("'",1)));  
+        }else if (group.startsWith("\"")){  
+          list.add(group.substring(1,group.indexOf("\"",1)));  
+        }else{  
+          list.add(group.split("\\s")[0]);  
+        }  
+    }  
+    for(int i=0;i<list.size();i++){
+      if(list.size()==1){
+        imrUrl=list.get(i);
+      }else{
+        imrUrl=imrUrl+list.get(i)+"$";
+      }
+     
+    }
+    return imrUrl;   
   }
   /**
    * 测试
@@ -424,6 +459,9 @@ public class StringUtil extends StringUtils {
 //      //下面两行如果不加volatile的话，执行的先后顺序是不可预测的。并且下面两行都是原子操作，但是这两行作为一个整体的话就不是一个原子操作。  
 //      t.a = 48; //这是一个原子操作，但是其结果不一定具有可见性。加上volatile后就具备了可见性。  
 //      t.ready = true;//同理  
+         String imgUrl = "17930234852";
+         
+         System.out.println(StringUtil.isMobileNO(imgUrl));
   } 
  
 

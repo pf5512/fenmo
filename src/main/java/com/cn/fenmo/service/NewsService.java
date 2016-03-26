@@ -16,12 +16,17 @@ public interface NewsService {
   
   public boolean delete(long mainId);
   
-  public List<? extends News> selectBeanBy(Map<String,Object> params);
+  public List<News> selectBeanBy(Map<String,Object> params);
   
   public int selectCount(Map<String,Object> params);
   
   public boolean PublishNews(Map<String,Object> params);
   
   public boolean updateZCount(long mainId);
+  
+  //查找新闻表中最新的新闻
+  public List<News> getNewsHeadPage(Map<String,Object> params);
+  
+  
   
 }

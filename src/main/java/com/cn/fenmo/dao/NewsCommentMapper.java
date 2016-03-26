@@ -15,6 +15,8 @@ public interface NewsCommentMapper {
   List<NewsCommentUser> selectPage(Map<String,Object> params);
   
   int insert(NewsComment record);
+  
+  int update(Map<String, Object> params);
 
   NewsComment selectByPrimaryKey(Long mainid);
 

@@ -9,6 +9,8 @@ public class DynamicAndUser implements Serializable {
     private String content;
 
     private String userName;
+    
+    private String imgUrl;
 
     private Date createdate;
 
@@ -20,13 +22,27 @@ public class DynamicAndUser implements Serializable {
     
     private int sex;
     
+    private int comments;
+    
     private String nickName;
     
     private String headImgPath;
-
+    
+    private double lat;
+    
+    private double lng;
+    
+    private double distance;
 
     private static final long serialVersionUID = 1L;
     
+    public int getComments() {
+      return comments;
+    }
+
+    public void setComments(int comments) {
+      this.comments = comments;
+    }
 
     public int getAge() {
       return age;
@@ -108,5 +124,35 @@ public class DynamicAndUser implements Serializable {
       this.imgpath = imgpath;
     }
 
- 
+    public double getLat() {
+      return lat;
+    }
+
+    public void setLat(double lat) {
+      this.lat = lat;
+    }
+
+    public double getLng() {
+      return lng;
+    }
+
+    public void setLng(double lng) {
+      this.lng = lng;
+    }
+
+    public double getDistance() {
+      return distance;
+    }
+
+    public void setDistance(double distance) {
+      this.distance = distance;
+    }
+
+    public String getImgUrl() {
+      return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+      this.imgUrl = imgUrl;
+    }
 }

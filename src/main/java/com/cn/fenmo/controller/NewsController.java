@@ -1,23 +1,27 @@
 package com.cn.fenmo.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cn.fenmo.pojo.Dynamic;
-import com.cn.fenmo.pojo.DynamicComment;
+import com.cn.fenmo.file.NginxUtil;
 import com.cn.fenmo.pojo.News;
 import com.cn.fenmo.pojo.NewsComment;
 import com.cn.fenmo.pojo.UserBean;
@@ -39,6 +43,21 @@ public class NewsController extends ToJson {
   
   @Autowired
   private NewsCommentService newsCommentService;
+  
+  
+  private final int HEAD_LIMIT=3;
+  
+  private final String HTTPHEAD="http://";
+  
+  //获取首页上显示的新闻(目前只显示最新的三条新闻) 
+  @RequestMapping("/getNewsHeadPage")
+  public void getNewsHeadPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Map<String,Object> params = new HashMap<String,Object>();
+    params.put("state",NewsCnst.PUBLISH);
+    params.put("limit",HEAD_LIMIT);
+    List<News> list = this.newsService.getNewsHeadPage(params);
+    toArrayJson(response, list);
+  }
 
   /*获取某人发布的新闻*/
   @RequestMapping("/getNewsPage")
@@ -54,15 +73,22 @@ public class NewsController extends ToJson {
       params.put("start", viewPage.getPageStart());
     }
     if(StringUtil.isNumeric(limit)){
-      params.put("limit", limit);
+      params.put("limit", Integer.parseInt(limit));
     }else{
       params.put("limit", viewPage.getPageLimit());
     }
     params.put("state",NewsCnst.PUBLISH);
     int count = this.newsService.selectCount(params);
-    List list = null;
+    List<News> list = null;
     if(count>0){
       list = this.newsService.selectBeanBy(params);
+      for(int i=0;i<list.size();i++){
+        News  news = list.get(i);
+        String[] imgUrls = StringUtil.getImgStr(news.getContent()).split("\\$");
+        if(!"".equals(imgUrls)){
+          news.setNewHeadImgUrl(imgUrls[0]);
+        }
+      }
       viewPage.setTotalCount(count);
       viewPage.setListResult(list);
     } 
@@ -79,6 +105,36 @@ public class NewsController extends ToJson {
       toExMsg(response,UserCnst.INFO_NO_EXIST);
     }
   }
+  /*保存发布新闻时上传的图片*/
+  @RequestMapping(value="/uploadNewsImg", method=RequestMethod.POST)  
+  public String uploadNewsImg(@RequestParam String userPhone,@RequestParam MultipartFile[] myfiles, HttpServletRequest request,HttpServletResponse response) throws IOException{  
+    UserBean bean= null;
+    String token = (String) RedisClient.get(userPhone);
+    if(StringUtil.isNotNull(token)){    
+      bean = (UserBean)RedisClient.getObject(token);
+    }
+    if(token==null || bean==null){
+      toExMsg(response,UserCnst.INFO_NO_LOGIN);
+      return null;
+    }
+    List<String> imgurlList=new ArrayList<String>();
+    for(MultipartFile myfile:myfiles){  
+      if(!myfile.isEmpty()){  
+        String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userPhone;
+        String  fileName = myfile.getOriginalFilename();
+        String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
+        //此文件只能在linux下才能生成
+        File file = new File(tempPath,newFileName);
+        FileUtils.copyInputStreamToFile(myfile.getInputStream(),file); 
+        String tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+userPhone+File.separatorChar+newFileName;
+        imgurlList.add(tpUrl);
+      }
+    }
+    toArrayJson(response,imgurlList);
+    return null;  
+  }
   /*保存新闻*/
   @RequestMapping("/save")
   public void save(@RequestParam String userPhone,@RequestParam String content,HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -94,7 +150,7 @@ public class NewsController extends ToJson {
       toExMsg(response,UserCnst.INFO_SAVE_FAIL);
     }
   }
-  /*直接发表新闻*/
+  /*直接发表新闻,手机客服端发布的新闻都认为是自媒体新闻，娱乐，财经，房产等新闻由后台发布*/
   @RequestMapping("/publishNews")
   public String publishNews(@RequestParam String title,@RequestParam String content,@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserBean bean= null; 
@@ -115,6 +171,7 @@ public class NewsController extends ToJson {
       news.setCreatedate(new Date());
       news.setNewsrc(CNST.CIRCLE_ZMT_STR);
       news.setZcount(0);
+      news.setNewstype(CNST.CIRCLE_ZMT);
       if(!this.newsService.save(news)){
         toExMsg(response,UserCnst.INFO_SAVE_FAIL);
         return null;
@@ -230,7 +287,7 @@ public class NewsController extends ToJson {
       params.put("start", viewPage.getPageStart());
     }
     if(StringUtil.isNumeric(limit)){
-      params.put("limit", limit);
+      params.put("limit", Integer.parseInt(limit));
     }else{
       params.put("limit", viewPage.getPageLimit());
     }
@@ -245,53 +302,14 @@ public class NewsController extends ToJson {
     toViewPage(response,viewPage);
   }
   
-  /**
-   * 
-   * @Description: 获取新闻列表
-   * @param request
-   * @param response
-   * @throws IOException
-   * @return void
-   * @throws
-   */
-  @RequestMapping("/getNews")
-  public void getNews(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//	    String start = request.getParameter("start");
-//	    String limit = request.getParameter("limit");
-	    Map<String,Object> params = new HashMap<String,Object>();
-//	    ViewPage viewPage = new ViewPage();
-//	    if(StringUtil.isNumeric(start)){
-//	      params.put("start", Integer.parseInt(start));
-//	    }else{
-//	      params.put("start", viewPage.getPageStart());
-//	    }
-//	    if(StringUtil.isNumeric(limit)){
-//	      params.put("limit", limit);
-//	    }else{
-//	      params.put("limit", viewPage.getPageLimit());
-//	    }
-	    int count = this.newsCommentService.getNewsComentCount(params);
-	    List list = null;
-	    Map<String,Object> result = new HashMap<String, Object>();
-	    if(count>0){
-//	      viewPage.setTotalCount(count);
-	      list = this.newsCommentService.getNewsComentPage(params);
-	      result.put("rows", list);
-	      result.put("total", count);
-//	      viewPage.setListResult(list);
-	    }
-//	    toViewPage(response,viewPage);
-	    
-	    response.setContentType("text/html;charset=utf-8");
-	    JSONObject jsonObj = new JSONObject(result);
-	    PrintWriter out = null;
-	    try {
-	      out = response.getWriter();
-	      out.println(jsonObj.toString());
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    }finally{
-	      out.close();
-	    };
-	  }
+  /*为新闻评论点赞，没有登陆也可以点赞*/
+  @RequestMapping("/admireComent")
+  public void admireComent(@RequestParam long mainid,HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if(!this.newsCommentService.updateZcount(mainid)){
+      toExMsg(response,UserCnst.INFO_UPDATE_FAIL);
+    }else{
+      toExSuccMsg(response, "success");
+    }
+  }
+  
 }

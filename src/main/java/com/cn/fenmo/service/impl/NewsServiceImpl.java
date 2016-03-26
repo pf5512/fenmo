@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cn.fenmo.dao.NewsMapper;
 import com.cn.fenmo.pojo.News;
 import com.cn.fenmo.service.NewsService;
+import com.cn.fenmo.util.StringUtil;
 
 
 @Service("newsService")
@@ -25,8 +26,9 @@ public class NewsServiceImpl implements NewsService{
     return this.newsMapper.insert(bean)==1?true:false;
   }
 
-  public List<? extends News> selectBeanBy(Map<String, Object> params) {
-    return this.newsMapper.selectPageBy(params);
+  public List<News> selectBeanBy(Map<String, Object> params) {
+    List<News> list  = this.newsMapper.selectPageBy(params);
+    return list;
   }
 
   public int selectCount(Map<String, Object> params) {
@@ -55,6 +57,10 @@ public class NewsServiceImpl implements NewsService{
 
   public boolean delete(long mainId) {
     return this.newsMapper.deleteByPrimaryKey(mainId)==1?true:false;
+  }
+
+  public List<News> getNewsHeadPage(Map<String, Object> params) {
+    return this.newsMapper.selectNewsHeadPage(params);
   }
   
 
