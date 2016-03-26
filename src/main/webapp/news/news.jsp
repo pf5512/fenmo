@@ -1,20 +1,20 @@
-<%@page pageEncoding="GBK" language="java"%>
+<%@page pageEncoding="utf-8" language="java"%>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="GBK">
+	<meta charset="utf-8">
 	<title>Basic Form - jQuery EasyUI Demo</title>
-	<link rel="stylesheet" type="text/css" href="./../jquery-easyui-1.4.4/themes/default/easyui.css">
-	<link rel="stylesheet" type="text/css" href="./../jquery-easyui-1.4.4/themes/icon.css">
-	<link rel="stylesheet" type="text/css" href="./../jquery-easyui-1.4.4/demo/demo.css">
-	<script type="text/javascript" src="./../jquery-easyui-1.4.4/jquery.min.js"></script>
-	<script type="text/javascript" src="./../jquery-easyui-1.4.4/jquery.easyui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./../plugin/easyUI/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="./../plugin/easyUI/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="./../plugin/easyUI/demo/demo.css">
+	<script type="text/javascript" src="./../plugin/easyUI/jquery.min.js"></script>
+	<script type="text/javascript" src="./../plugin/easyUI/jquery.easyui.min.js"></script>
 	
-	<script type="text/javascript" charset="gbk" src="../ueditor.config.js"></script>
-    <script type="text/javascript" charset="gbk" src="../ueditor.all.js"> </script>
-    <!--½¨ÒéÊÖ¶¯¼ÓÔÚÓïÑÔ£¬±ÜÃâÔÚieÏÂÓĞÊ±ÒòÎª¼ÓÔØÓïÑÔÊ§°Üµ¼ÖÂ±à¼­Æ÷¼ÓÔØÊ§°Ü-->
-    <!--ÕâÀï¼ÓÔØµÄÓïÑÔÎÄ¼ş»á¸²¸ÇÄãÔÚÅäÖÃÏîÄ¿ÀïÌí¼ÓµÄÓïÑÔÀàĞÍ£¬±ÈÈçÄãÔÚÅäÖÃÏîÄ¿ÀïÅäÖÃµÄÊÇÓ¢ÎÄ£¬ÕâÀï¼ÓÔØµÄÖĞÎÄ£¬ÄÇ×îºó¾ÍÊÇÖĞÎÄ-->
-    <script type="text/javascript" charset="gbk" src="../lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" charset="utf-8" src="./../plugin/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="./../plugin/ueditor/ueditor.all.js"> </script>
+    <!--å»ºè®®æ‰‹åŠ¨åŠ åœ¨è¯­è¨€ï¼Œé¿å…åœ¨ieä¸‹æœ‰æ—¶å› ä¸ºåŠ è½½è¯­è¨€å¤±è´¥å¯¼è‡´ç¼–è¾‘å™¨åŠ è½½å¤±è´¥-->
+    <!--è¿™é‡ŒåŠ è½½çš„è¯­è¨€æ–‡ä»¶ä¼šè¦†ç›–ä½ åœ¨é…ç½®é¡¹ç›®é‡Œæ·»åŠ çš„è¯­è¨€ç±»å‹ï¼Œæ¯”å¦‚ä½ åœ¨é…ç½®é¡¹ç›®é‡Œé…ç½®çš„æ˜¯è‹±æ–‡ï¼Œè¿™é‡ŒåŠ è½½çš„ä¸­æ–‡ï¼Œé‚£æœ€åå°±æ˜¯ä¸­æ–‡-->
+    <script type="text/javascript" charset="utf-8" src="./../plugin/ueditor/lang/zh-cn/zh-cn.js"></script>
 
     <style type="text/css">
 		.inputText{
@@ -26,48 +26,49 @@
 	</style>
 	<script type="text/javascript">
 	
-		//´´½¨¸»ÎÄ±¾¿ò
+		//åˆ›å»ºå¯Œæ–‡æœ¬æ¡†
 		var ue = UE.getEditor('editor',{
-			elementPathEnabled:false //²»ÏÔÊ¾ÔªËØÂ·¾¶
+			elementPathEnabled:false //ä¸æ˜¾ç¤ºå…ƒç´ è·¯å¾„
+			//UEDITOR_HOME_URL:window.location.protocol+"//"+window.location.host+"/fenmo/plugin/ueditor" æŒ‡å®šæ ¹ç›®å½•
 		});
 		
-		//Ìá½»
+		//æäº¤
 		function submitForm(){
 			$('#newsForm').form('submit');
 		}
 		
-		//¼ÓÔØÄÚÈİ
+		//åŠ è½½å†…å®¹
 		function setContent(content, isAppendTo) {
 	        ue.setContent(content , isAppendTo);
 	    }
 	    
 	    
-	    //³õÊ¼»¯Íê±Ï¼ÓÔØÊı¾İ
-	   	ue.ready( function( editor ) {
+	    //åˆå§‹åŒ–å®Œæ¯•åŠ è½½æ•°æ®
+	   	/* ue.ready( function( editor ) {
             setContent('<p><img title="1458733219702024395.jpg" alt="Tulips.jpg" src="/testproject/jsp/upload/image/20160323/1458733219702024395.jpg"/></p>');
-        } );
+        } ); */
         
 	</script>
 </head>
 <body>
-	<div class="easyui-panel" title="ĞÂÎÅ" style="width:1000px;" >
+	<div class="easyui-panel" title="æ–°é—»" style="width:1000px;" >
 		<div  align="center" style="padding:10px 0;">
 	    <form id="newsForm" method="post">
 	    	<table cellpadding="5">
 	    		<tr>
-	    			<td class="titlespan" >ĞÂÎÅ±êÌâ:</td>
+	    			<td class="titlespan" >æ–°é—»æ ‡é¢˜:</td>
 	    			<td align="left" >
 	    				<input class="easyui-textbox inputText"  type="text" name="name" data-options="required:true" />
     				</td>
 	    		</tr>
 	    		<tr>
-	    			<td class="titlespan" >ĞÂÎÅ×÷Õß:</td>
+	    			<td class="titlespan" >æ–°é—»ä½œè€…:</td>
 	    			<td align="left" >
 	    				<input class="easyui-textbox inputText" type="text" name="email" data-options="required:true" />
     				</td>
 	    		</tr>
 	    		<tr>
-	    			<td class="titlespan" >ĞÂÎÅÄÚÈİ:</td>
+	    			<td class="titlespan" >æ–°é—»å†…å®¹:</td>
 	    			<td>
 	    				<div>
 		    				<script id="editor" type="text/plain" style="width:800px;height:500px;"></script>
@@ -77,7 +78,7 @@
 	    	</table>
 	    </form>
 	    <div style="text-align:center;padding:5px">
-	    	<a href="javascript:void(0);" class="easyui-linkbutton" onclick="submitForm()">±£´æ</a>
+	    	<a href="javascript:void(0);" class="easyui-linkbutton" onclick="submitForm()">ä¿å­˜</a>
 	    </div>
 	    </div>
 	</div>
