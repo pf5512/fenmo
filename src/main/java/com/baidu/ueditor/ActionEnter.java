@@ -11,6 +11,7 @@ import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.hunter.FileManager;
 import com.baidu.ueditor.hunter.ImageHunter;
 import com.baidu.ueditor.upload.Uploader;
+import com.baidu.ueditor.upload.fenmoUploader;
 
 public class ActionEnter {
 	
@@ -66,29 +67,33 @@ public class ActionEnter {
 		int actionCode = ActionMap.getType( this.actionType );
 		
 		Map<String, Object> conf = null;
-		
+		conf = this.configManager.getConfig( actionCode );
 		switch ( actionCode ) {
 		
 			case ActionMap.CONFIG:
 				return this.configManager.getAllConfig().toString();
 				
+				
 			case ActionMap.UPLOAD_IMAGE:
+				//如果配置了上传到nignx，则上传到nginx路径
+				boolean isNginx = (Boolean)(conf.get("isNginx"));
+				if(isNginx){
+					state = new fenmoUploader( request, conf ).doExec();
+					break;
+				}
 			case ActionMap.UPLOAD_SCRAWL:
 			case ActionMap.UPLOAD_VIDEO:
 			case ActionMap.UPLOAD_FILE:
-				conf = this.configManager.getConfig( actionCode );
 				state = new Uploader( request, conf ).doExec();
 				break;
 				
 			case ActionMap.CATCH_IMAGE:
-				conf = configManager.getConfig( actionCode );
 				String[] list = this.request.getParameterValues( (String)conf.get( "fieldName" ) );
 				state = new ImageHunter( conf ).capture( list );
 				break;
 				
 			case ActionMap.LIST_IMAGE:
 			case ActionMap.LIST_FILE:
-				conf = configManager.getConfig( actionCode );
 				int start = this.getStartIndex();
 				state = new FileManager( conf ).listFile( start );
 				break;
