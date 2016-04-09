@@ -101,6 +101,7 @@ public final class ConfigManager {
 				conf.put( "maxSize", this.jsonConfig.getLong( "imageMaxSize" ) );
 				conf.put( "allowFiles", this.getArray( "imageAllowFiles" ) );
 				conf.put( "fieldName", this.jsonConfig.getString( "imageFieldName" ) );
+				conf.put("isNginx", this.jsonConfig.getBoolean("isNginx"));//增加isNginx配置
 				savePath = this.jsonConfig.getString( "imagePathFormat" );
 				break;
 				

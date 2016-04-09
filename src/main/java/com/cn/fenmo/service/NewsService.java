@@ -27,6 +27,25 @@ public interface NewsService {
   //查找新闻表中最新的新闻
   public List<News> getNewsHeadPage(Map<String,Object> params);
   
+  /**
+   * 
+   * @Description: 获取新闻详情
+   * @author weiwj	
+   * @date 2016-4-9 上午11:28:34	
+   * @param mainId
+   * @return
+   */
+  public News selectByPrimaryKey(Long mainId);
+
   
+  /**
+   * 
+   * @Description:更新新闻内容
+   * @author weiwj	
+   * @date 2016-4-9 下午5:18:35	
+   * @param news
+   * @return
+   */
+  public boolean updateNews(News news);
   
 }

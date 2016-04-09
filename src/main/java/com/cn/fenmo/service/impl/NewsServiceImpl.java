@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.cn.fenmo.dao.NewsMapper;
 import com.cn.fenmo.pojo.News;
 import com.cn.fenmo.service.NewsService;
-import com.cn.fenmo.util.StringUtil;
 
 
 @Service("newsService")
@@ -62,6 +61,14 @@ public class NewsServiceImpl implements NewsService{
   public List<News> getNewsHeadPage(Map<String, Object> params) {
     return this.newsMapper.selectNewsHeadPage(params);
   }
+
+	public News selectByPrimaryKey(Long mainId) {
+		return this.newsMapper.selectByPrimaryKey(mainId);
+	}
+
+	public boolean updateNews(News news) {
+		return this.newsMapper.update(news)==1?true:false;
+	}
   
 
 }
