@@ -107,7 +107,8 @@ public class Md5Util
   }
   
   public static void main(String args[]) {
-    System.out.println(Md5Util.getMD5String("18680683004"));
+    System.out.println("mima="+Md5Util.getMD5String("123456"));
+    System.out.println("xiaoxie="+"E10ADC3949BA59ABBE56E057F20F883E".toLowerCase());
   }
 
 

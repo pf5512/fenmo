@@ -26,13 +26,6 @@ public class DynamicServiceImpl implements  DynamicService {
   public boolean save(Dynamic bean) {
     return this.dynamicMapper.insert(bean)==1?true:false;
   }
-
-  public List<? extends Dynamic> getPageBy(Map<String, Object> params) {
-    return this.dynamicMapper.selectPage(params);
-  }
-  public int selectCount(Map<String, Object> params) {
-    return  this.dynamicMapper.selectCount(params);
-  }
   
   public  boolean updateZCount(long mainId) {
     Dynamic dynamic = this.dynamicMapper.selectByPrimaryKey(mainId);
@@ -62,6 +55,7 @@ public class DynamicServiceImpl implements  DynamicService {
   }
 
   public List<DynamicAndUser> getDtPageBy(Map<String, Object> params) {
-    return this.dynamicMapper.selectDtPageBy(params);
+    return  this.dynamicMapper.selectDtPageBy(params);
+    
   }
 }

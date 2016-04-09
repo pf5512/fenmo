@@ -42,7 +42,9 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>classpath:spring-mvc.xml</param-value>
 		</init-param>
+		<!-- 表示启动容器时初始化该Servlet -->
 		<load-on-startup>1</load-on-startup>
+		
 		<async-supported>true</async-supported>
 	</servlet>
 	<servlet-mapping>

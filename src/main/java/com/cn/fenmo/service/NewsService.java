@@ -22,12 +22,20 @@ public interface NewsService {
   
   public boolean PublishNews(Map<String,Object> params);
   
+  /**
+   * 
+   * @description 点赞
+   * @date  下午8:04:38
+   * @author Administrator
+   * @param mainId
+   * @return
+   */
   public boolean updateZCount(long mainId);
   
   //查找新闻表中最新的新闻
   public List<News> getNewsHeadPage(Map<String,Object> params);
   
-  /**
+    /**
    * 
    * @Description: 获取新闻详情
    * @author weiwj	

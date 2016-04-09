@@ -27,6 +27,9 @@
 	</style>
 	<%
 		String mainId = request.getParameter("mainId");
+		if(mainId==null ||mainId.trim().length() == 0){
+			mainId="";
+		}
 	 %>
 	<script type="text/javascript">
 	

@@ -46,8 +46,7 @@ public class DateUtil {
 	public static final SimpleDateFormat DATE_FORMAT_DASH_YYYY_MM_DD_HH_MM = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm");
 	/** yyyy-MM-dd HH:mm:ss */
-	public static final SimpleDateFormat DATE_FORMAT_DASH_YYYY_MM_DD_HH_MM_SS = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat DATE_FORMAT_DASH_YYYY_MM_DD_HH_MM_SS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	/** yyyy-MM-dd HH:mm:ss,SSS */
 	public static final SimpleDateFormat DATE_FORMAT_DASH_YYYY_MM_DD_HH_MM_SS_SSS = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss,SSS");

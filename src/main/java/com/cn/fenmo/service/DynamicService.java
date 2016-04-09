@@ -17,10 +17,6 @@ public interface DynamicService {
   
   public boolean delete(long mainId);
   
-  public List<? extends Dynamic> getPageBy(Map<String,Object> params);
-  
-  public int selectCount(Map<String,Object> params);
-  
   public boolean updateZCount(long mainId);
   
   public int selectDtCount(Map<String,Object> params);

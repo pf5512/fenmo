@@ -1,5 +1,7 @@
 package com.cn.fenmo.util;
 
+import java.math.BigDecimal;
+
 public class Dis {
   
   //计算两个人之间的距离
@@ -7,10 +9,12 @@ public class Dis {
     double PI = 3.14159265358979323; // 圆周率
     double R = 6371229; // 地球的半径
     double x, y, distance;
-    x = (lng2-lng1) * 3.14 * 6371229* Math.cos(((lat2+lat1) / 2) * 3.14 / 180) / 180;
-    y = (lat2-lat1) * 3.14 *6371229 / 180;
-    distance = Math.hypot(x, y);
-    return distance;
+    x = (lng2-lng1) * PI * R* Math.cos(((lat2+lat1) / 2) * PI / 180) / 180;
+    y = (lat2-lat1) * PI *R / 180;
+    distance = Math.sqrt(x*x+y*y);
+    BigDecimal   b   =   new   BigDecimal(distance);  
+    double   f1   =   b.setScale(0,   BigDecimal.ROUND_HALF_UP).doubleValue(); 
+    return f1;
   }
   
   public static double computeDistance(double lat1, double lon1,double lat2, double lon2) {
@@ -80,12 +84,24 @@ public class Dis {
       }
 
       return  b * A * (sigma - deltaSigma);
+  }
+  public static double geographicDistance(double lng1, double lat1, double lng2, double lat2) {
+    double dLat = Math.toRadians(lat2 - lat1); 
+    double dLng = Math.toRadians(lng2 - lng1);
+    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    double distance = 6378137 * c;
+    return new BigDecimal(distance).intValue();
 }
   
   
   public  static void main(String[] arg){
     System.out.println(getDistance(34.8082342, 113.6125439, 34.8002478, 113.659779));
-    System.out.println(computeDistance(34.8082342, 113.6125439, 34.8002478, 113.659779));
+    System.out.println(geographicDistance(113.6125439,34.8082342, 113.659779, 34.8002478 ));
+    
+   // System.out.println(computeDistance(34.8082342, 113.6125439, 34.8002478, 113.659779));
 
   }
 }

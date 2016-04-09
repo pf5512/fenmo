@@ -24,6 +24,6 @@ public class Test {
     // UserBean zhuoxuan =  (UserBean) RedisClient.getObject("zhuoxuan");
     // System.out.println(RedisClient.get("6"));
     // System.out.println(zhuoxuan.getSex());
-     RedisClient.set("15867178340","");
+     RedisClient.get("15867178340");
   }
 }

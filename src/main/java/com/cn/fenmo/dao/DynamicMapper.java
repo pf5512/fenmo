@@ -15,11 +15,7 @@ public interface DynamicMapper {
     Dynamic selectByPrimaryKey(long mainId);
     
     Dynamic selectBy(Map<String, Object> params);
-    
-    List<? extends Dynamic> selectPage(Map<String, Object> params);
    
-    int selectCount(Map<String, Object> params);
-    
     int selectDtCount(Map<String, Object> params);
     
     List<DynamicAndUser> selectDtPageBy(Map<String, Object> params);

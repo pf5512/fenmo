@@ -24,7 +24,7 @@ public class RedisClient {
     config.setMaxTotal(maxActive);
     config.setMaxIdle(maxIdle);
     config.setMaxWaitMillis(maxWait);
-    jedisPool = new JedisPool(config, ip, port); 
+    jedisPool = new JedisPool(config, ip, port,100000); 
   }
   
   public static boolean TestRedisIsSuccess(){

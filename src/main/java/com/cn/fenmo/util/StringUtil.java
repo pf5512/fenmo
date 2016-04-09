@@ -1,23 +1,19 @@
 package com.cn.fenmo.util;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.cn.fenmo.pojo.UserBean;
+import com.cn.fenmo.redis.RedisClient;
 
 public class StringUtil extends StringUtils {
 
@@ -453,6 +449,11 @@ public class StringUtil extends StringUtils {
           System.out.println(ready);  
       }  
   }  
+  
+  public static void setRides(String userPhone,UserBean bean) {
+//    RedisClient.set(userPhone, bean.getToken(), CNST.TOKEN_CANCEL);
+//    RedisClient.setObject(bean.getToken(), bean, CNST.TOKEN_CANCEL);
+  }
   public static void main(String[] args) throws InterruptedException {  
 //      StringUtil t = new StringUtil();
 //      t.new PrintA().start();  
@@ -463,6 +464,9 @@ public class StringUtil extends StringUtils {
          
          System.out.println(StringUtil.isMobileNO(imgUrl));
   } 
+  
+  
+
  
 
 }

@@ -17,6 +17,9 @@ public final class CNST {
   public final static String CIRCLE_ZMT_STR     = "自媒体";
   
   
+  public final static int TOKEN_CANCEL=12*60*60*1000;//一天
+  
+  
   public static String getVStateStr(int vState){
     String result = "";
     switch(vState){

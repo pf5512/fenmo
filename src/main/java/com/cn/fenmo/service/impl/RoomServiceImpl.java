@@ -1,9 +1,9 @@
 package com.cn.fenmo.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.taglibs.standard.tag.rt.core.ForEachTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +55,19 @@ public class RoomServiceImpl implements IRoomService {
   	}
   
   	public List<Room> getRooms(Map<String, Object> params) {
-  	   return  this.roomMapper.selectPageBy(params);
+  	  List<Room> list = this.roomMapper.selectPageBy(params);
+  	  for(int i=0;i<list.size();i++){
+  	    Room room = list.get(i);
+  	    room.setTypeStr(room.getType());
+  	  }
+  	   return  list;
   	}
+
+    public List<Room> getHotRooms() {
+      return this.roomMapper.selectHotRooms();
+    }
+
+    public Room getMaxUseRoom(String userName) {
+      return this.roomMapper.selectRoomMaxUsers(userName);
+    }
 }

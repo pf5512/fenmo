@@ -1,32 +1,38 @@
 package com.cn.fenmo.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+
+import sun.misc.BASE64Decoder;
 
 import com.cn.fenmo.file.NginxUtil;
 import com.cn.fenmo.pojo.News;
 import com.cn.fenmo.pojo.NewsComment;
-import com.cn.fenmo.pojo.NewsCommentUser;
 import com.cn.fenmo.pojo.UserBean;
-import com.cn.fenmo.redis.RedisClient;
+import com.cn.fenmo.service.IUserService;
 import com.cn.fenmo.service.NewsCommentService;
 import com.cn.fenmo.service.NewsService;
 import com.cn.fenmo.util.CNST;
@@ -35,16 +41,20 @@ import com.cn.fenmo.util.StringUtil;
 import com.cn.fenmo.util.ToJson;
 import com.cn.fenmo.util.UserCnst;
 import com.cn.fenmo.util.ViewPage;
+import com.google.gson.Gson;
 
 @Controller
 @RequestMapping("/news")
 public class NewsController extends ToJson {
+  private Gson gson=new Gson();
   @Autowired
   private NewsService newsService;
   
   @Autowired
-  private NewsCommentService newsCommentService;
+  private IUserService userService;
   
+  @Autowired
+  private NewsCommentService newsCommentService;
   
   private final int HEAD_LIMIT=3;
   
@@ -60,6 +70,42 @@ public class NewsController extends ToJson {
     toArrayJson(response, list);
   }
 
+  @RequestMapping(value = "uploadimage",method = RequestMethod.POST)
+  public  void uplaodImg(HttpServletRequest req,HttpServletResponse resp){ 
+    try {
+      //String imgCode =field;
+      String imgCode = req.getParameter("filed");
+      if (imgCode==null){
+          return;
+      }
+      String imgArg[]=imgCode.split(",");
+      if (imgArg == null||imgArg.length!=2||imgArg[1]==null) //图像数据为空
+          return;
+          String filePath = req.getServletContext().getRealPath("/")+"news/";
+         // String filePath = NginxUtil.getNginxDisk() + File.separatorChar+"news/";
+          if (!new File(filePath).exists()){
+            new File(filePath).mkdirs();
+          }
+          String name=System.currentTimeMillis()+".png";
+          String imgFilePath = filePath+name;//新生成的图片
+          BASE64Decoder decoder = new BASE64Decoder();
+          byte[] decodedBytes = decoder.decodeBuffer(imgArg[1]);
+          BufferedImage image = ImageIO.read(new ByteArrayInputStream(decodedBytes));
+          if (image == null) {
+              return;
+          }
+          File f = new File(imgFilePath);
+          ImageIO.write(image, "png", f);
+          HashMap hashMap=new HashMap();
+          hashMap.put("path","http://localhost:8088"+req.getContextPath()+"/news/"+name);
+          resp.getOutputStream().print(gson.toJson(hashMap));
+
+      } catch (Exception e) {
+          e.printStackTrace();
+      }  
+    
+    
+  }
   /*获取某人发布的新闻*/
   @RequestMapping("/getNewsPage")
   public void getPage(@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -107,21 +153,12 @@ public class NewsController extends ToJson {
     }
   }
   /*保存发布新闻时上传的图片*/
-  @RequestMapping(value="/uploadNewsImg", method=RequestMethod.POST)  
-  public String uploadNewsImg(@RequestParam String userPhone,@RequestParam MultipartFile[] myfiles, HttpServletRequest request,HttpServletResponse response) throws IOException{  
-    UserBean bean= null;
-    String token = (String) RedisClient.get(userPhone);
-    if(StringUtil.isNotNull(token)){    
-      bean = (UserBean)RedisClient.getObject(token);
-    }
-    if(token==null || bean==null){
-      toExMsg(response,UserCnst.INFO_NO_LOGIN);
-      return null;
-    }
+  @RequestMapping(value="/uploadNewsImg", method={RequestMethod.POST,RequestMethod.GET})  
+  public String uploadNewsImg(@Context HttpServletRequest request,@Context HttpServletResponse response) throws IOException{  
     List<String> imgurlList=new ArrayList<String>();
-    for(MultipartFile myfile:myfiles){  
+  /*  for(MultipartFile myfile:image){  
       if(!myfile.isEmpty()){  
-        String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userPhone;
+        String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+"news";
         String  fileName = myfile.getOriginalFilename();
         String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -129,11 +166,113 @@ public class NewsController extends ToJson {
         //此文件只能在linux下才能生成
         File file = new File(tempPath,newFileName);
         FileUtils.copyInputStreamToFile(myfile.getInputStream(),file); 
-        String tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+userPhone+File.separatorChar+newFileName;
+        String tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+"news"+File.separatorChar+newFileName;
         imgurlList.add(tpUrl);
       }
     }
-    toArrayJson(response,imgurlList);
+    toArrayJson(response,imgurlList);*/
+    
+    
+    
+    //得到上传文件的保存目录，将上传的文件存放于WEB-INF目录下，不允许外界直接访问，保证上传文件的安全
+    String savePath = NginxUtil.getNginxDisk()+File.separatorChar+"news";
+    File file = new File(savePath);
+    //判断上传文件的保存目录是否存在
+    if (!file.exists() && !file.isDirectory()) {
+        System.out.println(savePath+"目录不存在，需要创建");
+        //创建目录
+        file.mkdir();
+    }
+    //消息提示
+    String message = "";
+    try{
+        //使用Apache文件上传组件处理文件上传步骤：
+        //1、创建一个DiskFileItemFactory工厂
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        //2、创建一个文件上传解析器
+        ServletFileUpload upload = new ServletFileUpload(factory);
+         //解决上传文件名的中文乱码
+        upload.setHeaderEncoding("UTF-8"); 
+        //3、判断提交上来的数据是否是上传表单的数据
+//        if(!ServletFileUpload.isMultipartContent(request)){
+//            //按照传统方式获取数据
+//            return null;
+//        }
+        //4、使用ServletFileUpload解析器解析上传数据，解析结果返回的是一个List<FileItem>集合，每一个FileItem对应一个Form表单的输入项
+        List<FileItem> list = upload.parseRequest(request);
+        for(FileItem item : list){
+            //如果fileitem中封装的是普通输入项的数据
+            if(item.isFormField()){
+                String name = item.getFieldName();
+                //解决普通输入项的数据的中文乱码问题
+                String value = item.getString("UTF-8");
+                //value = new String(value.getBytes("iso8859-1"),"UTF-8");
+                System.out.println(name + "=" + value);
+            }else{//如果fileitem中封装的是上传文件
+                //得到上传的文件名称，
+                String filename = item.getName();
+                System.out.println(filename);
+                if(filename==null || filename.trim().equals("")){
+                    continue;
+                }
+                //注意：不同的浏览器提交的文件名是不一样的，有些浏览器提交上来的文件名是带有路径的，如：  c:\a\b\1.txt，而有些只是单纯的文件名，如：1.txt
+                //处理获取到的上传文件的文件名的路径部分，只保留文件名部分
+                filename = filename.substring(filename.lastIndexOf("\\")+1);
+                //获取item中的上传文件的输入流
+                InputStream in = item.getInputStream();
+                //创建一个文件输出流
+                FileOutputStream out = new FileOutputStream(savePath + "\\" + filename);
+                //创建一个缓冲区
+                byte buffer[] = new byte[1024];
+                //判断输入流中的数据是否已经读完的标识
+                int len = 0;
+                //循环将输入流读入到缓冲区当中，(len=in.read(buffer))>0就表示in里面还有数据
+                while((len=in.read(buffer))>0){
+                    //使用FileOutputStream输出流将缓冲区的数据写入到指定的目录(savePath + "\\" + filename)当中
+                    out.write(buffer, 0, len);
+                }
+                //关闭输入流
+                in.close();
+                //关闭输出流
+                out.close();
+                //删除处理文件上传时生成的临时文件
+                item.delete();
+                message = "文件上传成功！";
+            }
+        }
+    }catch (Exception e) {
+        message= "文件上传失败！";
+        e.printStackTrace();
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     return null;  
   }
   /*保存新闻*/
@@ -154,13 +293,9 @@ public class NewsController extends ToJson {
   /*直接发表新闻,手机客服端发布的新闻都认为是自媒体新闻，娱乐，财经，房产等新闻由后台发布*/
   @RequestMapping("/publishNews")
   public String publishNews(@RequestParam String title,@RequestParam String content,@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserBean bean= null; 
-    String token = (String) RedisClient.get(userPhone);
-    if(StringUtil.isNotNull(token)){    
-      bean = (UserBean)RedisClient.getObject(token);
-    }
-    if(token==null || bean==null){
-      toExMsg(response,UserCnst.INFO_NO_LOGIN);
+    UserBean bean = getUserBeanFromRedis(userPhone);
+    if (bean == null) {
+      toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }else {
       News news = new News();
@@ -196,13 +331,10 @@ public class NewsController extends ToJson {
   /*删除自己发表的新闻,级联删除相关的评论*/
   @RequestMapping("/deleteNews")
   public void deleteNews(@RequestParam String userPhone,@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserBean bean= null;
-    String token = (String) RedisClient.get(userPhone);
-    if(StringUtil.isNotNull(token)){    
-      bean = (UserBean)RedisClient.getObject(token);
-    }
-    if(token==null || bean==null){
-      toExMsg(response,UserCnst.INFO_NO_LOGIN);
+    UserBean bean = getUserBeanFromRedis(userPhone);
+    if (bean == null) {
+      toExMsg(response, UserCnst.NO_LOGIN);
+      return;
     }else{
       News cbean =  this.newsService.getBeanById(newsId);
       if(cbean==null){
@@ -225,13 +357,10 @@ public class NewsController extends ToJson {
   /*用户为新闻进行评论,必须登陆*/
   @RequestMapping("/discuss")
   public void discuss(@RequestParam String userPhone,@RequestParam String content,@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserBean bean= null;
-    String token = (String) RedisClient.get(userPhone);
-    if(StringUtil.isNotNull(token)){    
-      bean = (UserBean)RedisClient.getObject(token);
-    }
-    if(token==null || bean==null){
-      toExMsg(response,UserCnst.INFO_NO_LOGIN);
+    UserBean bean = getUserBeanFromRedis(userPhone);
+    if (bean == null) {
+      toExMsg(response, UserCnst.NO_LOGIN);
+      return;
     }else{
       NewsComment cbean =  new NewsComment();
       cbean.setMainid(new Date().getTime());
@@ -250,13 +379,10 @@ public class NewsController extends ToJson {
   /*删除自己发表的新闻评论*/
   @RequestMapping("/deleteNewsComment")
   public void deleteNewsComment(@RequestParam String userPhone,@RequestParam long commentId,HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserBean bean= null;
-    String token = (String) RedisClient.get(userPhone);
-    if(StringUtil.isNotNull(token)){    
-      bean = (UserBean)RedisClient.getObject(token);
-    }
-    if(token==null || bean==null){
-      toExMsg(response,UserCnst.INFO_NO_LOGIN);
+    UserBean bean = getUserBeanFromRedis(userPhone);
+    if (bean == null) {
+      toExMsg(response, UserCnst.NO_LOGIN);
+      return;
     }else{
       NewsComment cbean =  this.newsCommentService.getBeanById(commentId);
       if(cbean==null){
@@ -294,13 +420,18 @@ public class NewsController extends ToJson {
     }
     params.put("newsId", newsId);
     int count = this.newsCommentService.getNewsComentCount(params);
-    List<NewsCommentUser> list = null;
+    List list = null;
     if(count>0){
       viewPage.setTotalCount(count);
       list = this.newsCommentService.getNewsComentPage(params);
       viewPage.setListResult(list);
     }
     toViewPage(response,viewPage);
+  }
+  
+  public  UserBean getUserBeanFromRedis(String userPhone) {
+    UserBean user = this.userService.getUserBeanByPhone(userPhone);
+    return user;
   }
   
   /*为新闻评论点赞，没有登陆也可以点赞*/
@@ -312,8 +443,8 @@ public class NewsController extends ToJson {
       toExSuccMsg(response, "success");
     }
   }
-  
-  /**
+
+ /**
    * 
    * @Description: 新增新闻
    * @author weiwj	
@@ -372,5 +503,4 @@ public class NewsController extends ToJson {
 	  boolean success = this.newsService.updateNews(news);
 	  toExSuccMsg(response, String.valueOf(success));
   }
-  
 }

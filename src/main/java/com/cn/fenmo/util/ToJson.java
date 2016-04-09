@@ -40,6 +40,22 @@ public class ToJson {
       out.close();
     };
   }
+  public void toViewPageForWeb(HttpServletResponse response,List list,int total){
+    response.setContentType("text/html;charset=utf-8");
+    JSONObject jsonObj = new JSONObject();
+    PrintWriter out = null;
+    try {
+      out = response.getWriter();
+      jsonObj.put("code",200);
+      jsonObj.put("rows",list);
+      jsonObj.put("total",total);
+      out.println(jsonObj);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }finally{
+      out.close();
+    };
+  }
   
   
   public void toViewPage(HttpServletResponse response,ViewPage page){

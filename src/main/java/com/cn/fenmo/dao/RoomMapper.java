@@ -14,6 +14,8 @@ public interface RoomMapper {
     int insertSelective(Room record);
 
     Room selectByPrimaryKey(Long mainid);
+    
+    Room selectRoomMaxUsers(String userName);
 
     int updateByPrimaryKeySelective(Room record);
 
@@ -24,6 +26,8 @@ public interface RoomMapper {
     int selectCount(Map<String, Object> parmars);
     
     List<Room> selectPageBy(Map<String, Object> parmars);
+    
+    List<Room> selectHotRooms();
 
    	int updateByGroupIdSelective(Room room);
    	
@@ -32,4 +36,6 @@ public interface RoomMapper {
    	Room selectByGroupId(String groupId);
    
    	void deleteByGroupId(String groupId);
+   	
+   	
 }

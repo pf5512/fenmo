@@ -26,22 +26,23 @@ public class UserServiceImpl implements IUserService {
   public int selectCount(Map<String,Object> params) {
     return this.userBeanMapper.selectCount(params);
   }
-  public List<? extends UserBean> selectUserBy(Map<String, Object> params) {
+  public List<UserBean> selectUserBy(Map<String, Object> params) {
     return this.userBeanMapper.selectPageBy(params);
   }
   public boolean save(UserBean userBean) {
     return this.userBeanMapper.insert(userBean)==1?true:false;
   }
   public int update(UserBean userBean) {
-    return this.userBeanMapper.updateByPrimaryKeySelective(userBean);
+    return this.userBeanMapper.update(userBean);
   }
+
   public UserBean getUserByToken(String token) {
     return this.userBeanMapper.selectByToken(token);
   }
   public int selectMyFriendCount(Map<String,Object> params) {
     return this.userBeanMapper.selectMyFriendCount(params);
   }
-  public List<? extends UserBean> getMyFriend(Map<String,Object> params) {
+  public List<UserBean> getMyFriend(Map<String,Object> params) {
     return this.userBeanMapper.selectMyFriend(params);
   }
   public List<UserBean> getUserList(List<String> userIdList) {
@@ -78,8 +79,16 @@ public class UserServiceImpl implements IUserService {
   public List<UserBean> getUserListByUserPhoneList(List<String> userPhoneList) {
     return this.userBeanMapper.selectUserByUserPhoneList(userPhoneList);
   }
-  public List<UserBean> getNearUsers(double lat, double lng) {
-    // TODO Auto-generated method stub
-    return null;
+  public List<UserBean> getNearUsers(Map<String, Object> params) {
+    return this.userBeanMapper.selectNearList(params);
+  }
+  public int updateLocation(Map<String, Object> params) {
+    return this.userBeanMapper.updateLocation(params);
+  }
+  public List<UserBean> getUsersByStarLevel(int starLevel) {
+    return this.userBeanMapper.selectUsersByStarLevel(starLevel);
+  }
+  public List<UserBean> selectMyFriendRequest(Map<String, Object> params) {
+    return this.userBeanMapper.selectMyFriendRequest(params);
   }
 }

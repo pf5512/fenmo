@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.cn.fenmo.util.DateUtil;
+import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
 
 public class UserBean implements Serializable {
     private Long mainid;
@@ -73,7 +74,7 @@ public class UserBean implements Serializable {
     }
 
     public String getHeadImgPath() {
-      return headImgPath;
+      return headImgPath==null?"":headImgPath;
     }
 
     public void setHeadImgPath(String headImgPath) {
@@ -89,7 +90,7 @@ public class UserBean implements Serializable {
     }
 
     public String getNickname() {
-      return nickname;
+      return nickname==null?username:nickname;
     }
 
     public void setNickname(String nickname) {
@@ -129,7 +130,7 @@ public class UserBean implements Serializable {
     }
 
     public String getImgUrls() {
-      return imgUrls;
+      return imgUrls==null?"":imgUrls;
     }
 
     public void setImgUrls(String imgUrls) {
@@ -245,6 +246,10 @@ public class UserBean implements Serializable {
 
     public void setDistance(double distance) {
       this.distance = distance;
+    }
+    @Override
+    public String toString(){
+      return "userName:"+this.getUsername()+";age:"+this.getAge()+";sex:"+this.getSex()+";headImgPath:"+this.getHeadImgPath();
     }
     
     

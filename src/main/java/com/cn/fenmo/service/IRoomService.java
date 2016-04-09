@@ -16,8 +16,12 @@ public interface IRoomService {
 	public List<? extends Room> selectRooms(Map<String,Object> params);
 	public int selectCount(Map<String, Object> params);
 	public Room getRoomByGroupId(String groupId);
+	
+  public Room getMaxUseRoom(String userName);
+
 	public void deleteRoomByGroupId(String groupId);
 	
+	public List<Room> getHotRooms();
 	
 	public List<Room> getRooms(Map<String, Object> params);
 	

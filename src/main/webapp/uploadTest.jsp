@@ -11,6 +11,62 @@
 <script type="text/javascript"></script>
 </head>
 <body>
+    <h1>发送添加好友 </h1> 
+    <form name="userForm" action="/fenmo/friend/addFriend.do" enctype="multipart/form-data" method="get">
+ 		<div id="newUpload2">
+ 	
+		</div>
+		<input type="submit" value="发送" >
+ 	</form> 
+   <form name="userForm" action="/fenmo/user/changPwd.do" enctype="multipart/form-data" method="post">
+ 		<div id="newUpload2">
+ 		    自己：<input type="text" value="" name="userPhone" /></br>
+		      密码：<input type="text" value="" name="oncePwd" />
+		       确认密码：<input type="text" value="" name="twicePwd" />
+		</div>
+		<input type="submit" value="发送" >
+ 	</form> 
+ 	<form name="userForm" action="/fenmo/user/login.do" enctype="multipart/form-data" method="post"">
+ 		<div id="newUpload2">
+ 		       用户名<input type="text" value="15867178340" name="userPhone" /></br>
+			密码：<input type="password" name="passWord" >
+		</div>
+		<input type="submit" value="登录" >
+ 	</form> 
+    <h1>用户注册 </h1> 
+ 	<form name="userForm" action="/fenmo/user/login.do" enctype="multipart/form-data" method="post"">
+ 		<div id="newUpload2">
+ 		       用户名<input type="text" value="15867178340" name="userPhone" /></br>
+			密码：<input type="password" name="passWord" >
+			性别:<input type="radio">
+		</div>
+		<input type="submit" value="登录" >
+ 	</form> 
+    <h1>更新用户位置 </h1> 
+ 	<form name="userForm" action="/fenmo/user/updateLocation.do" enctype="multipart/form-data" method="post"">
+ 		<div id="newUpload2">
+ 		       用户名<input type="text" value="15867178340" name="userPhone" /></br>
+			lat：<input type="text" name="lat" >
+		    lng：<input type="text" name="lng" >
+		</div>
+		<input type="submit" value="登录" >
+ 	</form> 
+ 	<h1>更新群组成员昵称</h1 > 
+ 	<form name="userForm" action="/fenmo/room/updateUserRemarkInRoom.do" enctype="multipart/form-data" method="post"">
+		<input type=hidden value="15867178340" name="userPhone" />
+		<input type=hidden value="157568635261419980" name="groupId" />
+	    <input type=text value="15867178340" name="逍客" />
+		<input type="submit" value="上传" >
+ 	</form> 
+ 	<h1>上传群组背景图片</h1> 
+ 	<form name="userForm" action="/fenmo/room/uploadBjImg.do" enctype="multipart/form-data" method="post"">
+ 		<div id="newUpload2">
+			<input type="file" name="myfile">
+		</div>
+		<input type=hidden value="15867178340" name="userPhone" />
+		<input type=hidden value="157568635261419980" name="groupId" />
+		<input type="submit" value="上传" >
+ 	</form> 
     <h1> 上传用户头像文件</h1> 
  	<form name="userForm" action="/fenmo/user/uploadTx.do" enctype="multipart/form-data" method="post"">
  		<div id="newUpload2">
@@ -39,6 +95,14 @@
 		<input type=hidden value="15867178340" name="userPhone" />
 		<input type="submit" value="保存" >
  	</form> 
+ 	 <h1>上传新闻图片</h1> 
+     <form name="userForm" action="/fenmo/news/uploadNewsImg.do" enctype="multipart/form-data" method="post"">
+ 		<div id="er">
+	               文件:<input type="file" name="myfiles">
+		</div>
+		<input type=hidden value="15867178340" name="userPhone" />
+		<input type="submit" value="上传" >
+ 	</form> 
  	<h1> 发布新闻</h1> 
      <form name="userForm" action="/fenmo/news/publishNews.do" enctype="multipart/form-data" method="post"">
  		<div id="">
@@ -57,7 +121,18 @@
 		<input type=hidden value="15867178325" name="userPhone" />
 		<input type="submit" value="保存" >
  	  </form> 
- 	<h1>动态评论</h1> 
+ 	<h1>获取周边动态</h1> 
+ 	<form name="userForm" action="/fenmo/dynamic/getDtPage.do" enctype="multipart/form-data" method="post"">
+ 		<div id="newUpload2">
+			Lat<input type="text" name="lat"></br>
+		    Lng<input type="text" name="lng">
+		</div>
+		<input type="text" value="10" name="start" />
+	    <input type=hidden value="2" name="limit" />
+		<input type=hidden value="15867178340" name="userPhone" />
+		<input type="submit" value="保存" >
+ 	</form> 
+ 	<h1>获取周边动态</h1> 
  	<form name="userForm" action="/fenmo/dynamic/discuss.do" enctype="multipart/form-data" method="post"">
  		<div id="newUpload2">
 			<input type="text" name="content">

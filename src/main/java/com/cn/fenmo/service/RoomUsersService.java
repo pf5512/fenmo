@@ -14,8 +14,9 @@ public interface RoomUsersService {
   //É¾³ýÈº³ÉÔ±
   public boolean deleteRoomUser(String groupId,String userName);
   
+  public boolean updateRoomUser(RoomUsers bean);
   
-  public List<String> getRoomUsers(String groupId);
+  public RoomUsers getRoomUsers(String userName,String groupId);
   
   public boolean addBatchRecord(List<RoomUsers> list);
   

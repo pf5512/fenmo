@@ -19,17 +19,23 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cn.fenmo.file.NginxUtil;
+import com.cn.fenmo.pojo.Result;
 import com.cn.fenmo.pojo.Room;
+import com.cn.fenmo.pojo.RoomBjImg;
 import com.cn.fenmo.pojo.RoomUsers;
 import com.cn.fenmo.pojo.UserBean;
 import com.cn.fenmo.redis.RedisClient;
 import com.cn.fenmo.service.IRoomService;
 import com.cn.fenmo.service.IUserService;
+import com.cn.fenmo.service.RoomBjImgService;
 import com.cn.fenmo.service.RoomUsersService;
+import com.cn.fenmo.util.CNST;
 import com.cn.fenmo.util.Md5Util;
 import com.cn.fenmo.util.RoomCnst;
 import com.cn.fenmo.util.StringUtil;
@@ -51,19 +57,81 @@ public class RoomController extends ToJson {
   private IUserService userService;
   @Autowired
   private RoomUsersService roomUsersService;
+  @Autowired
+  private RoomBjImgService roomBjImgService;
   
   private final String HTTPHEAD="http://";
+  
+  /**
+   * 上传用户群组背景图
+   */
+  @RequestMapping(value = "uploadBjImg", method = RequestMethod.POST)
+  public String uploadBjImg(@RequestParam String userPhone,@RequestParam String groupId,@RequestParam MultipartFile myfile,HttpServletRequest request,HttpServletResponse response) throws IOException {
+    if(getBeanFromRedis(userPhone)==null){
+      toExMsg(response, UserCnst.NO_LOGIN);
+      return null;
+    }
+    String tpUrl="";
+    String oldPath="";
+    if(!myfile.isEmpty()){  
+      String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userPhone;
+      String  fileName = myfile.getOriginalFilename();
+      String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+      String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
+      //此文件只能在linux下才能生成
+      File file = new File(tempPath,newFileName);
+      FileUtils .copyInputStreamToFile(myfile.getInputStream(),file); 
+      tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+userPhone+File.separatorChar+newFileName;
+    }
+    RoomBjImg roomBjImg = this.roomBjImgService.getBean(userPhone,groupId);
+    if(roomBjImg!=null){
+      oldPath = roomBjImg.getBjImgUrl();
+      roomBjImg.setBjImgUrl(tpUrl);
+      //删除nginx服务器上原来的头像
+      if(StringUtil.isNotNull(oldPath)){
+        oldPath = oldPath.replace(HTTPHEAD+NginxUtil.getNginxIP(),NginxUtil.getNginxDisk());
+        File file = new File(oldPath);
+        if(file.isFile() && file.delete()&&this.roomBjImgService.update(roomBjImg)){
+          toJson(response,roomBjImg);
+          return null;
+        }
+      }
+    }else{
+      roomBjImg = new RoomBjImg();
+      roomBjImg.setId(new Date().getTime());
+      roomBjImg.setBjImgUrl(tpUrl);
+      roomBjImg.setUserName(userPhone);
+      roomBjImg.setGroupId(groupId);
+      if(this.roomBjImgService.save(roomBjImg)){
+        toJson(response,roomBjImg);
+      }
+    }
+    return null;
+  }
+  
   /**
    * 获取群组详细信息，没有登陆也可以获取群组信息
-   * @param request
-   * @param response
-   * @throws IOException
    */
   @RequestMapping("/getRoomById")
   public String getRoomById(@RequestParam String groupId,HttpServletRequest request,HttpServletResponse response) throws IOException {
     Room room = this.roomService.getRoomByGroupId(groupId);
     if(room!=null){
       toJson(response, room);
+    }else{
+      toExMsg(response, "群组不存在");
+    }
+    return null;
+  }
+  
+  /**
+   * 推荐群组
+   */
+  @RequestMapping("/getHotRooms")
+  public String getHotRooms(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    List<Room> rooms = this.roomService.getHotRooms();
+    if(rooms!=null){
+      toArrayJson(response,rooms);
     }else{
       toExMsg(response, "群组不存在");
     }
@@ -118,7 +186,7 @@ public class RoomController extends ToJson {
    * 此处查找公开和私有群
    */
   @RequestMapping("/getPageRoomsByUserPhone")
-  public String searchPageRoomsByUserName(@RequestParam String userPhone,HttpServletRequest request,HttpServletResponse response) throws IOException {
+  public String getPageRoomsByUserPhone(@RequestParam String userPhone,HttpServletRequest request,HttpServletResponse response) throws IOException {
     if(getBeanFromRedis(userPhone)==null){
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
@@ -140,9 +208,9 @@ public class RoomController extends ToJson {
       viewPage.setPageLimit(Integer.valueOf(limit));
     }
     if(StringUtil.isNotNull(userPhone)){
-      params.put("roomName",userPhone);
+      params.put("userName",userPhone);
     }
-    List<Room> roomlist = null;
+    List<Room> roomlist = new ArrayList<Room>();
     int count = this.roomService.selectCount(params);
     if(count>0){
       roomlist =  (List<Room>) this.roomService.getRooms(params);
@@ -195,7 +263,7 @@ public class RoomController extends ToJson {
    * @param response
    */
   @RequestMapping("/createPublicRoom")
-  public String createPublicRoom(@RequestParam String userPhone,@RequestParam int type,@RequestParam String roomName,@RequestParam String desc,@RequestParam String subject,HttpServletRequest request,HttpServletResponse response) throws IOException {
+  public String createPublicRoom(@RequestParam String headImgeUrl,@RequestParam String userPhone,@RequestParam int type,@RequestParam String roomName,@RequestParam String desc,@RequestParam String subject,HttpServletRequest request,HttpServletResponse response) throws IOException {
     if(getBeanFromRedis(userPhone)==null){
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
@@ -237,7 +305,9 @@ public class RoomController extends ToJson {
         bean.setType(type);
         bean.setIspublic(RoomCnst.ROOM_PUBLIC);
         bean.setUserCounts(1);
+        bean.setMaxusers(300);
         bean.setCreatedate(new Date());
+        bean.setHeadImgePath(headImgeUrl);
         if(this.roomService.save(bean)){
           toJson(response, bean);
         }
@@ -332,6 +402,27 @@ public class RoomController extends ToJson {
     }
     return null;
   }
+  
+//  /**
+//   * 修改用户在群组中的昵称(只在该群组中显示)
+//   */
+//  @RequestMapping("/updateUserRemarkInRoom")
+//  public String updateUserRemarkInRoom(@RequestParam String userPhone,@RequestParam String groupId,@RequestParam String userRemark,HttpServletRequest request,HttpServletResponse response) throws IOException {
+//    if(getBeanFromRedis(userPhone)==null){
+//      toExMsg(response, UserCnst.NO_LOGIN);
+//      return null;
+//    }
+//    RoomUsers roomUsers =  this.roomUsersService.getRoomUsers(userPhone,groupId);
+//    if(roomUsers!=null){
+//      roomUsers.setUserRemark(userRemark);
+//      if(this.roomUsersService.updateRoomUser(roomUsers)){
+//        toJson(response, roomUsers);
+//      }else{
+//        toExMsg(response, "更新失败");
+//      }
+//    }
+//    return null;
+//  }
 
   /**
    * 修改群聊名称,修改群组的roomName只有群主才能修改,此处修改的群组为公开群
@@ -528,6 +619,18 @@ public class RoomController extends ToJson {
     return null;
   }
   
+  /*
+   * 获取当前用户所有群组中群组成员最多的群组
+   * */
+  @RequestMapping("/getMaxUsersRoom")
+  public @ResponseBody Result<Room> getMaxUsersRoom(@RequestParam String userPhone,HttpServletRequest request,HttpServletResponse response) throws IOException{
+     Room bean  = this.roomService.getMaxUseRoom(userPhone);
+     if(bean!=null){
+       return new Result<Room>(bean,"success", 200);
+     }
+     return new Result<Room>(bean,"fail", 201);
+  }
+
   /**
    * 删除群组成员【单人】,只有群主才能删除人
    * @param request
@@ -610,37 +713,23 @@ public class RoomController extends ToJson {
   }
    
   /**上传群组头像 */
-  @RequestMapping("/uploadHeadImg")
-  public String uploadHeadImg(@RequestParam String groupId,@RequestParam String userPhone,@RequestParam MultipartFile myfile, HttpServletRequest request,HttpServletResponse response) throws IOException{  
+  @RequestMapping(value = "uploadHeadImg", method = RequestMethod.POST)
+  public String uploadHeadImg(@RequestParam String userPhone,@RequestParam MultipartFile myfile, HttpServletRequest request,HttpServletResponse response) throws IOException{  
     if(getBeanFromRedis(userPhone)==null){
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }
-    Room room = this.roomService.getRoomByGroupId(groupId);
-    if(room==null){
-      toExMsg(response,"该群组不存在");
-      return null;
-    }
-    if(!room.getUserName().equals(userPhone)){
-      toExMsg(response,"只有群主才能上传群头像");
-      return null;
-    }
     if(!myfile.isEmpty()){  
-      String tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userPhone;
+      String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userPhone;
       String  fileName = myfile.getOriginalFilename();
       String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
       SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
       String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
       //此文件只能在linux下才能生成
       File file = new File(tempPath,newFileName);
-      FileUtils.copyInputStreamToFile(myfile.getInputStream(),file); 
+      FileUtils .copyInputStreamToFile(myfile.getInputStream(),file); 
       String tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+userPhone+File.separatorChar+newFileName;
-      room.setHeadImgePath(tpUrl);
-    }
-    if(this.roomService.update(room)==1){
-      toJson(response,room);
-    }else {
-      toExMsg(response,UserCnst.INFO_UPDATE_FAIL);
+      toExSuccMsg(response, tpUrl);
     }
     return null;
   }
@@ -690,15 +779,47 @@ public class RoomController extends ToJson {
    }
   
    private UserBean getBeanFromRedis(String userPhone){
-     String token = (String) RedisClient.get(userPhone);
-     UserBean user = null;
-     if(StringUtil.isNotNull(token)){
-       user = (UserBean)RedisClient.getObject(token);
-       if(user!=null){
-         RedisClient.set(userPhone, user.getToken(),1800);
-         RedisClient.setObject(user.getToken(),user,1800);
-       }
-     }
+     UserBean user = this.userService.getUserBeanByPhone(userPhone);
      return user;
+   }
+   
+   
+   /**
+    * for web 接口
+    */
+   @RequestMapping("/searchPageRooms")
+   public String searchPageRooms(HttpServletRequest request,HttpServletResponse response) throws IOException {
+     String roomName = request.getParameter("roomName");
+     String type = request.getParameter("type");
+     String start = request.getParameter("start");
+     String limit = request.getParameter("limit");
+     ViewPage viewPage = new ViewPage();
+     Map<String, Object> params = new HashMap<String, Object>();
+     if(!StringUtil.isNumeric(start)){
+       params.put("start", viewPage.getPageStart());
+     }else{
+       params.put("start", Integer.valueOf(start));
+       viewPage.setPageStart(Integer.valueOf(start));
+     }
+     if(!StringUtil.isNumeric(limit)){
+       params.put("limit", viewPage.getPageLimit());
+     }else{
+       params.put("limit", Integer.valueOf(limit));
+       viewPage.setPageLimit(Integer.valueOf(limit));
+     }
+     if(StringUtil.isNotNull(roomName)){
+       params.put("roomName",roomName);
+     }
+     if(StringUtil.isNumeric(type)){
+       params.put("type",type);
+     }
+     params.put("ispublic",RoomCnst.ROOM_PUBLIC);
+     List<Room> roomlist = null;
+     int count = this.roomService.selectCount(params);
+     if(count>0){
+       roomlist =  (List<Room>) this.roomService.getRooms(params);
+     }
+     toViewPageForWeb(response,roomlist,count);
+     return null;
    }
 }

@@ -18,9 +18,7 @@ public interface UserBeanMapper {
   
   UserBean selectByFmNo(String fmNo);
 
-  int updateByPrimaryKey(UserBean record);
-  
-  int updateByPrimaryKeySelective(UserBean record);
+  int update(UserBean record);
   
   int selectCount(Map<String, Object> parmars);
   
@@ -30,17 +28,22 @@ public interface UserBeanMapper {
   
   int selectMyFriendCountBy(Map<String, Object> parmars);
 
-  //获取某个人的所有好友
   List<UserBean> selectMyFriend(Map<String, Object> parmars);
+  
+  List<UserBean> selectMyFriendRequest(Map<String, Object> parmars);
 
   List<UserBean> selectUserList(List<String> userIdList);
   
   List<UserBean> selectUserByUserPhoneList(List<String> userPhoneList);
   
-  //按关键字模糊查找我的朋友
   List<UserBean> selectMyFriendBy(Map<String,Object> params);
-  //获取群组中的成员
   List<UserBean> selectMembers(String groupId);
+  
+  List<UserBean> selectNearList(Map<String,Object> params);
+  
+  int  updateLocation(Map<String, Object> parmars);
+
+  List<UserBean> selectUsersByStarLevel(int starLevel);
   
   
   

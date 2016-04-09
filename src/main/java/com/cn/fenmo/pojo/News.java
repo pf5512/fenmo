@@ -114,7 +114,7 @@ public class News implements Serializable {
     }
 
     public String getNewHeadImgUrl() {
-      return newHeadImgUrl;
+      return newHeadImgUrl==null?"":newHeadImgUrl;
     }
 
     public void setNewHeadImgUrl(String newHeadImgUrl) {

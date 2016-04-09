@@ -57,9 +57,9 @@
   </delete>
   
   <insert id="insert" parameterType="com.cn.fenmo.pojo.NewsComment" >
-      insert into fm_news_comment (mainId, content, newsId,createDate, userName)
+      insert into fm_news_comment (mainId, content, newsId,createDate, userName,zcount)
       values (#{mainid,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{newsid,jdbcType=BIGINT}, 
-      #{createdate,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR})
+      #{createdate,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR},#{zcount,jdbcType=INTEGER})
   </insert>
   <update id="update"  parameterType="java.util.Map">
       update fm_news_comment set zcount= #{zcount,jdbcType=INTEGER}

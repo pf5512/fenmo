@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.fenmo.dao.RoomBjImgMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.RoomBjImg" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="groupId" property="groupId" jdbcType="VARCHAR" />
+    <result column="bjImgUrl" property="bjImgUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,userName,groupId,bjImgUrl
+  </sql>
+  
+  <select id="selectBy" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from fm_room_bjImg
+    where userName = #{userName,jdbcType=VARCHAR} and groupId=#{groupId,jdbcType=VARCHAR}
+  </select>
+  
+  <insert  id="insert" parameterType="com.cn.fenmo.pojo.RoomBjImg">  
+     insert into fm_room_bjImg (id,userName,groupId,bjImgUrl)
+     values(#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, 
+     #{bjImgUrl,jdbcType=VARCHAR})
+  </insert> 
+  
+  <update id="update" parameterType="com.cn.fenmo.pojo.RoomBjImg"> 
+     update fm_room_bjImg set bjImgUrl= #{bjImgUrl,jdbcType=VARCHAR}
+     where userName = #{userName,jdbcType=VARCHAR} and groupId=#{groupId,jdbcType=VARCHAR} 
+  </update>
+  
+</mapper>

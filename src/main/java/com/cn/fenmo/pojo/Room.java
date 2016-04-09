@@ -111,8 +111,8 @@ public class Room implements Serializable {
       return ispublicStr;
     }
 
-    public void setIspublicStr(int state) {
-      this.ispublicStr = RoomCnst.getIsPublicStr(state);
+    public void setIspublicStr(int ispublic) {
+      this.ispublicStr = RoomCnst.getIsPublicStr(ispublic);
     }
 
     public Integer getMaxusers() {
@@ -132,7 +132,7 @@ public class Room implements Serializable {
     }
 
     public String getHeadImgePath() {
-      return headImgePath;
+      return headImgePath==null?"":headImgePath;
     }
 
     public void setHeadImgePath(String headImgePath) {

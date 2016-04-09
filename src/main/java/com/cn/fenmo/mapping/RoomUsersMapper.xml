@@ -11,17 +11,22 @@
   <sql id="Base_Column_List" >
     mainId, userName, groupId,startDate,userRemark
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectBy" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select 
     <include refid="Base_Column_List" />
     from fm_room_users
-    where mainId = #{mainid,jdbcType=BIGINT}
+    where userName = #{userName,jdbcType=VARCHAR} and  groupId = #{groupId,jdbcType=VARCHAR}
   </select>
   
   <delete id="deleteOneUserOfRoom" parameterType="java.lang.String" >
     delete from fm_room_users
     where userName = #{userName,jdbcType=VARCHAR} and groupId = #{groupId,jdbcType=VARCHAR}
   </delete>
+  
+  <update id="updateUserRemark" parameterType="com.cn.fenmo.pojo.RoomUsers" >
+    update fm_room_users set userRemark=#{userRemark,jdbcType=VARCHAR}
+    where userName = #{userName,jdbcType=VARCHAR} and groupId = #{groupId,jdbcType=VARCHAR}
+  </update>
   
   <insert id="insert" parameterType="com.cn.fenmo.pojo.RoomUsers" >
      insert into fm_room_users (mainId, userName, groupId, startDate, userRemark)
@@ -35,6 +40,4 @@
         (#{item.mainid},#{item.userName},#{item.groupId},#{item.userRemark},#{item.startdate})  
      </foreach>  
   </insert> 
-  
-  
 </mapper>
