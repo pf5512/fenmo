@@ -9,9 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="./plugin/easyUI/demo/demo.css">
 	<script type="text/javascript" src="./plugin/easyUI/jquery.min.js"></script>
 	<script type="text/javascript" src="./plugin/easyUI/jquery.easyui.min.js"></script>
-	<script type="text/javascript">
-	
-	</script>
+	<script type="text/javascript" src="./plugin/easyUI/locale/easyui-lang-zh_CN.js"></script>
 </head>
 <body class="easyui-layout">
 	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">north region</div>

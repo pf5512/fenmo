@@ -52,7 +52,7 @@
    </select>
    
    <select id="selectNewsHeadPage" resultMap="BaseResultMap" parameterType="java.util.Map">
-	     SELECT * FROM From fm_news 
+	     SELECT * FROM  fm_news 
 	     WHERE STATE = #{state,jdbcType=INTEGER}
 	     ORDER BY createDate DESC 
 	     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
@@ -67,14 +67,11 @@
 		      <if test="newsrc != null" >
 		        newSrc = #{newsrc,jdbcType=VARCHAR},
 		      </if>
-		      <if test="newstype != null" >
+		      <if test="content != null" >
 		        content = #{content,jdbcType=VARCHAR},
 		      </if>
 		      <if test="summary != null" >
 		        summary = #{summary,jdbcType=VARCHAR},
-		      </if>
-		      <if test="state null" >
-		        state = #{state,jdbcType=INTEGER}
 		      </if>
 	     </set>
         where mainId = #{mainid,jdbcType=BIGINT}

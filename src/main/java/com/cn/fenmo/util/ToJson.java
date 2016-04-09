@@ -89,4 +89,19 @@ public class ToJson {
       out.close();
     }
   }
+  
+  
+  public void toJSON(HttpServletResponse response,Object bean){
+    response.setContentType("text/html;charset=utf-8");
+    PrintWriter out = null;
+    try {
+      out = response.getWriter();
+      Object obj = JSONObject.toJSON(bean);
+      out.println(obj);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }finally{
+      out.close();
+    };
+  }
 }

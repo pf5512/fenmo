@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cn.fenmo.file.NginxUtil;
 import com.cn.fenmo.pojo.News;
 import com.cn.fenmo.pojo.NewsComment;
+import com.cn.fenmo.pojo.NewsCommentUser;
 import com.cn.fenmo.pojo.UserBean;
 import com.cn.fenmo.redis.RedisClient;
 import com.cn.fenmo.service.NewsCommentService;
@@ -293,7 +294,7 @@ public class NewsController extends ToJson {
     }
     params.put("newsId", newsId);
     int count = this.newsCommentService.getNewsComentCount(params);
-    List list = null;
+    List<NewsCommentUser> list = null;
     if(count>0){
       viewPage.setTotalCount(count);
       list = this.newsCommentService.getNewsComentPage(params);
@@ -310,6 +311,66 @@ public class NewsController extends ToJson {
     }else{
       toExSuccMsg(response, "success");
     }
+  }
+  
+  /**
+   * 
+   * @Description: 新增新闻
+   * @author weiwj	
+   * @date 2016-4-9 上午11:02:25
+   */
+  @RequestMapping("/addNews")
+  public void addNews(HttpServletRequest request, HttpServletResponse response){
+	  String title = request.getParameter("title");
+	  String content = request.getParameter("content");
+	  String userName = request.getParameter("userName");
+	  
+	  News news = new News();
+	  news.setTitle(title);
+	  news.setContent(content);
+	  news.setUserName(userName);
+	  news.setNewsrc("自媒体");
+	  
+	  boolean success = this.newsService.save(news);
+	  
+	  toExSuccMsg(response, String.valueOf(success));
+  }
+  
+  /**
+   * 
+   * @Description: 根据id获取新闻详情
+   * @author weiwj	
+   * @date 2016-4-9 上午11:24:27	
+   * @param mainid 新闻主键
+   * @param request
+   * @param response
+   */
+  @RequestMapping("/getNewsById")
+  public void getNewsById(@RequestParam long mainId, HttpServletRequest request, HttpServletResponse response){
+	  News news = this.newsService.selectByPrimaryKey(mainId);
+	  toJSON(response, news);
+  }
+  
+  
+  /**
+   * 
+   * @Description: 更新新闻内容
+   * @author weiwj	
+   * @date 2016-4-9 下午5:14:26	
+   * @param request
+   * @param response
+   */
+  @RequestMapping("/updateNews")
+  public void updateNews(HttpServletRequest request, HttpServletResponse response){
+	  String mainId = request.getParameter("mainId");
+	  String content = request.getParameter("content");
+	  String title = request.getParameter("title");
+	  News news = new News();
+	  news.setMainid(Long.valueOf(mainId));
+	  news.setContent(content);
+	  news.setTitle(title);
+	  boolean success = this.newsService.updateNews(news);
+	  toExSuccMsg(response, String.valueOf(success));
   }
   
 }
