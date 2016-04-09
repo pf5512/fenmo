@@ -4,11 +4,11 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Full Layout - jQuery EasyUI Demo</title>
-	<link rel="stylesheet" type="text/css" href="easyUI/themes/default/easyui.css">
-	<link rel="stylesheet" type="text/css" href="easyUI/themes/icon.css">
-	<link rel="stylesheet" type="text/css" href="easyUI/demo/demo.css">
-	<script type="text/javascript" src="easyUI/jquery.min.js"></script>
-	<script type="text/javascript" src="easyUI/jquery.easyui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="plugin/easyUI/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="plugin/easyUI/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="plugin/easyUI/demo/demo.css">
+	<script type="text/javascript" src="plugin/easyUI/jquery.min.js"></script>
+	<script type="text/javascript" src="plugin/easyUI/jquery.easyui.min.js"></script>
 </head>
 <body class="easyui-layout">
 	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">north region</div>
