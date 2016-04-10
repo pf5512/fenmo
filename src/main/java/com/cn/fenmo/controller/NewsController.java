@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -73,38 +74,45 @@ public class NewsController extends ToJson {
   @RequestMapping(value = "uploadimage",method = RequestMethod.POST)
   public  void uplaodImg(HttpServletRequest req,HttpServletResponse resp){ 
     try {
-      //String imgCode =field;
       String imgCode = req.getParameter("filed");
       if (imgCode==null){
           return;
       }
       String imgArg[]=imgCode.split(",");
-      if (imgArg == null||imgArg.length!=2||imgArg[1]==null) //图像数据为空
+      if (imgArg == null||imgArg.length!=2||imgArg[1]==null){
+    	    return; //图像数据为空
+      }
+      String filePath =""; 
+      Properties props=System.getProperties(); //获得系统属性集    
+      String osName = props.getProperty("os.name"); //操作系统名称    
+      if(osName.indexOf("win")>0){
+    	 filePath = req.getServletContext().getRealPath("/")+"news/";
+      }else{
+    	 filePath = NginxUtil.getNginxDisk() + File.separatorChar+"news/";
+      }
+      if (!new File(filePath).exists()){
+        new File(filePath).mkdirs();
+      }
+      String name=System.currentTimeMillis()+".png";
+      String imgFilePath = filePath+name;//新生成的图片
+      BASE64Decoder decoder = new BASE64Decoder();
+      byte[] decodedBytes = decoder.decodeBuffer(imgArg[1]);
+      BufferedImage image = ImageIO.read(new ByteArrayInputStream(decodedBytes));
+      if (image == null) {
           return;
-          String filePath = req.getServletContext().getRealPath("/")+"news/";
-         // String filePath = NginxUtil.getNginxDisk() + File.separatorChar+"news/";
-          if (!new File(filePath).exists()){
-            new File(filePath).mkdirs();
-          }
-          String name=System.currentTimeMillis()+".png";
-          String imgFilePath = filePath+name;//新生成的图片
-          BASE64Decoder decoder = new BASE64Decoder();
-          byte[] decodedBytes = decoder.decodeBuffer(imgArg[1]);
-          BufferedImage image = ImageIO.read(new ByteArrayInputStream(decodedBytes));
-          if (image == null) {
-              return;
-          }
-          File f = new File(imgFilePath);
-          ImageIO.write(image, "png", f);
-          HashMap hashMap=new HashMap();
-          hashMap.put("path","http://localhost:8088"+req.getContextPath()+"/news/"+name);
-          resp.getOutputStream().print(gson.toJson(hashMap));
-
+      }
+      File f = new File(imgFilePath);
+      ImageIO.write(image, "png", f);
+      HashMap hashMap=new HashMap();
+      if(osName.indexOf("win")>0){
+     	  hashMap.put("path","http://localhost:8088"+req.getContextPath()+"/news/"+name);
+       }else{
+    	  hashMap.put("path","60.190.243.154/news/"+name);
+       }
+      resp.getOutputStream().print(gson.toJson(hashMap));
       } catch (Exception e) {
           e.printStackTrace();
       }  
-    
-    
   }
   /*获取某人发布的新闻*/
   @RequestMapping("/getNewsPage")
@@ -455,15 +463,12 @@ public class NewsController extends ToJson {
 	  String title = request.getParameter("title");
 	  String content = request.getParameter("content");
 	  String userName = request.getParameter("userName");
-	  
 	  News news = new News();
 	  news.setTitle(title);
 	  news.setContent(content);
 	  news.setUserName(userName);
 	  news.setNewsrc("自媒体");
-	  
 	  boolean success = this.newsService.save(news);
-	  
 	  toExSuccMsg(response, String.valueOf(success));
   }
   
