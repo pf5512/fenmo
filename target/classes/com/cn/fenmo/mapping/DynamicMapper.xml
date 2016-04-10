@@ -21,6 +21,10 @@
     <result column="sex" property="sex" jdbcType="INTEGER" />
     <result column="nickName" property="nickName" jdbcType="VARCHAR" />
     <result column="headImgPath" property="headImgPath" jdbcType="VARCHAR" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="lng" property="lng" jdbcType="DOUBLE" />
+    <result column="imgUrl" property="imgUrl" jdbcType="VARCHAR" />
+    <result column="comments" property="comments" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     mainId, content, userName, createDate,zCount,state,imgUrl
@@ -41,47 +45,29 @@
   </select>
   
   
-  <!-- 获取自己所有的动态,联合fm_user找出发表动态人的性别，年龄，头像地址等 -->
+  <!-- 获取周边的动态,联合fm_user找出发表动态人的性别，年龄，头像地址等 -->
   <select id="selectDtCount" resultType="Integer" parameterType="java.util.Map">
-    select count(*)
-    from fm_dynamic a join fm_user b on a.userName = b.userName
+    select count(*) 
+    from fm_dynamic a join fm_user b on a.userName = b.userName 
+    where 1=1
+    <if test="userName!=null" >
+       and a.userName = #{userName,jdbcType=VARCHAR}
+    </if>
   </select>
   
   <select id="selectDtPageBy" resultMap="DynamicAndUserResultMap" parameterType="java.util.Map" >
-    select a.mainId, a.content, a.userName, a.createDate,a.zCount,a.imgUrl,
-    b.age,b.sex,b.nickname,b.headImgPath
-    from fm_dynamic a join fm_user b on a.userName=b.userName
-    where state = #{state,jdbcType=INTEGER}  
-    order by createDate desc
-    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
-  </select>
-  
-   <!-- 获取自己发布的动态 -->
-   <select id="selectCount" resultType="Integer" parameterType="java.util.Map">
-    select count(*)
-    from fm_dynamic
-    where 1=1
-    <if test="userName!=null" >
-       and userName = #{userName,jdbcType=VARCHAR}
-    </if>
-    <if test="state!=null" >
-       and state = #{state,jdbcType=INTEGER}
-    </if>
-  </select>
-  
-  <select id="selectPage" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select 
-    <include refid="Base_Column_List" />
-    from fm_dynamic 
-    where 1=1
-    <if test="userName!=null" >
-       and userName = #{userName,jdbcType=VARCHAR}
-    </if>
-    <if test="state!=null" >
-       and state = #{state,jdbcType=INTEGER}
-    </if>
-    order by createDate DESC
-    limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+   SELECT
+	 a.mainId, a.content, a.userName, a.createDate,a.zCount,a.imgUrl,
+     b.age,b.sex,b.nickname,b.headImgPath,b.lat,b.lng,
+	 (select count(1) from fm_dynamic_comment fdc where fdc.dynamicId=a.mainId) comments
+   FROM
+	 fm_dynamic a join fm_user b on a.userName=b.userName
+   WHERE state = #{state,jdbcType=INTEGER}
+     <if test="userName!=null" >
+        and a.userName = #{userName,jdbcType=VARCHAR}
+     </if>
+     order by createDate desc
+     limit #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
   </select>
   
   <!-- 依靠数据库的级联删除，将删除所有关于该动态的评论数据 -->

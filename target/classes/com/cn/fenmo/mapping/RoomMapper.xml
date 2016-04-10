@@ -10,7 +10,7 @@
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="ispublic" jdbcType="INTEGER" property="ispublic" />
     <result column="maxUsers" jdbcType="INTEGER" property="maxusers" />
-    <result column="createDate" jdbcType="DATE" property="createdate" />
+    <result column="createDate" jdbcType="TIMESTAMP" property="createdate" />
     <result column="headImgePath" jdbcType="VARCHAR" property="headImgePath" />
     <result column="groupId" jdbcType="BIGINT" property="groupId" />
     <result column="userCounts" jdbcType="INTEGER" property="userCounts" />
@@ -19,6 +19,13 @@
   <sql id="Base_Column_List" >
     mainId,userName,roomName,description,subject,type,ispublic,maxUsers,createDate,headImgePath,groupId,userCounts,membersonly
   </sql>
+  
+  <select id="selectRoomMaxUsers" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select a.*,max(a.userCounts)
+    from fm_room a
+    where a.userName = #{userName,jdbcType=VARCHAR}
+  </select>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -36,12 +43,12 @@
   </delete>
 
   <insert id="insert" parameterType="com.cn.fenmo.pojo.Room">
-    insert into fm_room (mainId, userName, roomName,description,subject, type, ispublic,maxUsers, createDate,groupId, userCounts,membersonly)
+    insert into fm_room (mainId, userName, roomName,description,subject, type, ispublic,maxUsers, createDate,groupId, userCounts,membersonly,headImgeUrl)
     values (#{mainid,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{roomName,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{ispublic,jdbcType=INTEGER}, 
       #{maxusers,jdbcType=INTEGER}, #{createdate,jdbcType=DATE},  
       #{groupId,jdbcType=VARCHAR}, #{userCounts,jdbcType=INTEGER}, 
-      #{membersonly,jdbcType=INTEGER})
+      #{membersonly,jdbcType=INTEGER},#{headImgeUrl,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.cn.fenmo.pojo.Room">
     update fm_room
@@ -110,6 +117,9 @@
 	    from fm_room
 	    where groupId = #{groupId,jdbcType=VARCHAR}
    </select>
-  
-  
+   <select id="selectHotRooms" resultMap="BaseResultMap">
+	   select  <include refid="Base_Column_List" />
+	   from fm_room a
+       where a.userCounts in (select max(b.userCounts) from fm_room b )
+   </select>
 </mapper>

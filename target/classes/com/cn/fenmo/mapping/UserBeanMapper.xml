@@ -21,41 +21,25 @@
     <result column="nationality" property="nationality" jdbcType="VARCHAR" />
     <result column="occupation" property="occupation" jdbcType="VARCHAR" />
     <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="lng" property="lng" jdbcType="DOUBLE" />
+    <result column="starLevel" property="starLevel" jdbcType="INTEGER" />
+    <result column="registerTime" property="registerTime" jdbcType="TIMESTAMP" />
   </resultMap>
    <sql id="Base_Column_List" >
-     mainId, userName, passWord, imgUrls, specificSign, age, sex, phone, constellation,hxId,
-     circle, idol,nickname,token,nationality,occupation,birthday,headImgPath
+     mainId, userName, passWord, imgUrls, specificSign, age, sex, phone, constellation,hxId,fmNo,
+     circle, idol,nickname,token,nationality,occupation,birthday,headImgPath,lat,lng,starLevel,registerTime
    </sql>
    <insert id="insert" parameterType="com.cn.fenmo.pojo.UserBean" >
       insert into fm_user (mainId,fmNo, userName, passWord,specificSign, age, sex, phone, constellation, 
-      circle, idol,nickname,token,nationality,occupation,birthday)
+      circle, idol,nickname,token,nationality,occupation,birthday,starLevel,registerTime)
       values (#{mainid,jdbcType=BIGINT},#{fmNo,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{specificsign,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
       #{sex,jdbcType=INTEGER}, #{phone,jdbcType=DECIMAL}, #{constellation,jdbcType=VARCHAR}, 
       #{circle,jdbcType=INTEGER}, #{idol,jdbcType=VARCHAR},#{nickname,jdbcType=VARCHAR},
-      #{token,jdbcType=VARCHAR},#{nationality,jdbcType=VARCHAR},#{occupation,jdbcType=VARCHAR},#{birthday,jdbcType=DATE})
+      #{token,jdbcType=VARCHAR},#{nationality,jdbcType=VARCHAR},#{occupation,jdbcType=VARCHAR},#{birthday,jdbcType=DATE}
+     ,#{starLevel,jdbcType=DATE},#{registerTime,jdbcType=DATE})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.cn.fenmo.pojo.UserBean" >
-    update fm_user
-    set userName = #{username,jdbcType=VARCHAR},
-      passWord = #{password,jdbcType=VARCHAR},
-      imgUrls = #{imgUrls,jdbcType=VARCHAR},
-      specificSign = #{specificsign,jdbcType=VARCHAR},
-      age = #{age,jdbcType=INTEGER},
-      sex = #{sex,jdbcType=INTEGER},
-      phone = #{phone,jdbcType=DECIMAL},
-      constellation = #{constellation,jdbcType=VARCHAR},
-      hxId = #{hxid,jdbcType=VARCHAR},
-      circle = #{circle,jdbcType=INTEGER},
-      idol = #{idol,jdbcType=VARCHAR},
-      nickname = #{nickname,jdbcType=VARCHAR},
-      token = #{token,jdbcType=VARCHAR},
-      nationality = #{nationality,jdbcType=VARCHAR},
-      occupation = #{occupation,jdbcType=VARCHAR},
-      birthday = #{birthday,jdbcType=DATE},
-      headImgPath = #{headImgPath,jdbcType=VARCHAR}
-      where mainId = #{mainid,jdbcType=BIGINT}
-  </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
@@ -63,18 +47,108 @@
     where mainId = #{mainid,jdbcType=BIGINT}
   </select>
   
-  <select id="selectMyFriendCount" resultType="Integer" parameterType="java.util.Map" >
-    select count(*)
-    from fm_user
-    where phone in (select friendPhone  from fm_friend  where userPhone =#{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER})
-  </select>
-  
-  <select id="selectMyFriend" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="selectUsersByStarLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from fm_user
-    where phone in (select friendPhone  from fm_friend where userPhone =#{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER})
-    LIMIT #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+    where (starLevel > #{starLevel,jdbcType=INTEGER} or starLevel =#{starLevel,jdbcType=INTEGER})
+    ORDER BY starLevel DESC,registerTime DESC
+    limit 0,20
+  </select>
+  
+  <select id="selectMyFriendCount" resultType="Integer" parameterType="java.util.Map" >
+    SELECT
+       count(*)
+    FROM
+	(
+		SELECT
+			*
+		FROM
+			fm_user
+		WHERE
+			phone IN (
+				SELECT
+					userPhone
+				FROM
+					fm_friend
+				WHERE
+					friendPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+			)
+		UNION
+			SELECT
+				*
+			FROM
+				fm_user
+			WHERE
+				phone IN (
+					SELECT
+						friendPhone
+					FROM
+						fm_friend
+					WHERE
+						userPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+				)
+	) as u
+  </select>
+  
+  <select id="selectMyFriend" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT
+        <include refid="Base_Column_List" />
+    FROM
+	(
+		SELECT
+			*
+		FROM
+			fm_user
+		WHERE
+			phone IN (
+				SELECT
+					userPhone
+				FROM
+					fm_friend
+				WHERE
+					friendPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+			)
+		UNION
+			SELECT
+				*
+			FROM
+				fm_user
+			WHERE
+				phone IN (
+					SELECT
+						friendPhone
+					FROM
+						fm_friend
+					WHERE
+						userPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+				)
+	) as u
+    ORDER BY starLevel DESC,registerTime DESC
+    LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectMyFriendRequest" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    SELECT
+        <include refid="Base_Column_List" />
+    FROM
+	(
+		SELECT
+			*
+		FROM
+			fm_user
+		WHERE
+			phone IN (
+				SELECT
+					userPhone
+				FROM
+					fm_friend
+				WHERE
+					friendPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+			)
+		
+	) as u
+    ORDER BY starLevel DESC,registerTime DESC
   </select>
   
    <select id="selectMembers" resultMap="BaseResultMap" parameterType="java.util.Map" >
@@ -87,16 +161,45 @@
      select count(*)
      from fm_user
      where phone in (select friendPhone  from fm_friend  where userPhone =#{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER})
-     and (nickName like '%${searchKey}%'  or userName like '%${searchKey}%' or fmNo like '%${searchKey}%')
+     and (nickName like '${searchKey}%'  or userName like '${searchKey}%' or fmNo like '${searchKey}%')
    </select>
    
    <select id="selectMyFriendBy" resultMap="BaseResultMap" parameterType="java.util.Map" >
-	    select 
-	    <include refid="Base_Column_List" />
-	    from fm_user
-	    where phone in (select friendPhone  from fm_friend where userPhone =#{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER})
-        and (nickName like '%${searchKey}%'  or userName like '%${searchKey}%' or fmNo like '%${searchKey}%')
-	    LIMIT #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+	    SELECT
+        <include refid="Base_Column_List" />
+	    FROM
+		(
+			SELECT
+				*
+			FROM
+				fm_user
+			WHERE
+				phone IN (
+					SELECT
+						userPhone
+					FROM
+						fm_friend
+					WHERE
+						friendPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+				)
+			UNION
+				SELECT
+					*
+				FROM
+					fm_user
+				WHERE
+					phone IN (
+						SELECT
+							friendPhone
+						FROM
+							fm_friend
+						WHERE
+							userPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
+					)
+		) as u
+        where 1=1 and  (nickName like '${searchKey}%'  or userName like '${searchKey}%' or fmNo like '${searchKey}%')
+        ORDER BY starLevel DESC,registerTime DESC
+	    LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
   </select>
   
   <select id="selectByPhone" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -124,14 +227,8 @@
       select count(*)
       from fm_user
       where  1=1
-      <if test="phone!= null" >
-         and phone like '%${phone}%'     
-      </if>
-      <if test="nickName!= null" >
-         and nickName like '%${nickName}%'     
-      </if>
-      <if test="fmNum!= null" >
-         and fmNum like '%${fmNum}%'  
+      <if test="searchKey!= null" >
+         and (phone like '${searchKey}%' or nickName like '${searchKey}%' or fmNo like '${searchKey}%'  )
       </if>
       <if test="age==2">
          and age <![CDATA[<=]]>20 
@@ -152,14 +249,8 @@
 	    <include refid="Base_Column_List" />
 	    from fm_user
 	    where 1=1
-	    <if test="phone!= null" >
-           and phone like '%${phone}%'     
-       </if>
-       <if test="nickName!= null" >
-           and nickName like '%${nickName}%'     
-       </if>
-	    <if test="fmNum!= null" >
-           and fmNum like '%${fmNum}%'  
+	    <if test="searchKey!= null" >
+           and (phone like '%${searchKey}%' or nickName like '%${searchKey}%' or fmNo like '%${searchKey}%')
         </if>
 	    <if test="age==2">
            and age <![CDATA[<=]]>20 
@@ -172,8 +263,9 @@
         </if>
         <if test="sex!=null" >
            and sex = #{sex,jdbcType=VARCHAR}
-        </if>  
-	    LIMIT #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+        </if>   
+        ORDER BY starLevel DESC,registerTime DESC
+	    LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
    </select>
    
    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
@@ -182,9 +274,9 @@
    </delete>
 
   
-  <update id="updateByPrimaryKeySelective" parameterType="com.cn.fenmo.pojo.UserBean" >
-    update fm_user
-    <set>
+  <update id="update" parameterType="com.cn.fenmo.pojo.UserBean" >
+     update fm_user
+     <set>
       <if test="headImgPath != null" >
         headImgPath = #{headImgPath,jdbcType=VARCHAR},
       </if>
@@ -234,7 +326,13 @@
         occupation = #{occupation,jdbcType=VARCHAR},
        </if>
        <if test="birthday != null" >
-        birthday = #{birthday,jdbcType=DATE}
+        birthday = #{birthday,jdbcType=DATE},
+       </if>
+       <if test="lat != null" >
+        lat = #{lat,jdbcType=DOUBLE},
+       </if>
+       <if test="lng != null" >
+        lng = #{lng,jdbcType=DOUBLE}
        </if>
     </set>
     where mainId = #{mainid,jdbcType=BIGINT}
@@ -257,4 +355,25 @@
             #{userPhone}
         </foreach>
     </select>
+    <select id="selectNearList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		 <![CDATA[ 
+		select t.* from (
+		select s.*, sqrt((lng-${lng})*3.14*6371229*cos(((lat+${lat})/2)*3.14/180)/180*(lng-${lng})*3.14*6371229*cos(((lat+${lat})/2)*3.14/180)/180
+				+(lat-${lat})*3.14*6371229/180*(lat-${lat})*3.14*6371229/180) as juli from fm_user as s 
+		) t
+		where t.juli<10000 and lat!=${lat} and lng!=${lat}
+	    ]]> 
+	    <if test="sex != null" >
+         and sex = #{sex}
+        </if>
+        <![CDATA[ 
+		order by t.juli 
+		limit #{start},#{limit}
+		]]> 
+    </select>
+    <update id="updateLocation" parameterType="java.util.Map">
+       update fm_user
+       set lat = #{lat},lng = #{lng}
+       where phone = #{userPhone}
+    </update>
 </mapper>

@@ -20,7 +20,8 @@
     select 
     <include refid="Base_Column_List" />
     from fm_friend
-    where userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}
+    where (userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}) or 
+    (friendPhone = #{userPhone,jdbcType=VARCHAR} and userPhone = #{friendPhone,jdbcType=VARCHAR})
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -30,7 +31,8 @@
   
   <delete id="deleteFriend" parameterType="java.util.Map">
     delete from fm_friend
-    where userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}
+    where (userPhone=#{friendPhone,jdbcType=VARCHAR} and friendPhone=#{userPhone,jdbcType=VARCHAR} ) or 
+    (userPhone=#{userPhone,jdbcType=VARCHAR} and friendPhone=#{friendPhone,jdbcType=VARCHAR})
   </delete>
   
   <insert id="insert" parameterType="com.cn.fenmo.pojo.Friend">

@@ -33,23 +33,32 @@
 		<property name="maxWait" value="${maxWait}"></property>
 	</bean>
 
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.cn.fenmo.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
 	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<!-- 自动扫描mapping.xml文件 -->
-		<property name="mapperLocations" value="classpath:com/cn/fenmo/mapping/*.xml"></property>
+		<property name="mapperLocations" value="classpath*:com/cn/fenmo/mapping/*.xml"></property>
+		<!-- 当字段为null时也将字段放入resultMap中 -->
+		<property name="configurationProperties" value="classpath:configuration.xml"></property>  
 	</bean>
-     <!-- 定义事务管理器 -->
+
+	<!-- 定义事务管理器 -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	 <!-- 配置事务模板，模板bean被设置成abstract bean，保证不会被初始化--> 
-	<bean id="baseTransactionProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
-		  abstract="true">
-		<!--为事务模板注入事务管理器-->  
-		<property name="transactionManager" ref="transactionManager"/>
-		<!--设置事务属性--> 
+	<!-- 配置事务模板，模板bean被设置成abstract bean，保证不会被初始化 -->
+	<bean id="baseTransactionProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true">
+		<!--为事务模板注入事务管理器 -->
+		<property name="transactionManager" ref="transactionManager" />
+		<!--设置事务属性 -->
 		<property name="transactionAttributes">
 			<props>
 				<!-- 为所有的操作添加事务管理 -->
@@ -57,11 +66,5 @@
 				<prop key="*">PROPAGATION_REQUIRED,-Exception</prop>
 			</props>
 		</property>
-	</bean>
-
-	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.cn.fenmo.dao" />
-		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
 	</bean>
 </beans>
