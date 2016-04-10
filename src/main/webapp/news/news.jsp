@@ -56,25 +56,28 @@
 				}
 				
 			});
-			$("#newsForm").form('load', '/fenmo/news/getNewsById.do?mainId='+mainId);
+			$("#newsForm").form('load', '../news/getNewsById.do?mainId='+mainId);
 		}
 		
 		
 		//提交
-		function submitForm(){
+		function submitForm(state){
 			var content = ue.getContent();
-			url = "/fenmo/news/addNews.do";
+			url = "../news/addNews.do";
 			if(mainId){
-				url = "/fenmo/news/updateNews.do";
+				url = "../news/updateNews.do";
 			}
 			$.ajax({
 				url:url,
 				type:"POST",
+				cache:false,
 				data:{
 					content:content,
 					title:$("#title").val(),
 					userName:$("#userName").val(),
-					mainId:mainId
+					mainId:mainId,
+					state:state,
+					newSrc:"自媒体" //暂时默认是这个 
 				},
 				success:function(data){
 					if(data){
@@ -120,8 +123,8 @@
 	    	</table>
 	    </form>
 	    <div style="text-align:center;padding:5px">
-	    	<a href="javascript:void(0);" class="easyui-linkbutton" onclick="submitForm()">保存</a>
-	    	<a href="javascript:void(0);" class="easyui-linkbutton" onclick="fabuForm()">发布</a>
+	    	<a href="javascript:void(0);" class="easyui-linkbutton" onclick="submitForm(0)">保存</a>
+	    	<a href="javascript:void(0);" class="easyui-linkbutton" onclick="submitForm(1)">发布</a>
 	    </div>
 	    </div>
 	</div>

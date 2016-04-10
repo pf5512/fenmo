@@ -20,6 +20,8 @@ import javax.ws.rs.core.Context;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,7 @@ import com.cn.fenmo.service.NewsCommentService;
 import com.cn.fenmo.service.NewsService;
 import com.cn.fenmo.util.CNST;
 import com.cn.fenmo.util.NewsCnst;
+import com.cn.fenmo.util.RequestUtil;
 import com.cn.fenmo.util.StringUtil;
 import com.cn.fenmo.util.ToJson;
 import com.cn.fenmo.util.UserCnst;
@@ -46,6 +49,9 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping("/news")
 public class NewsController extends ToJson {
+	
+	private Logger logger = LoggerFactory.getLogger(NewsController.class);
+	
   private Gson gson=new Gson();
   @Autowired
   private NewsService newsService;
@@ -58,7 +64,6 @@ public class NewsController extends ToJson {
   
   private final int HEAD_LIMIT=3;
   
-  private final String HTTPHEAD="http://";
   
   //获取首页上显示的新闻(目前只显示最新的三条新闻) 
   @RequestMapping("/getNewsHeadPage")
@@ -245,36 +250,10 @@ public class NewsController extends ToJson {
         e.printStackTrace();
         
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     return null;  
   }
+  
+  
   /*保存新闻*/
   @RequestMapping("/save")
   public void save(@RequestParam String userPhone,@RequestParam String content,HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -452,19 +431,21 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/addNews")
   public void addNews(HttpServletRequest request, HttpServletResponse response){
-	  String title = request.getParameter("title");
-	  String content = request.getParameter("content");
-	  String userName = request.getParameter("userName");
 	  
-	  News news = new News();
-	  news.setTitle(title);
-	  news.setContent(content);
-	  news.setUserName(userName);
-	  news.setNewsrc("自媒体");
-	  
-	  boolean success = this.newsService.save(news);
-	  
-	  toExSuccMsg(response, String.valueOf(success));
+		boolean success = false;
+
+		try {
+			
+			News news = RequestUtil.getBean(request, News.class);
+
+			success = this.newsService.save(news);
+
+		} catch (Exception e) {
+			logger.error("----addNews---生成News对象出错",e);
+			e.printStackTrace();
+		}
+
+		toExSuccMsg(response, String.valueOf(success));
   }
   
   /**
@@ -478,7 +459,9 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/getNewsById")
   public void getNewsById(@RequestParam long mainId, HttpServletRequest request, HttpServletResponse response){
+	  
 	  News news = this.newsService.selectByPrimaryKey(mainId);
+	  
 	  toJSON(response, news);
   }
   
@@ -493,14 +476,41 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/updateNews")
   public void updateNews(HttpServletRequest request, HttpServletResponse response){
-	  String mainId = request.getParameter("mainId");
-	  String content = request.getParameter("content");
-	  String title = request.getParameter("title");
-	  News news = new News();
-	  news.setMainid(Long.valueOf(mainId));
-	  news.setContent(content);
-	  news.setTitle(title);
-	  boolean success = this.newsService.updateNews(news);
-	  toExSuccMsg(response, String.valueOf(success));
+	  
+	boolean success = false;
+	
+	try {
+		
+		News news = RequestUtil.getBean(request, News.class);
+
+		success = this.newsService.updateNews(news);
+
+	} catch (Exception e) {
+		logger.error("----updateNews---生成News对象出错",e);
+		e.printStackTrace();
+	}
+
+	toExSuccMsg(response, String.valueOf(success));
   }
+  
+  
+  /**
+   * 
+   * @description 获取新闻列表
+   * @author weiwj
+   * @date 下午7:51:23
+   * @param request
+   * @param response
+   */
+  @RequestMapping("/getNewsList")
+  public void getNewsList(HttpServletRequest request,HttpServletResponse response){
+//	  List<News> news = this.newsService.selectBeanBy(params);
+	  String page = request.getParameter("page");//当前页
+	  String row = request.getParameter("rows");//每页多少行
+	  String title = request.getParameter("title"); //标题
+	  String newsType = request.getParameter("newsType"); //新闻类型
+	  //TODO
+  }
+  
+  
 }
