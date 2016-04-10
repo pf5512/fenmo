@@ -451,6 +451,8 @@ public class NewsController extends ToJson {
 			logger.error("----addNews---生成News对象出错",e);
 			e.printStackTrace();
 		}
+		
+		toExSuccMsg(response, String.valueOf(success));
 
   }
   
