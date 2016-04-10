@@ -107,7 +107,7 @@ public class NewsController extends ToJson {
       if(osName.indexOf("win")>0){
      	  hashMap.put("path","http://localhost:8088"+req.getContextPath()+"/news/"+name);
        }else{
-    	  hashMap.put("path","60.190.243.154/news/"+name);
+    	  hashMap.put("path","http://60.190.243.154:80/news/"+name);
        }
       resp.getOutputStream().print(gson.toJson(hashMap));
       } catch (Exception e) {
@@ -253,34 +253,6 @@ public class NewsController extends ToJson {
         e.printStackTrace();
         
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     return null;  
   }
   /*±£¥Ê–¬Œ≈*/

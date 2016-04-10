@@ -18,7 +18,7 @@
 			<li>
 				<span>内容管理</span>
 				<ul>
-					<li>群组管理</
+					<li>群组管理</li>
 				    <li>新闻管理</li>
 				    <li>用户管理</li>
 				    <li>动态管理</li>
@@ -29,8 +29,24 @@
 	</div>
 	<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">底部</div>
 	<div data-options="region:'center',title:'面板'">
-	   	<table class="easyui-datagrid" title="群组管理" style="width:100%;height:100%;"
-			data-options="singleSelect:true,collapsible:true,url:'${pageContext.request.contextPath}/room/searchPageRooms.do',method:'get'">
+	     <div id="tb" style="padding:5px;height:auto">
+			<div>
+				类型: 
+				<select class="easyui-combobox" panelHeight="auto" style="width:100px">
+				    <option value="0"></option>
+					<option value="yl">娱乐</option>
+					<option value="cl">财经</option>
+					<option value="fc">房产</option>
+					<option value="zmt">自媒体</option>
+				</select>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+			    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true"></a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true"></a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true"></a>
+			</div>
+	    </div>
+	   	<table id = "dg" class="easyui-datagrid" title="群组管理" style="width:100%;height:100%;"
+			data-options="rownumbers:true,singleSelect:true,pagination:true,url:'${pageContext.request.contextPath}/room/searchPageRooms.do',method:'get'">
 			<thead>
 				<tr>
 					<th data-options="field:'groupId',hidden:true"></th>
@@ -43,28 +59,7 @@
 				</tr>
 			</thead>
 	    </table>
-	    <div id="tb" style="padding:5px;height:auto">
-			<div style="margin-bottom:5px">
-				<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true"></a>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true"></a>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true"></a>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-cut" plain="true"></a>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true"></a>
-			</div>
-			<div>
-				Date From: <input class="easyui-datebox" style="width:80px">
-				To: <input class="easyui-datebox" style="width:80px">
-				Language: 
-				<select class="easyui-combobox" panelHeight="auto" style="width:100px">
-					<option value="java">Java</option>
-					<option value="c">C</option>
-					<option value="basic">Basic</option>
-					<option value="perl">Perl</option>
-					<option value="python">Python</option>
-				</select>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a>
-			</div>
-	   </div>
+
 	</div>
 </body>
 </html>
