@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class MapUtil {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(MapUtil.class);
+	
 	/**
 	 * 
 	 * @description 从Map中获取参数 
@@ -81,20 +81,34 @@ public class MapUtil {
 			
 		}else{
 			
-			FieldValue fv = FieldFactory.createFieldValue(clazz);
-			
-			if(fv != null){
+				return translateValue(value, clazz);
 				
-				LOGGER.info("类型为"+clazz.getName()+"的取值类没有实现，可能会造成转换异常，请尽快实现！");
-				
-				return fv.translateValue(value);
-				
-			}else {//如果没有实现，则直接强转
-				
-				return clazz.cast(value);
-			}
 		}
 		
 	}
 	
+	/**
+	 * 
+	 * @description 转换值
+	 * @author weiwj
+	 * @date 上午12:11:11
+	 * @param value
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static Object translateValue(Object value,Class<?> clazz) throws Exception{
+		
+		FieldValue fv = FieldFactory.createFieldValue(clazz);
+		
+		if(fv != null){
+			
+			return fv.translateValue(value);
+			
+		}else {//如果没有实现，则直接强转
+			
+			return clazz.cast(value);
+		}
+		
+	}
 }

@@ -11,4 +11,13 @@ public class IntFieldValue extends IntegerFieldValue{
 	public String getType() {
 		return "int";
 	}
+	
+	@Override
+	public Integer translateValue(Object value) {
+		Integer v = super.translateValue(value);
+		if(v == null){
+			return 0;
+		}
+		return v;
+	}
 }

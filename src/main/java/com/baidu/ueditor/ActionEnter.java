@@ -11,7 +11,7 @@ import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.hunter.FileManager;
 import com.baidu.ueditor.hunter.ImageHunter;
 import com.baidu.ueditor.upload.Uploader;
-import com.baidu.ueditor.upload.fenmoUploader;
+import com.baidu.ueditor.upload.FenmoUploader;
 
 public class ActionEnter {
 	
@@ -78,7 +78,7 @@ public class ActionEnter {
 				//如果配置了上传到nignx，则上传到nginx路径
 				boolean isNginx = (Boolean)(conf.get("isNginx"));
 				if(isNginx){
-					state = new fenmoUploader( request, conf ).doExec();
+					state = new FenmoUploader( request, conf ).doExec();
 					break;
 				}
 			case ActionMap.UPLOAD_SCRAWL:

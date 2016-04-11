@@ -34,7 +34,7 @@ public class PathUtil {
 	 * @return String
 	 * @throws
 	 */
-	public static String combineFilePath(String[] names){
+	public static String combineFilePath(String... names){
 		if(names != null){
 			StringBuilder path = new StringBuilder();
 			for (String name : names) {
@@ -80,7 +80,8 @@ public class PathUtil {
 			if(childFiles != null){
 				 for (int i = 0; i < childFiles.length; i++) {
 					File childFile = childFiles[i];
-					classNames.add(packageName+"."+childFile.getName());
+					String name = childFile.getName();
+					classNames.add(packageName+"."+name.substring(0,name.lastIndexOf(".class")));
 				}
 			}
 		}

@@ -35,7 +35,16 @@ public class BeanUtil {
 				
 				Class<?> fieldType = field.getType();
 				
-				Object value  = MapUtil.getValue(param, fieldName, fieldType);
+				Object value  = MapUtil.getValue(param, fieldName);
+				
+				if(value == null){
+					
+					continue;
+					
+				}else{
+					
+					value = MapUtil.translateValue(value, fieldType);
+				}
 				
 				field.set(obj, value);
 			}

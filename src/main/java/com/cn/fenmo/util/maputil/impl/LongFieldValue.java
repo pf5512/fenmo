@@ -11,4 +11,13 @@ public class LongFieldValue extends LongObjFieldValue{
 	public String getType() {
 		return "long";
 	}
+	
+	@Override
+	public Long translateValue(Object value) {
+		Long v = super.translateValue(value);
+		if(v == null){
+			return 0L;
+		}
+		return v;
+	}
 }

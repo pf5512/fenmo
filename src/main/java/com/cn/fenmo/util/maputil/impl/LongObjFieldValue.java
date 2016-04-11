@@ -16,7 +16,19 @@ public class LongObjFieldValue implements FieldValue{
 
 
 	public Long translateValue(Object value) {
-		return value == null ? null:Long.valueOf(String.valueOf(value));
+		
+		if(value == null){
+			
+			return null;
+		}
+		
+		String v = String.valueOf(value);
+		
+		if(v.trim().length() == 0){
+			
+			return null;
+		}
+		return Long.valueOf(v);
 	}
 
 }

@@ -3,9 +3,14 @@ package com.cn.fenmo.util.maputil;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cn.fenmo.util.PathUtil;
 
 public class FieldFactory {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(FieldFactory.class);
 	
 	/**
 	 * 
@@ -49,6 +54,8 @@ public class FieldFactory {
 				}
 			}
 		}
+		
+		LOGGER.info("类型为"+clazz.getName()+"的取值类没有实现，可能会造成转换异常，请尽快实现！");
 		return null;
 	}
 }

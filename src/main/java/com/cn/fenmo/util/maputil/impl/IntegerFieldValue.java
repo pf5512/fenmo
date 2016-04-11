@@ -16,7 +16,20 @@ public class IntegerFieldValue implements FieldValue{
 
 
 	public Integer translateValue(Object value) {
-		return value == null ? null:Integer.parseInt(String.valueOf(value));
+		
+		if(value == null){
+			
+			return null;
+		}
+		
+		String v = String.valueOf(value);
+		
+		if(v.trim().length() == 0){
+			
+			return null;
+		}
+		
+		return Integer.valueOf(v);
 	}
 
 }
