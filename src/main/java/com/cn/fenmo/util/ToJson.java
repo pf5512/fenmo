@@ -40,7 +40,9 @@ public class ToJson {
       out.close();
     };
   }
-  public void toViewPageForWeb(HttpServletResponse response,List list,int total){
+  
+  
+  public void toViewPageForWeb(HttpServletResponse response,List<?> list,int total){
     response.setContentType("text/html;charset=utf-8");
     JSONObject jsonObj = new JSONObject();
     PrintWriter out = null;

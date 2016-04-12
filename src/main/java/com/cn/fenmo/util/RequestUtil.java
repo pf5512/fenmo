@@ -28,19 +28,37 @@ public class RequestUtil {
 	
 	/**
 	 * 
-	 * @description 获取查询参数，存入Map。 
+	 * @description 获取查询参数，存入Map。 注意，得到的值都是String类型。
 	 * @author weiwj
 	 * @date 下午8:56:40
 	 * @param request
 	 * @return
 	 */
 	public static Map<String,Object> getRequestParamMap(HttpServletRequest request){
+		
 		 Enumeration<String> names = request.getParameterNames();
+		 
 		 Map<String,Object> param = new HashMap<String, Object>();
+		 
 		 while(names.hasMoreElements()){
+			 
 			 String name = names.nextElement();
-			 String value = request.getParameter(name); //暂时只考虑参数不重复的情况 TODO
-			 param.put(name, value);
+			 
+			 String value = request.getParameter(name);//暂时只考虑参数不重复的情况 TODO
+			 
+			 if(value == null || value.length() == 0){
+				 
+				 continue;
+			 }
+			 
+			 if("page".equals(name)||"rows".equals(name)){
+				 
+				 param.put(name, Integer.valueOf(value));
+				 
+			 }else{
+				 
+				 param.put(name, value);
+			 }
 		 }
 		return param;
 	}

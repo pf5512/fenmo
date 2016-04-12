@@ -37,18 +37,52 @@
       #{content,jdbcType=VARCHAR}, #{zcount,jdbcType=INTEGER})
   </insert>
   
+   <!--查询新闻总数 -->
    <select id="selectCount" resultType="Integer" parameterType="java.util.Map">
 	    select count(*)
 	    from fm_news
-	    where userName = #{userName,jdbcType=VARCHAR} and state = #{state,jdbcType=INTEGER}
+	    <where>
+		      <if test="userName != null" >
+		        userName = #{userName,jdbcType=VARCHAR}
+		      </if>
+		      <if test="state != null" >
+		        and state = #{state,jdbcType=INTEGER}
+		      </if>
+		      <if test="title != null" >
+		        and title like '%${title}%'
+		      </if>
+		      <if test="newsType != null" >
+		        and newsType = #{newsType,jdbcType=INTEGER}
+		      </if>
+	     </where>
    </select>
   
+  <!-- 分页查询新闻 -->
    <select id="selectPageBy" resultMap="BaseResultMap" parameterType="java.util.Map">
 	     SELECT p.*,(select COUNT(1) FROM fm_news_comment t where t.newsId = p.mainId) comments
          From fm_news p
-	     WHERE userName = #{userName,jdbcType=VARCHAR} and state = #{state,jdbcType=INTEGER}
-	     ORDER BY p.createDate 
-	     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+	     <where>
+		      <if test="userName != null" >
+		        userName = #{userName,jdbcType=VARCHAR}
+		      </if>
+		      <if test="state != null" >
+		        and state = #{state,jdbcType=INTEGER}
+		      </if>
+		      <if test="title != null" >
+		        and title like '%${title}%'
+		      </if>
+		      <if test="newsType != null" >
+		        and newsType = #{newsType,jdbcType=INTEGER}
+		      </if>
+	     </where>
+	     ORDER BY p.createDate desc
+     	<if test="start!=null and limit !=null">
+     		LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+     	</if>
+     	<if test="page!=null and rows !=null">
+     		LIMIT #{page,jdbcType=INTEGER},#{rows,jdbcType=INTEGER}
+     	</if>
+	     
    </select>
    
    <select id="selectNewsHeadPage" resultMap="BaseResultMap" parameterType="java.util.Map">

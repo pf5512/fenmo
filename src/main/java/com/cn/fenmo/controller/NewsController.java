@@ -485,20 +485,20 @@ public class NewsController extends ToJson {
   @RequestMapping("/updateNews")
   public void updateNews(HttpServletRequest request, HttpServletResponse response){
 	  
-	boolean success = false;
-	
-	try {
+		boolean success = false;
 		
-		News news = RequestUtil.getBean(request, News.class);
+		try {
+			
+			News news = RequestUtil.getBean(request, News.class);
+	
+			success = this.newsService.updateNews(news);
+	
+		} catch (Exception e) {
+			logger.error("----updateNews---生成News对象出错",e);
+			e.printStackTrace();
+		}
 
-		success = this.newsService.updateNews(news);
-
-	} catch (Exception e) {
-		logger.error("----updateNews---生成News对象出错",e);
-		e.printStackTrace();
-	}
-
-	toExSuccMsg(response, String.valueOf(success));
+		toExSuccMsg(response, String.valueOf(success));
   }
   
   
@@ -512,12 +512,15 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/getNewsList")
   public void getNewsList(HttpServletRequest request,HttpServletResponse response){
-//	  List<News> news = this.newsService.selectBeanBy(params);
-	  String page = request.getParameter("page");//当前页
-	  String row = request.getParameter("rows");//每页多少行
-	  String title = request.getParameter("title"); //标题
-	  String newsType = request.getParameter("newsType"); //新闻类型
-	  //TODO
+  	
+  	Map<String,Object> params = RequestUtil.getRequestParamMap(request);
+  	
+	  List<News> news = this.newsService.selectBeanBy(params);
+	  
+	  int total = this.newsService.selectCount(params);
+	  
+	  toViewPageForWeb(response, news, total);
+	  
   }
   
   
