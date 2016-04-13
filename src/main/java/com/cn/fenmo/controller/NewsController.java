@@ -50,9 +50,7 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping("/news")
 public class NewsController extends ToJson {
-	
-	private Logger logger = LoggerFactory.getLogger(NewsController.class);
-	
+  private Logger logger = LoggerFactory.getLogger(NewsController.class);
   private Gson gson=new Gson();
   @Autowired
   private NewsService newsService;
@@ -440,20 +438,14 @@ public class NewsController extends ToJson {
   @RequestMapping("/addNews")
   public void addNews(HttpServletRequest request, HttpServletResponse response){
 		boolean success = false;
-
 		try {
-			
 			News news = RequestUtil.getBean(request, News.class);
-
 			success = this.newsService.save(news);
-
 		} catch (Exception e) {
 			logger.error("----addNews---生成News对象出错",e);
 			e.printStackTrace();
 		}
-		
 		toExSuccMsg(response, String.valueOf(success));
-
   }
   
   /**
@@ -467,9 +459,7 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/getNewsById")
   public void getNewsById(@RequestParam long mainId, HttpServletRequest request, HttpServletResponse response){
-	  
 	  News news = this.newsService.selectByPrimaryKey(mainId);
-	  
 	  toJSON(response, news);
   }
   
@@ -517,7 +507,6 @@ public class NewsController extends ToJson {
 	  String row = request.getParameter("rows");//每页多少行
 	  String title = request.getParameter("title"); //标题
 	  String newsType = request.getParameter("newsType"); //新闻类型
-	  //TODO
   }
   
   
