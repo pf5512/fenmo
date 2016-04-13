@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cn.fenmo.pojo.UserBean;
+import com.cn.fenmo.util.maputil.MapUtil;
 
 public class RequestUtil {
 	
@@ -50,16 +51,25 @@ public class RequestUtil {
 				 
 				 continue;
 			 }
-			 
-			 if("page".equals(name)||"rows".equals(name)){
-				 
-				 param.put(name, Integer.valueOf(value));
-				 
-			 }else{
-				 
-				 param.put(name, value);
-			 }
+				param.put(name, value);
 		 }
+		 
+		 //分页
+		 if(param.containsKey("page")&&param.containsKey("rows")){
+			 int rows = Integer.parseInt(String.valueOf(param.get("rows")));
+			 int page = Integer.parseInt(String.valueOf(param.get("page")));
+			 int start = (page-1)*rows;
+			 param.put("start", start);
+			 param.put("limit", rows);
+			 
+		 }
+		 
+		 //排序
+		 if(param.containsKey("order") && param.containsKey("sort")){
+			 String orderby = " order by "+String.valueOf(MapUtil.getValue(param, "sort"))+"  "+String.valueOf(MapUtil.getValue(param, "order"));
+			 param.put("orderby", orderby);
+		 }
+		 
 		return param;
 	}
 	

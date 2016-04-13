@@ -75,14 +75,15 @@
 		        and newsType = #{newsType,jdbcType=INTEGER}
 		      </if>
 	     </where>
-	     ORDER BY p.createDate desc
+	     <if test="orderby != null">
+	     	${orderby}
+	     </if>
+	     <if test="orderby == null">
+		     ORDER BY p.createDate desc
+	     </if>
      	<if test="start!=null and limit !=null">
      		LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
      	</if>
-     	<if test="page!=null and rows !=null">
-     		LIMIT #{page,jdbcType=INTEGER},#{rows,jdbcType=INTEGER}
-     	</if>
-	     
    </select>
    
    <select id="selectNewsHeadPage" resultMap="BaseResultMap" parameterType="java.util.Map">

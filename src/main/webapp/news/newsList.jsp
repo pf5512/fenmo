@@ -50,6 +50,7 @@
 		
 		//编辑新闻
 		function editNews(mainId){
+			clearForm();
 			if(mainId){
 				loadRemote(mainId);
 			}
@@ -57,11 +58,11 @@
 			//doSearch();
 		}
 	
-		/* ue.ready(function() {
-			if(mainId){
-				loadRemote();
-			}
-        }); */
+		//清除表单数据
+		function clearForm(){
+			$("#newsForm").form('clear');
+			setContent('');
+		}
 		
 		//加载数据
 		function loadRemote(mainId){
@@ -121,7 +122,7 @@
 			<span>新闻标题:</span>
 			<input name="title" style="line-height:26px;border:1px solid #ccc">
 			<span>新闻类型:</span>
-			<select name="newsType" class="easyui-combobox" panelHeight="auto" style="width:100px">
+			<select name="newsType" id="newsType"  data-options="editable:false" class="easyui-combobox"  panelHeight="auto"  style="width:100px">
 				<option value="1">娱乐</option>
 				<option value="2">财经</option>
 				<option value="3">房地产</option>
