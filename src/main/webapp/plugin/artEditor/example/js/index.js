@@ -1,8 +1,6 @@
 $(function() {
 	"use strict";
-
 	var p='<p>请输入文章正文内容</p>';
-
 	$('#content').artEditor({
 		imgTar: '#imageUpload',
 		limitSize: 5,   // 兆
