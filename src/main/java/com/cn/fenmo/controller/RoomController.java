@@ -37,6 +37,7 @@ import com.cn.fenmo.service.RoomBjImgService;
 import com.cn.fenmo.service.RoomUsersService;
 import com.cn.fenmo.util.CNST;
 import com.cn.fenmo.util.Md5Util;
+import com.cn.fenmo.util.RequestUtil;
 import com.cn.fenmo.util.RoomCnst;
 import com.cn.fenmo.util.StringUtil;
 import com.cn.fenmo.util.ToJson;
@@ -314,6 +315,71 @@ public class RoomController extends ToJson {
       }else if("400".equals(statusCode)){
         String error_description = node.get("error_description").toString();
         toExMsg(response, error_description);
+      }
+    }
+    return null;
+  }
+  
+  
+  /**
+   * 新建群,后台创建
+   * @param request
+   * @param response
+   */
+  @RequestMapping("/createPublicRoomForWeb")
+  public String createPublicRoomForWeb(@RequestParam MultipartFile myfile,@RequestParam int type,@RequestParam String roomName,@RequestParam String desc,@RequestParam String subject,HttpServletRequest request,HttpServletResponse response) throws IOException {
+    UserBean  userbean  = RequestUtil.getLoginUser(request);
+    List<Room> roomList = this.roomService.getRoomByName(roomName);
+    for(int i=0;roomList!=null&&i<roomList.size();i++){
+      Room room = roomList.get(i);
+      if(room.getUserName().equals(userbean.getUsername())){
+        toExMsg(response, "你已经创建了一个叫"+roomName+"的群");
+        return null;
+      }
+    }
+    ObjectNode datanode = JsonNodeFactory.instance.objectNode();
+    datanode.put("groupname",roomName);
+    datanode.put("desc",desc);
+    // 群组类型： true 公开群，false 私有群,
+    datanode.put("public",true);
+    datanode.put("maxusers",300);
+    // 此属性为必选的，此值为false时，加群不需要群主批准,为true时需要群主审批
+    datanode.put("approval",false);
+    // true 允许群成员邀请人加入此群;
+    datanode.put("allowinvites", true);
+    //是否只有群成员可以进来发言，true 是 ， false 否
+    datanode.put("membersonly", false );
+    datanode.put("owner",Md5Util.getMd5Value(userbean.getUsername()));
+    ObjectNode node = EasemobChatGroups.creatChatGroups(datanode);
+    if (node != null) {
+      String statusCode = node.get("statusCode").toString();
+      if ("200".equals(statusCode)) {// 如果新建成功
+        JsonNode data = node.get("data");
+        String groupId = data.get("groupid").asText();
+        Room bean = new Room();
+        bean.setGroupId(groupId);
+        bean.setUserName(userbean.getUsername());
+        bean.setRoomName(roomName);
+        bean.setDescription(desc);
+        bean.setSubject(subject);
+        bean.setType(type);
+        bean.setIspublic(RoomCnst.ROOM_PUBLIC);
+        bean.setUserCounts(1);
+        bean.setMaxusers(300);
+        bean.setCreatedate(new Date());
+        if(!myfile.isEmpty()){  
+            String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userbean.getUsername();
+            String  fileName = myfile.getOriginalFilename();
+            String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+            String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
+            //此文件只能在linux下才能生成
+            File file = new File(tempPath,newFileName);
+            FileUtils .copyInputStreamToFile(myfile.getInputStream(),file); 
+            String tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+userbean.getUsername()+File.separatorChar+newFileName;
+            bean.setHeadImgePath(tpUrl);
+        }
+        this.roomService.save(bean);
       }
     }
     return null;
@@ -811,14 +877,11 @@ public class RoomController extends ToJson {
        params.put("roomName",roomName);
      }
      if(StringUtil.isNumeric(type)){
-       params.put("type",type);
+       params.put("type",Integer.parseInt(type)==0?null:Integer.parseInt(type));
      }
      params.put("ispublic",RoomCnst.ROOM_PUBLIC);
-     List<Room> roomlist = null;
      int count = this.roomService.selectCount(params);
-     if(count>0){
-       roomlist =  (List<Room>) this.roomService.getRooms(params);
-     }
+     List<Room> roomlist  =  (List<Room>) this.roomService.getRooms(params);
      toViewPageForWeb(response,roomlist,count);
      return null;
    }

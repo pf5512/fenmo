@@ -119,18 +119,24 @@ public class UserController extends ToJson {
    * @throws Exception
    */
   @RequestMapping(value = "userReg", method = RequestMethod.POST)
-  public String userReg(@RequestParam String userPhone,
-      @RequestParam String passWord, @RequestParam int sex,HttpServletRequest request,
-      HttpServletResponse response) throws Exception {
+  public String userReg(@RequestParam String userPhone,@RequestParam String passWord, @RequestParam int sex,HttpServletRequest request,HttpServletResponse response) throws Exception {
     if (!StringUtil.isMobileNO(userPhone)) {
       toExMsg(response, UserCnst.PHONE_NOTCANUSER);
       return null;
     }
     UserBean bean = this.userService.getUserBeanByPhone(userPhone);
-    if (bean != null) {
+    if (bean!= null) {
       toExMsg(response, UserCnst.USER_HAVE_REGISTED);
       return null;
     } else {
+	  ObjectNode node = EasemobIMUsers.getIMUsersByUserName(Md5Util.getMd5Value(userPhone));
+      if(node!=null){
+  	   String statusCode = node.get("statusCode").toString();
+  	   if("200".equals(statusCode)){
+  		  toExMsg(response, "该手机号已经注册了");
+  		  return null;
+  	   }
+      }
       ObjectNode datanode = JsonNodeFactory.instance.objectNode();
       datanode.put("username", Md5Util.getMd5Value(userPhone));
       datanode.put("password", Md5Util.getMd5Value(userPhone));
