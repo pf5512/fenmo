@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * REST API Demo :ÓÃ»§ÌåÏµ¼¯³É REST API HttpClient4.3ÊµÏÖ
+ * REST API Demo :ç”¨æˆ·ä½“ç³»é›†æˆ REST API HttpClient4.3å®ç°
  * 
  * Doc URL: https://docs.easemob.com/doku.php?id=start:100serverintegration:20users
  * 
@@ -30,14 +30,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class EasemobIMUsers {
   private static final Logger LOGGER = LoggerFactory.getLogger(EasemobIMUsers.class);
   private static final JsonNodeFactory factory = new JsonNodeFactory(false);
-    // Í¨¹ıappµÄclient_idºÍclient_secretÀ´»ñÈ¡app¹ÜÀíÔ±token
+    // é€šè¿‡appçš„client_idå’Œclient_secretæ¥è·å–appç®¡ç†å‘˜token
   private static Credential credential = new ClientSecretCredential(Constants.APP_CLIENT_ID,
             Constants.APP_CLIENT_SECRET, Roles.USER_ROLE_APPADMIN);
 
      /**
-   * ×¢²áIMÓÃ»§[µ¥¸ö]
+   * æ³¨å†ŒIMç”¨æˆ·[å•ä¸ª]
    * 
-   * ¸øÖ¸¶¨Constants.APPKEY´´½¨Ò»¸öĞÂµÄÓÃ»§
+   * ç»™æŒ‡å®šConstants.APPKEYåˆ›å»ºä¸€ä¸ªæ–°çš„ç”¨æˆ·
    * 
    * @param dataNode
    * @return
@@ -70,9 +70,9 @@ public class EasemobIMUsers {
   }
 
  /**
-  * ×¢²áIMÓÃ»§[ÅúÁ¿]
+  * æ³¨å†ŒIMç”¨æˆ·[æ‰¹é‡]
   * 
-  * ¸øÖ¸¶¨Constants.APPKEY´´½¨Ò»ÅúÓÃ»§
+  * ç»™æŒ‡å®šConstants.APPKEYåˆ›å»ºä¸€æ‰¹ç”¨æˆ·
   * @param dataArrayNode
   * @return
   */
@@ -108,16 +108,16 @@ public class EasemobIMUsers {
   }
 
    /**
-    * ×¢²áIMÓÃ»§[ÅúÁ¿Éú³ÉÓÃ»§È»ºó×¢²á]
+    * æ³¨å†ŒIMç”¨æˆ·[æ‰¹é‡ç”Ÿæˆç”¨æˆ·ç„¶åæ³¨å†Œ]
     * 
-    * ¸øÖ¸¶¨Constants.APPKEY´´½¨Ò»ÅúÓÃ»§
+    * ç»™æŒ‡å®šConstants.APPKEYåˆ›å»ºä¸€æ‰¹ç”¨æˆ·
     * 
     * @param usernamePrefix
-    *            Éú³ÉÓÃ»§ÃûµÄÇ°×º
+    *            ç”Ÿæˆç”¨æˆ·åçš„å‰ç¼€
     * @param perNumber
-    *            ÅúÁ¿×¢²áÊ±Ò»´Î×¢²áµÄÊıÁ¿
+    *            æ‰¹é‡æ³¨å†Œæ—¶ä¸€æ¬¡æ³¨å†Œçš„æ•°é‡
     * @param totalNumber
-    *            Éú³ÉÓÃ»§×¢²áµÄÓÃ»§×ÜÊı
+    *            ç”Ÿæˆç”¨æˆ·æ³¨å†Œçš„ç”¨æˆ·æ€»æ•°
     * @return
     */
    public static ObjectNode createNewIMUserBatchGen(String usernamePrefix, Long perNumber, Long totalNumber) {
@@ -126,7 +126,7 @@ public class EasemobIMUsers {
     if (totalNumber == 0 || perNumber == 0) {
      return objectNode;
     }
-    System.out.println("Äã¼´½«×¢²á" + totalNumber + "¸öÓÃ»§£¬Èç¹û´óÓÚ" + perNumber + "ÁË,»á·ÖÅú×¢²á,Ã¿´Î×¢²á" + perNumber + "¸ö");
+    System.out.println("ä½ å³å°†æ³¨å†Œ" + totalNumber + "ä¸ªç”¨æˆ·ï¼Œå¦‚æœå¤§äº" + perNumber + "äº†,ä¼šåˆ†æ‰¹æ³¨å†Œ,æ¯æ¬¡æ³¨å†Œ" + perNumber + "ä¸ª");
     ArrayNode genericArrayNode = EasemobIMUsers.genericArrayNode(usernamePrefix, totalNumber);
     if (totalNumber <= perNumber) {
       objectNode = EasemobIMUsers.createNewIMUserBatch(genericArrayNode);
@@ -138,7 +138,7 @@ public class EasemobIMUsers {
        if ((i + 1) % perNumber == 0) {
         objectNode = EasemobIMUsers.createNewIMUserBatch(tmpArrayNode);
         if(objectNode!=null){
-         LOGGER.info("×¢²áIMÓÃ»§[ÅúÁ¿]: " + objectNode.toString());
+         LOGGER.info("æ³¨å†ŒIMç”¨æˆ·[æ‰¹é‡]: " + objectNode.toString());
         }
         tmpArrayNode.removeAll();
         continue;
@@ -148,7 +148,7 @@ public class EasemobIMUsers {
       if (i > (genericArrayNode.size() / perNumber * perNumber - 1)) {
        objectNode = EasemobIMUsers.createNewIMUserBatch(tmpArrayNode);
        if(objectNode!=null){
-        LOGGER.info("×¢²áIMÓÃ»§[ÅúÁ¿]: " + objectNode.toString());
+        LOGGER.info("æ³¨å†ŒIMç”¨æˆ·[æ‰¹é‡]: " + objectNode.toString());
        }
        tmpArrayNode.removeAll();
       }
@@ -159,10 +159,10 @@ public class EasemobIMUsers {
    }
   
    /**
-    * »ñÈ¡IMÓÃ»§
+    * è·å–IMç”¨æˆ·
     * 
     * @param userName
-    * ÓÃ»§Ö÷¼ü£ºusername»òÕßuuid
+    * ç”¨æˆ·ä¸»é”®ï¼šusernameæˆ–è€…uuid
     * @return
     */
    public static ObjectNode getIMUsersByUserName(String userName) {
@@ -189,8 +189,8 @@ public class EasemobIMUsers {
    }
   
    /**
-    * É¾³ıIMÓÃ»§[µ¥¸ö]
-    * É¾³ıÖ¸¶¨Constants.APPKEYÏÂIMµ¥¸öÓÃ»§
+    * åˆ é™¤IMç”¨æˆ·[å•ä¸ª]
+    * åˆ é™¤æŒ‡å®šConstants.APPKEYä¸‹IMå•ä¸ªç”¨æˆ·
     * @param friendPhone
     * @return
     */
@@ -211,9 +211,9 @@ public class EasemobIMUsers {
    }
   
    /**
-    * É¾³ıIMÓÃ»§[ÅúÁ¿]
+    * åˆ é™¤IMç”¨æˆ·[æ‰¹é‡]
     * 
-    * ÅúÁ¿Ö¸¶¨Constants.APPKEYÏÂÉ¾³ıIMÓÃ»§
+    * æ‰¹é‡æŒ‡å®šConstants.APPKEYä¸‹åˆ é™¤IMç”¨æˆ·
     * 
     * @param limit
     * @param queryStr
@@ -247,7 +247,7 @@ public class EasemobIMUsers {
    }
   
    /**
-    * ÖØÖÃIMÓÃ»§ÃÜÂë Ìá¹©¹ÜÀíÔ±token
+    * é‡ç½®IMç”¨æˆ·å¯†ç  æä¾›ç®¡ç†å‘˜token
     * 
     * @param userName
     * @param dataObjectNode
@@ -263,9 +263,9 @@ public class EasemobIMUsers {
       return objectNode;
     }
     if (StringUtils.isEmpty(userName)) {
-      LOGGER.error("Property that named userName must be provided£¬the value is username of imuser.");
+      LOGGER.error("Property that named userName must be providedï¼Œthe value is username of imuser.");
       objectNode.put("message",
-       "Property that named userName must be provided£¬the value is username or imuser.");
+       "Property that named userName must be providedï¼Œthe value is username or imuser.");
       return objectNode;
     }
   
@@ -284,7 +284,7 @@ public class EasemobIMUsers {
    }
    
    /**
-    * Ìí¼ÓºÃÓÑ[µ¥¸ö]
+    * æ·»åŠ å¥½å‹[å•ä¸ª]
     * 
     * @param ownerUserName
     * @param friendUserName
@@ -299,13 +299,13 @@ public class EasemobIMUsers {
        return objectNode;
      }
      if (StringUtils.isEmpty(ownerUserName)) {
-       LOGGER.error("Your userName must be provided£¬the value is username of imuser.");
-       objectNode.put("message", "Your userName must be provided£¬the value is username of imuser.");
+       LOGGER.error("Your userName must be providedï¼Œthe value is username of imuser.");
+       objectNode.put("message", "Your userName must be providedï¼Œthe value is username of imuser.");
        return objectNode;
      }
      if (StringUtils.isEmpty(friendUserName)) {
-       LOGGER.error("The userName of friend must be provided£¬the value is username of imuser.");
-       objectNode.put("message","The userName of friend must be provided£¬the value is username of imuser.");
+       LOGGER.error("The userName of friend must be providedï¼Œthe value is username of imuser.");
+       objectNode.put("message","The userName of friend must be providedï¼Œthe value is username of imuser.");
        return objectNode;
      }
      try {
@@ -319,7 +319,7 @@ public class EasemobIMUsers {
    }
    
    /**
-    * É¾³ıºÃÓÑ
+    * åˆ é™¤å¥½å‹
     * 
     * @param ownerUserName
     * @param friendUserName
@@ -335,14 +335,14 @@ public class EasemobIMUsers {
        return objectNode;
     }
     if (StringUtils.isEmpty(ownerUserName)) {
-      LOGGER.error("Your userName must be provided£¬the value is username of imuser.");
-      objectNode.put("message", "Your userName must be provided£¬the value is username of imuser.");
+      LOGGER.error("Your userName must be providedï¼Œthe value is username of imuser.");
+      objectNode.put("message", "Your userName must be providedï¼Œthe value is username of imuser.");
       return objectNode;
     }
     if (StringUtils.isEmpty(friendUserName)) {
-      LOGGER.error("The userName of friend must be provided£¬the value is username of imuser.");
+      LOGGER.error("The userName of friend must be providedï¼Œthe value is username of imuser.");
       objectNode.put("message",
-       "The userName of friend must be provided£¬the value is username of imuser.");
+       "The userName of friend must be providedï¼Œthe value is username of imuser.");
       return objectNode;
     }
     try {
@@ -357,7 +357,7 @@ public class EasemobIMUsers {
    }
    
    /**
-    * »ñÈ¡ÓÃ»§ËùÓĞºÃÓÑ
+    * è·å–ç”¨æˆ·æ‰€æœ‰å¥½å‹
     * 
     * @param ownerUserName
     * 
@@ -372,8 +372,8 @@ public class EasemobIMUsers {
        return objectNode;
     }
     if (StringUtils.isEmpty(ownerUserName)) {
-       LOGGER.error("Your userName must be provided£¬the value is username of imuser.");
-       objectNode.put("message", "Your userName must be provided£¬the value is username of imuser.");
+       LOGGER.error("Your userName must be providedï¼Œthe value is username of imuser.");
+       objectNode.put("message", "Your userName must be providedï¼Œthe value is username of imuser.");
        return objectNode;
     }
     try {
@@ -387,7 +387,7 @@ public class EasemobIMUsers {
    }
   
    /**
-    * IMÓÃ»§µÇÂ¼
+    * IMç”¨æˆ·ç™»å½•
     * 
     * @param username
     * @param password
@@ -401,13 +401,13 @@ public class EasemobIMUsers {
        return objectNode;
      }
      if (StringUtils.isEmpty(username)) {
-       LOGGER.error("Your username must be provided£¬the value is username of imuser.");
-       objectNode.put("message", "Your username must be provided£¬the value is username of imuser.");
+       LOGGER.error("Your username must be providedï¼Œthe value is username of imuser.");
+       objectNode.put("message", "Your username must be providedï¼Œthe value is username of imuser.");
        return objectNode;
      }
      if (StringUtils.isEmpty(password)) {
-       LOGGER.error("Your password must be provided£¬the value is username of imuser.");
-       objectNode.put("message", "Your password must be provided£¬the value is username of imuser.");
+       LOGGER.error("Your password must be providedï¼Œthe value is username of imuser.");
+       objectNode.put("message", "Your password must be providedï¼Œthe value is username of imuser.");
        return objectNode;
      }
      try {
@@ -426,7 +426,7 @@ public class EasemobIMUsers {
   
    /*************************************************************************************************************************/
    /**
-    * Ö¸¶¨Ç°×ººÍÊıÁ¿Éú³ÉÓÃ»§»ù±¾Êı¾İ
+    * æŒ‡å®šå‰ç¼€å’Œæ•°é‡ç”Ÿæˆç”¨æˆ·åŸºæœ¬æ•°æ®
     * 
     * @param usernamePrefix
     * @param number
@@ -445,100 +445,100 @@ public class EasemobIMUsers {
    
    public static void main(String[] args) {
      /**
-      * ×¢²áIMÓÃ»§[µ¥¸ö]
+      * æ³¨å†ŒIMç”¨æˆ·[å•ä¸ª]
       */
      ObjectNode datanode = JsonNodeFactory.instance.objectNode();
      datanode.put("username","kenshinnuser100");
      datanode.put("password", Constants.DEFAULT_PASSWORD);
      ObjectNode createNewIMUserSingleNode = createNewIMUserSingle(datanode);
      if (null != createNewIMUserSingleNode) {
-         LOGGER.info("×¢²áIMÓÃ»§[µ¥¸ö]: " + createNewIMUserSingleNode.toString());
+         LOGGER.info("æ³¨å†ŒIMç”¨æˆ·[å•ä¸ª]: " + createNewIMUserSingleNode.toString());
      }
 
      /**
-      * IMÓÃ»§µÇÂ¼
+      * IMç”¨æˆ·ç™»å½•
       */
      ObjectNode imUserLoginNode = imUserLogin(datanode.get("username").asText(), datanode.get("password").asText());
      if (null != imUserLoginNode) {
-         LOGGER.info("IMÓÃ»§µÇÂ¼: " + imUserLoginNode.toString());
+         LOGGER.info("IMç”¨æˆ·ç™»å½•: " + imUserLoginNode.toString());
      }
 
      /**
-      * ×¢²áIMÓÃ»§[ÅúÁ¿Éú³ÉÓÃ»§È»ºó×¢²á]
+      * æ³¨å†ŒIMç”¨æˆ·[æ‰¹é‡ç”Ÿæˆç”¨æˆ·ç„¶åæ³¨å†Œ]
       */
      String usernamePrefix = "kenshinnuser";
      Long perNumber = 10l;
      Long totalNumber = 100l;
      ObjectNode createNewIMUserBatchGenNode = createNewIMUserBatchGen(usernamePrefix, perNumber, totalNumber);
      if (null != createNewIMUserBatchGenNode) {
-         LOGGER.info("×¢²áIMÓÃ»§[ÅúÁ¿]: " + createNewIMUserBatchGenNode.toString());
+         LOGGER.info("æ³¨å†ŒIMç”¨æˆ·[æ‰¹é‡]: " + createNewIMUserBatchGenNode.toString());
      }
 
      /**
-      * »ñÈ¡IMÓÃ»§[Ö÷¼ü²éÑ¯]
+      * è·å–IMç”¨æˆ·[ä¸»é”®æŸ¥è¯¢]
       */
      String userName = "kenshinnuser100";
      ObjectNode getIMUsersByUserNameNode = getIMUsersByUserName(userName);
      if (null != getIMUsersByUserNameNode) {
-         LOGGER.info("»ñÈ¡IMÓÃ»§[Ö÷¼ü²éÑ¯]: " + getIMUsersByUserNameNode.toString());
+         LOGGER.info("è·å–IMç”¨æˆ·[ä¸»é”®æŸ¥è¯¢]: " + getIMUsersByUserNameNode.toString());
      }
 
      /**
-      * ÖØÖÃIMÓÃ»§ÃÜÂë Ìá¹©¹ÜÀíÔ±token
+      * é‡ç½®IMç”¨æˆ·å¯†ç  æä¾›ç®¡ç†å‘˜token
       */
      String username = "kenshinnuser100";
      ObjectNode json2 = JsonNodeFactory.instance.objectNode();
      json2.put("newpassword", Constants.DEFAULT_PASSWORD);
      ObjectNode modifyIMUserPasswordWithAdminTokenNode = modifyIMUserPasswordWithAdminToken(username, json2);
      if (null != modifyIMUserPasswordWithAdminTokenNode) {
-         LOGGER.info("ÖØÖÃIMÓÃ»§ÃÜÂë Ìá¹©¹ÜÀíÔ±token: " + modifyIMUserPasswordWithAdminTokenNode.toString());
+         LOGGER.info("é‡ç½®IMç”¨æˆ·å¯†ç  æä¾›ç®¡ç†å‘˜token: " + modifyIMUserPasswordWithAdminTokenNode.toString());
      }
      ObjectNode imUserLoginNode2 = imUserLogin(username, json2.get("newpassword").asText());
      if (null != imUserLoginNode2) {
-         LOGGER.info("ÖØÖÃIMÓÃ»§ÃÜÂëºó,IMÓÃ»§µÇÂ¼: " + imUserLoginNode2.toString());
+         LOGGER.info("é‡ç½®IMç”¨æˆ·å¯†ç å,IMç”¨æˆ·ç™»å½•: " + imUserLoginNode2.toString());
      }
 
      /**
-      * Ìí¼ÓºÃÓÑ[µ¥¸ö]
+      * æ·»åŠ å¥½å‹[å•ä¸ª]
       */
      String ownerUserName = username;
      String friendUserName = "kenshinnuser099";
      ObjectNode addFriendSingleNode = addFriendSingle(ownerUserName, friendUserName);
      if (null != addFriendSingleNode) {
-         LOGGER.info("Ìí¼ÓºÃÓÑ[µ¥¸ö]: " + addFriendSingleNode.toString());
+         LOGGER.info("æ·»åŠ å¥½å‹[å•ä¸ª]: " + addFriendSingleNode.toString());
      }
 
      /**
-      * ²é¿´ºÃÓÑ
+      * æŸ¥çœ‹å¥½å‹
       */
      ObjectNode getFriendsNode = getFriends(ownerUserName);
      if (null != getFriendsNode) {
-         LOGGER.info("²é¿´ºÃÓÑ: " + getFriendsNode.toString());
+         LOGGER.info("æŸ¥çœ‹å¥½å‹: " + getFriendsNode.toString());
      }
 
      /**
-      * ½â³ıºÃÓÑ¹ØÏµ
+      * è§£é™¤å¥½å‹å…³ç³»
       **/
      ObjectNode deleteFriendSingleNode = deleteFriendSingle(ownerUserName, friendUserName);
      if (null != deleteFriendSingleNode) {
-         LOGGER.info("½â³ıºÃÓÑ¹ØÏµ: " + deleteFriendSingleNode.toString());
+         LOGGER.info("è§£é™¤å¥½å‹å…³ç³»: " + deleteFriendSingleNode.toString());
      }
 
      /**
-      * É¾³ıIMÓÃ»§[µ¥¸ö]
+      * åˆ é™¤IMç”¨æˆ·[å•ä¸ª]
       */
      ObjectNode deleteIMUserByuserNameNode = deleteIMUserByuserName(userName);
      if (null != deleteIMUserByuserNameNode) {
-         LOGGER.info("É¾³ıIMÓÃ»§[µ¥¸ö]: " + deleteIMUserByuserNameNode.toString());
+         LOGGER.info("åˆ é™¤IMç”¨æˆ·[å•ä¸ª]: " + deleteIMUserByuserNameNode.toString());
      }
 
      /**
-      * É¾³ıIMÓÃ»§[ÅúÁ¿]
+      * åˆ é™¤IMç”¨æˆ·[æ‰¹é‡]
       */
      Long limit = 2l;
      ObjectNode deleteIMUserByUsernameBatchNode = deleteIMUserByUsernameBatch(limit);
      if (null != deleteIMUserByUsernameBatchNode) {
-         LOGGER.info("É¾³ıIMÓÃ»§[ÅúÁ¿]: " + deleteIMUserByUsernameBatchNode.toString());
+         LOGGER.info("åˆ é™¤IMç”¨æˆ·[æ‰¹é‡]: " + deleteIMUserByUsernameBatchNode.toString());
      }
  }
 
