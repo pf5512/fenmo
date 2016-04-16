@@ -2580,35 +2580,6 @@ public class DateUtil {
   } 
 
  	public static void main(String[] agrs) {
-	 
-	  System.out.println(getConstellation(6,1));
-		// System.out.println(getDateMonthFormat());
-		// System.out.println(getDateMonthDashFormat());
-		// System.out.println(getDateMonthSlashFormat());
-		// System.out.println(getDateDayFormat());
-		// System.out.println(getDateDayDashFormat());
-		// System.out.println(getDateDaySlashFormat());
-		// System.out.println(getDateMinuteFormat());
-		// System.out.println(getDateMinuteDashFormat());
-		// System.out.println(getDateMinuteSlashFormat());
-		// System.out.println(getDateSecondFormat());
-		// System.out.println(getDateSecondDashFormat());
-		// System.out.println(getDateSecondSlashFormat());
-		// System.out.println(getDateMilliFormat());
-		// System.out.println(getDateMilliDashFormat());
-		// System.out.println(getDateMilliSlashFormat());
-		// parseDateFormat("200901", "yyyyMM");
-		/*
-		 * System.out.println(getAddNSeason("20091", -5));
-		 * System.out.println(getAddNSeason("20091", -2));
-		 * System.out.println(getAddNSeason("20091", 0));
-		 * System.out.println(getAddNSeason("20091", 2));
-		 * System.out.println(getAddNSeason("20094", 5));
-		 * System.out.println(formatYearAndSeason("20094", "yyyy年第s季度"));
-		 * System.out.println(getMonths("200801", "200911",
-		 * DATE_FORMAT_YYYY_MM)); System.out.println(getSeasons("20101",
-		 * "20092"));
-		 */
-		//System.out.println(getEndTime(getChineseFirstDayOfWeek(new Date())));
+	    System.out.println(getConstellation(1,22));
 	}
 }
