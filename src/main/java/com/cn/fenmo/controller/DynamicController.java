@@ -219,14 +219,10 @@ public class DynamicController extends ToJson {
   /*删除自己发表的动态,级联删除相关的评论*/
   @RequestMapping("/deleteDynamic")
   public void deleteDynamic(@RequestParam String userPhone,@RequestParam long dynamicId,HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserBean bean= null;
-    String token = (String) RedisClient.get(userPhone);
-    if(StringUtil.isNotNull(token)){    
-      bean = (UserBean)RedisClient.getObject(token);
-    }
-    if(token==null || bean==null){
-      toExMsg(response,UserCnst.INFO_NO_LOGIN);
-    }else{
+      UserBean bean = getUserBeanFromRedis(userPhone);
+      if (bean == null) {
+        toExMsg(response, UserCnst.NO_LOGIN);
+      }
       Dynamic cbean =  this.dynamicService.getBeanById(dynamicId);
       if(cbean==null){
         toExMsg(response, "记录不存在");
@@ -252,7 +248,6 @@ public class DynamicController extends ToJson {
           toExMsg(response, "删除失败");
         }
       }
-    }
   }
 
   
@@ -308,7 +303,7 @@ public class DynamicController extends ToJson {
       cbean.setContent(content);
       cbean.setUserName(userPhone);
       if(this.dynamicCommentService.save(cbean)){
-        toExSuccMsg(response, "评论成功");
+        toExSuccMsg(response,"评论成功");
       }
     }
   }
