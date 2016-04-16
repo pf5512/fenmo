@@ -228,10 +228,11 @@ public class UserController extends ToJson {
       // 用户不存在，提示用户注册
       toExMsg(response, UserCnst.USER_NOT_EXIST);
       return null;
-    } else {
+    }else {
       if (!bean.getPassword().equals(passWord)) {
         toExMsg(response, UserCnst.PASSWORD_ERROR);
-        return null;
+      }else{
+        toJson(response, bean);
       }
     }
     return null;
