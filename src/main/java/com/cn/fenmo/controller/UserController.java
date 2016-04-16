@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.registry.infomodel.User;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,8 +84,7 @@ public class UserController extends ToJson {
   }
 
   @RequestMapping("/getPage")
-  public void getPage(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public void getPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // searchKey可以是手机号，用户昵称，粉陌号
     String searchKey = request.getParameter("searchKey");
     String age = request.getParameter("age");
@@ -95,7 +96,9 @@ public class UserController extends ToJson {
     Map<String, Object> parmas = new HashMap<String, Object>();
     parmas.put("searchKey", searchKey);
     parmas.put("age", age);
-    parmas.put("sex", sex);
+    if(StringUtil.isNotNull(sex)){
+      parmas.put("sex", sex);
+    }
     if (StringUtil.isNumeric(start)) {
       parmas.put("start", Integer.parseInt(start));
     } else {
@@ -129,17 +132,17 @@ public class UserController extends ToJson {
       toExMsg(response, UserCnst.USER_HAVE_REGISTED);
       return null;
     } else {
-	  ObjectNode node = EasemobIMUsers.getIMUsersByUserName(Md5Util.getMd5Value(userPhone));
+	    ObjectNode node = EasemobIMUsers.getIMUsersByUserName(userPhone);
       if(node!=null){
   	   String statusCode = node.get("statusCode").toString();
   	   if("200".equals(statusCode)){
-  		  toExMsg(response, "该手机号已经注册了");
+  		  toExMsg(response, UserCnst.USER_HAVE_REGISTED);
   		  return null;
   	   }
       }
       ObjectNode datanode = JsonNodeFactory.instance.objectNode();
-      datanode.put("username", Md5Util.getMd5Value(userPhone));
-      datanode.put("password", Md5Util.getMd5Value(userPhone));
+      datanode.put("username",userPhone);
+      datanode.put("password",Md5Util.getMd5Value(userPhone));
       ObjectNode objectNode = EasemobIMUsers.createNewIMUserSingle(datanode);
       if (objectNode != null) {
         String statusCode = objectNode.get("statusCode").toString();
@@ -202,7 +205,6 @@ public class UserController extends ToJson {
       }
       if (this.userService.update(bean) == 1) {
         toJson(response, bean);
-        StringUtil.setRides(userPhone, bean);
       } else {
         toExMsg(response, UserCnst.INFO_UPDATE_FAIL);
       }
@@ -212,14 +214,11 @@ public class UserController extends ToJson {
 
   /**
    * 登陆
-   * 
    * @throws IOException
    */
   @ResponseBody
   @RequestMapping(value = "login", method = RequestMethod.POST)
-  public String login(@RequestParam String userPhone,
-      @RequestParam String passWord, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public String login(@RequestParam String userPhone,@RequestParam String passWord, HttpServletRequest request,HttpServletResponse response) throws IOException {
     if (!StringUtil.isMobileNO(userPhone)) {
       toExMsg(response, UserCnst.PARMARS_NOT_ALLOWED);
       return null;
@@ -233,37 +232,6 @@ public class UserController extends ToJson {
       if (!bean.getPassword().equals(passWord)) {
         toExMsg(response, UserCnst.PASSWORD_ERROR);
         return null;
-      }
-      ObjectNode node = EasemobMessages.getUserStatus(Md5Util
-          .getMd5Value(userPhone));
-      if (node != null) {
-        String statusCode = node.get("statusCode").toString();
-        if ("200".equals(statusCode)) {
-          String userStatus = node.get("data")
-              .path(Md5Util.getMd5Value(userPhone)).asText();
-          if ("online".equals(userStatus)) {
-            toJson(response, bean);
-            return null;
-          } else if ("offline".equals(userStatus)) {
-            ObjectNode objectNode = EasemobIMUsers.imUserLogin(
-                Md5Util.getMd5Value(userPhone), Md5Util.getMd5Value(userPhone));
-            if (objectNode != null) {
-              String code = objectNode.get("statusCode").toString();
-              if ("200".equals(code)) {
-                toJson(response, bean);
-                StringUtil.setRides(userPhone, bean);
-                return null;
-              } else {
-                toExMsg(response, UserCnst.HX_FRIENDER_LOGIN);
-              }
-            } else {
-              toExMsg(response, UserCnst.HX_FRIENDER_LOGIN);
-            }
-          }
-        } else {
-          toExMsg(response, "登陆环信服务器出错");
-          return null;
-        }
       }
     }
     return null;
@@ -623,6 +591,15 @@ public class UserController extends ToJson {
     }
     return null;
   }
+ 
+  
+  @RequestMapping(value = "getListUsers", method = RequestMethod.GET)
+  public String getListUsers(@RequestParam String userPhones,HttpServletRequest request, HttpServletResponse response)throws IOException {
+    String[] userPhoneAry = userPhones.split(",");
+    List<UserBean> userList = this.userService.getUserListByUserPhoneList(Arrays.asList(userPhoneAry));
+    toArrayJson(response, userList);
+    return null;
+  }
 
   private String requestToEntity(HttpServletRequest request, UserBean userInfo) {
     String phone = request.getParameter("userPhone");
@@ -636,10 +613,12 @@ public class UserController extends ToJson {
     if (StringUtil.isNotBlank(birthday)) {
       Date date=null;
       try {
-        date = DateUtil.parseDateDayFormat(birthday);
+        date = DateUtil.parseDateDayDashFormat(birthday);
         userInfo.setBirthday(date);
         userInfo.setAge(DateUtil.getAge(birthday));
-        userInfo.setConstellation(DateUtil.getConstellation(date.getMonth(),date.getDay()));
+        int month = date.getMonth() + 1;
+        int day = date.getDate();
+        userInfo.setConstellation(DateUtil.getConstellation(month,day));
       } catch (Exception e) {
         e.printStackTrace();
       }
