@@ -40,7 +40,7 @@
     select a.mainId,a.content,a.createDate,a.userName,a.zcount,
     b.nickName,b.headImgPath,b.sex,b.age
     from fm_news_comment a join fm_user b on a.userName = b.userName
-    where newsId = #{newsId,jdbcType=BIGINT} order by createDate DESC
+    where newsId = #{newsId,jdbcType=BIGINT} order by ${field} DESC
     limit #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
   </select>
   

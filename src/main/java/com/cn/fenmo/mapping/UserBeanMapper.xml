@@ -338,7 +338,8 @@
     where mainId = #{mainid,jdbcType=BIGINT}
   </update>
   <select id="selectUserList" resultType="com.cn.fenmo.pojo.UserBean" parameterType="java.util.List">
-        select *
+        select 
+        <include refid="Base_Column_List" />
         from fm_user e
         where e.userName in
         <foreach collection="list" item="userId" index="index"
@@ -347,7 +348,7 @@
         </foreach>
    </select>
    <select id="selectUserByUserPhoneList" resultType="com.cn.fenmo.pojo.UserBean" parameterType="java.util.List">
-        select e.mainId,e.nickName,e.userName
+        select *
         from fm_user e
         where e.userName in
         <foreach collection="list" item="userPhone" index="index"
