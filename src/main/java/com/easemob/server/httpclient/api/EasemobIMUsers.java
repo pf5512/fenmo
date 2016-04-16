@@ -2,6 +2,7 @@ package com.easemob.server.httpclient.api;
 
 import java.net.URL;
 
+import com.cn.fenmo.util.Md5Util;
 import com.easemob.server.comm.Constants;
 import com.easemob.server.comm.HTTPMethod;
 import com.easemob.server.comm.Roles;
@@ -444,102 +445,103 @@ public class EasemobIMUsers {
    }
    
    public static void main(String[] args) {
-     /**
-      * 注册IM用户[单个]
-      */
-     ObjectNode datanode = JsonNodeFactory.instance.objectNode();
-     datanode.put("username","kenshinnuser100");
-     datanode.put("password", Constants.DEFAULT_PASSWORD);
-     ObjectNode createNewIMUserSingleNode = createNewIMUserSingle(datanode);
-     if (null != createNewIMUserSingleNode) {
-         LOGGER.info("注册IM用户[单个]: " + createNewIMUserSingleNode.toString());
-     }
-
-     /**
-      * IM用户登录
-      */
-     ObjectNode imUserLoginNode = imUserLogin(datanode.get("username").asText(), datanode.get("password").asText());
-     if (null != imUserLoginNode) {
-         LOGGER.info("IM用户登录: " + imUserLoginNode.toString());
-     }
-
-     /**
-      * 注册IM用户[批量生成用户然后注册]
-      */
-     String usernamePrefix = "kenshinnuser";
-     Long perNumber = 10l;
-     Long totalNumber = 100l;
-     ObjectNode createNewIMUserBatchGenNode = createNewIMUserBatchGen(usernamePrefix, perNumber, totalNumber);
-     if (null != createNewIMUserBatchGenNode) {
-         LOGGER.info("注册IM用户[批量]: " + createNewIMUserBatchGenNode.toString());
-     }
-
-     /**
-      * 获取IM用户[主键查询]
-      */
-     String userName = "kenshinnuser100";
-     ObjectNode getIMUsersByUserNameNode = getIMUsersByUserName(userName);
-     if (null != getIMUsersByUserNameNode) {
-         LOGGER.info("获取IM用户[主键查询]: " + getIMUsersByUserNameNode.toString());
-     }
-
-     /**
-      * 重置IM用户密码 提供管理员token
-      */
-     String username = "kenshinnuser100";
-     ObjectNode json2 = JsonNodeFactory.instance.objectNode();
-     json2.put("newpassword", Constants.DEFAULT_PASSWORD);
-     ObjectNode modifyIMUserPasswordWithAdminTokenNode = modifyIMUserPasswordWithAdminToken(username, json2);
-     if (null != modifyIMUserPasswordWithAdminTokenNode) {
-         LOGGER.info("重置IM用户密码 提供管理员token: " + modifyIMUserPasswordWithAdminTokenNode.toString());
-     }
-     ObjectNode imUserLoginNode2 = imUserLogin(username, json2.get("newpassword").asText());
-     if (null != imUserLoginNode2) {
-         LOGGER.info("重置IM用户密码后,IM用户登录: " + imUserLoginNode2.toString());
-     }
-
-     /**
-      * 添加好友[单个]
-      */
-     String ownerUserName = username;
-     String friendUserName = "kenshinnuser099";
-     ObjectNode addFriendSingleNode = addFriendSingle(ownerUserName, friendUserName);
-     if (null != addFriendSingleNode) {
-         LOGGER.info("添加好友[单个]: " + addFriendSingleNode.toString());
-     }
-
-     /**
-      * 查看好友
-      */
-     ObjectNode getFriendsNode = getFriends(ownerUserName);
-     if (null != getFriendsNode) {
-         LOGGER.info("查看好友: " + getFriendsNode.toString());
-     }
-
-     /**
-      * 解除好友关系
-      **/
-     ObjectNode deleteFriendSingleNode = deleteFriendSingle(ownerUserName, friendUserName);
-     if (null != deleteFriendSingleNode) {
-         LOGGER.info("解除好友关系: " + deleteFriendSingleNode.toString());
-     }
-
-     /**
-      * 删除IM用户[单个]
-      */
-     ObjectNode deleteIMUserByuserNameNode = deleteIMUserByuserName(userName);
-     if (null != deleteIMUserByuserNameNode) {
-         LOGGER.info("删除IM用户[单个]: " + deleteIMUserByuserNameNode.toString());
-     }
-
-     /**
-      * 删除IM用户[批量]
-      */
-     Long limit = 2l;
-     ObjectNode deleteIMUserByUsernameBatchNode = deleteIMUserByUsernameBatch(limit);
-     if (null != deleteIMUserByUsernameBatchNode) {
-         LOGGER.info("删除IM用户[批量]: " + deleteIMUserByUsernameBatchNode.toString());
-     }
+//     /**
+//      * 注册IM用户[单个]
+//      */
+//     ObjectNode datanode = JsonNodeFactory.instance.objectNode();
+//     datanode.put("username","kenshinnuser100");
+//     datanode.put("password", Constants.DEFAULT_PASSWORD);
+//     ObjectNode createNewIMUserSingleNode = createNewIMUserSingle(datanode);
+//     if (null != createNewIMUserSingleNode) {
+//         LOGGER.info("注册IM用户[单个]: " + createNewIMUserSingleNode.toString());
+//     }
+//
+//     /**
+//      * IM用户登录
+//      */
+//     ObjectNode imUserLoginNode = imUserLogin(datanode.get("username").asText(), datanode.get("password").asText());
+//     if (null != imUserLoginNode) {
+//         LOGGER.info("IM用户登录: " + imUserLoginNode.toString());
+//     }
+//
+//     /**
+//      * 注册IM用户[批量生成用户然后注册]
+//      */
+//     String usernamePrefix = "kenshinnuser";
+//     Long perNumber = 10l;
+//     Long totalNumber = 100l;
+//     ObjectNode createNewIMUserBatchGenNode = createNewIMUserBatchGen(usernamePrefix, perNumber, totalNumber);
+//     if (null != createNewIMUserBatchGenNode) {
+//         LOGGER.info("注册IM用户[批量]: " + createNewIMUserBatchGenNode.toString());
+//     }
+//
+//     /**
+//      * 获取IM用户[主键查询]
+//      */
+//     String userName = "kenshinnuser100";
+//     ObjectNode getIMUsersByUserNameNode = getIMUsersByUserName(userName);
+//     if (null != getIMUsersByUserNameNode) {
+//         LOGGER.info("获取IM用户[主键查询]: " + getIMUsersByUserNameNode.toString());
+//     }
+//
+//     /**
+//      * 重置IM用户密码 提供管理员token
+//      */
+//     String username = "kenshinnuser100";
+//     ObjectNode json2 = JsonNodeFactory.instance.objectNode();
+//     json2.put("newpassword", Constants.DEFAULT_PASSWORD);
+//     ObjectNode modifyIMUserPasswordWithAdminTokenNode = modifyIMUserPasswordWithAdminToken(username, json2);
+//     if (null != modifyIMUserPasswordWithAdminTokenNode) {
+//         LOGGER.info("重置IM用户密码 提供管理员token: " + modifyIMUserPasswordWithAdminTokenNode.toString());
+//     }
+//     ObjectNode imUserLoginNode2 = imUserLogin(username, json2.get("newpassword").asText());
+//     if (null != imUserLoginNode2) {
+//         LOGGER.info("重置IM用户密码后,IM用户登录: " + imUserLoginNode2.toString());
+//     }
+//
+//     /**
+//      * 添加好友[单个]
+//      */
+//     String ownerUserName = username;
+//     String friendUserName = "kenshinnuser099";
+//     ObjectNode addFriendSingleNode = addFriendSingle(ownerUserName, friendUserName);
+//     if (null != addFriendSingleNode) {
+//         LOGGER.info("添加好友[单个]: " + addFriendSingleNode.toString());
+//     }
+//
+//     /**
+//      * 查看好友
+//      */
+//     ObjectNode getFriendsNode = getFriends(ownerUserName);
+//     if (null != getFriendsNode) {
+//         LOGGER.info("查看好友: " + getFriendsNode.toString());
+//     }
+//
+//     /**
+//      * 解除好友关系
+//      **/
+//     ObjectNode deleteFriendSingleNode = deleteFriendSingle(ownerUserName, friendUserName);
+//     if (null != deleteFriendSingleNode) {
+//         LOGGER.info("解除好友关系: " + deleteFriendSingleNode.toString());
+//     }
+//
+//     /**
+//      * 删除IM用户[单个]
+//      */
+//     ObjectNode deleteIMUserByuserNameNode = deleteIMUserByuserName(userName);
+//     if (null != deleteIMUserByuserNameNode) {
+//         LOGGER.info("删除IM用户[单个]: " + deleteIMUserByuserNameNode.toString());
+//     }
+//
+//     /**
+//      * 删除IM用户[批量]
+//      */
+//     Long limit = 2l;
+//     ObjectNode deleteIMUserByUsernameBatchNode = deleteIMUserByUsernameBatch(limit);
+//     if (null != deleteIMUserByUsernameBatchNode) {
+//         LOGGER.info("删除IM用户[批量]: " + deleteIMUserByUsernameBatchNode.toString());
+//     }
+	   System.out.print("userPhone="+Md5Util.getMd5Value("15867178320"));
  }
 
 }
