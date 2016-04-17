@@ -382,9 +382,7 @@ public class UserController extends ToJson {
 
   /** 用户上传图片，只支持一张图片上传 */
   @RequestMapping(value = "uploadImg", method = RequestMethod.POST)
-  public String uploadImg(@RequestParam String userPhone,
-      @RequestParam MultipartFile myfile, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public String uploadImg(@RequestParam String userPhone,@RequestParam MultipartFile myfile, HttpServletRequest request,HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
     if (bean == null) {
       toExMsg(response, UserCnst.NO_LOGIN);
@@ -395,23 +393,23 @@ public class UserController extends ToJson {
       if (!myfile.isEmpty()) {
         String tempPath = NginxUtil.getNginxDisk() + File.separatorChar+ userPhone;
         String fileName = myfile.getOriginalFilename();
-        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1)
-            .toLowerCase();
+        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String newFileName = df.format(new Date()) + "_"
-            + new Random().nextInt(1000) + "." + fileExt;
+        String newFileName = df.format(new Date()) + "_"+ new Random().nextInt(1000) + "." + fileExt;
         // 此文件只能在linux下才能生成
         File file = new File(tempPath, newFileName);
         FileUtils.copyInputStreamToFile(myfile.getInputStream(), file);
         if (!"".equals(imgUrls) && !";".equals(imgUrls)) {
-          imgUrls = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar
-              + userPhone + File.separatorChar + newFileName + ";" + imgUrls;
+          imgUrls = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar+ userPhone + File.separatorChar + newFileName + ";" + imgUrls;
         } else {
-          imgUrls = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar
-              + userPhone + File.separatorChar + newFileName;
+          imgUrls = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar+ userPhone + File.separatorChar + newFileName;
         }
       }
       bean.setImgUrls(imgUrls);
+      String[] urls =  imgUrls.split(";");
+      if(urls.length>0){
+        bean.setHeadImgPath(urls[0]);
+      }
       if (this.userService.update(bean) == 1) {
         toJson(response, bean);
         RedisClient.set(userPhone, bean.getToken(), CNST.TOKEN_CANCEL);
@@ -425,9 +423,7 @@ public class UserController extends ToJson {
 
   /** 用户删除图片，一次只能删除一张图片 */
   @RequestMapping("/deleteImg")
-  public String deleteImg(@RequestParam String userPhone,
-      @RequestParam String imgName, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public String deleteImg(@RequestParam String userPhone,@RequestParam String imgName, HttpServletRequest request,HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
     if (bean == null) {
       toExMsg(response, UserCnst.NO_LOGIN);
@@ -447,6 +443,10 @@ public class UserController extends ToJson {
           bean.setImgUrls("");
         }
         bean.setImgUrls(imgUrls);
+        String[] urls =  imgUrls.split(";");
+        if(urls.length>0){
+          bean.setHeadImgPath(urls[0]);
+        }
       } else {
         toExMsg(response, "图片不存在");
         return null;
@@ -466,56 +466,50 @@ public class UserController extends ToJson {
     return null;
   }
 
-  /** 用户更新头像 */
-  @RequestMapping(value = "updateHeadImg", method = RequestMethod.POST)
-  public String updateHeadImg(@RequestParam String userPhone,
-      @RequestParam MultipartFile myfile, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
-    UserBean bean = getUserBeanFromRedis(userPhone);
-    if (bean == null) {
-      toExMsg(response, UserCnst.NO_LOGIN);
-      return null;
-    }
-    if (bean != null) {
-      String headImgpath = bean.getHeadImgPath();
-      String updatePath = "";
-      if (!myfile.isEmpty()) {
-        String tempPath = NginxUtil.getNginxDisk() + File.separatorChar
-            + userPhone;
-        String fileName = myfile.getOriginalFilename();
-        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1)
-            .toLowerCase();
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String newFileName = df.format(new Date()) + "_"
-            + new Random().nextInt(1000) + "." + fileExt;
-        // 此文件只能在linux下才能生成
-        File file = new File(tempPath, newFileName);
-        FileUtils.copyInputStreamToFile(myfile.getInputStream(), file);
-        updatePath = NginxUtil.getNginxIP() + File.separatorChar + userPhone
-            + File.separatorChar + newFileName;
-      }
-      bean.setHeadImgPath(HTTPHEAD + updatePath);
-      if (this.userService.update(bean) == 1) {
-        // 删除nginx服务器上原来的头像
-        if (StringUtil.isNotNull(headImgpath)) {
-          headImgpath = headImgpath.replace(NginxUtil.getNginxIP(),
-              NginxUtil.getNginxDisk());
-        } else {
-          toJson(response, bean);
-          return null;
-        }
-        File file = new File(headImgpath);
-        if (file.isFile() && file.delete()) {
-          toJson(response, bean);
-          RedisClient.set(userPhone, bean.getToken(), CNST.TOKEN_CANCEL);
-          RedisClient.setObject(bean.getToken(), bean, CNST.TOKEN_CANCEL);
-        }
-      } else {
-        toExMsg(response, UserCnst.INFO_UPDATE_FAIL);
-      }
-    }
-    return null;
-  }
+//  /** 用户更新头像 */
+//  @RequestMapping(value = "updateHeadImg", method = RequestMethod.POST)
+//  public String updateHeadImg(@RequestParam String userPhone,@RequestParam MultipartFile myfile, HttpServletRequest request,HttpServletResponse response) throws IOException {
+//    UserBean bean = getUserBeanFromRedis(userPhone);
+//    if (bean == null) {
+//      toExMsg(response, UserCnst.NO_LOGIN);
+//      return null;
+//    }
+//    if (bean != null) {
+//      String headImgpath = bean.getHeadImgPath();
+//      String updatePath = "";
+//      if (!myfile.isEmpty()) {
+//        String tempPath = NginxUtil.getNginxDisk() + File.separatorChar+ userPhone;
+//        String fileName = myfile.getOriginalFilename();
+//        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+//        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+//        String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
+//        // 此文件只能在linux下才能生成
+//        File file = new File(tempPath, newFileName);
+//        FileUtils.copyInputStreamToFile(myfile.getInputStream(), file);
+//        updatePath = NginxUtil.getNginxIP() + File.separatorChar + userPhone+ File.separatorChar + newFileName;
+//      }
+//      bean.setHeadImgPath(HTTPHEAD + updatePath);
+//      if (this.userService.update(bean) == 1) {
+//        // 删除nginx服务器上原来的头像
+//        if (StringUtil.isNotNull(headImgpath)) {
+//          headImgpath = headImgpath.replace(NginxUtil.getNginxIP(),
+//              NginxUtil.getNginxDisk());
+//        } else {
+//          toJson(response, bean);
+//          return null;
+//        }
+//        File file = new File(headImgpath);
+//        if (file.isFile() && file.delete()) {
+//          toJson(response, bean);
+//          RedisClient.set(userPhone, bean.getToken(), CNST.TOKEN_CANCEL);
+//          RedisClient.setObject(bean.getToken(), bean, CNST.TOKEN_CANCEL);
+//        }
+//      } else {
+//        toExMsg(response, UserCnst.INFO_UPDATE_FAIL);
+//      }
+//    }
+//    return null;
+//  }
 
   /** 根据当前用户的地址搜索10KM范围内的用户， */
   @RequestMapping("/getNearUsers")
