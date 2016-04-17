@@ -22,5 +22,7 @@ public interface NewsMapper {
     
     List<News> selectNewsHeadPage(Map<String, Object> params);
     
+    List<News> selectInterfixNews(Map<String, Object> params);
+    
     int updateZCount(Map<String, Object> params);
 }

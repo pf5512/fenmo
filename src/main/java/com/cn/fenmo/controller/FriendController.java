@@ -234,21 +234,27 @@ public class FriendController extends ToJson{
        toExMsg(response,UserCnst.NO_LOGIN);
        return null;
      }else{
+       String searchKey = request.getParameter("searchKey");
        String start = request.getParameter("start");
        String limit = request.getParameter("limit");
        Map<String, Object> parmars =  new HashMap<String, Object>();
        parmars.put("userPhone", userPhone);
        parmars.put("state",3);
+       if(StringUtil.isNotNull(searchKey)){
+         parmars.put("searchKey", searchKey);
+       }
        int count =  this.userService.selectMyFriendCount(parmars);
        List<UserBean> myfriendList= new ArrayList<UserBean>();
        ViewPage viewPage = new ViewPage();
        if(StringUtil.isNumeric(start)){
          parmars.put("start",Integer.parseInt(start));
+         viewPage.setPageStart(Integer.parseInt(start));
        }else{
          parmars.put("start", viewPage.getPageStart());
        }
        if(StringUtil.isNumeric(limit)){
          parmars.put("limit",Integer.parseInt(limit));
+         viewPage.setPageLimit(Integer.parseInt(limit));
        }else{
          parmars.put("limit",viewPage.getPageLimit());
        }

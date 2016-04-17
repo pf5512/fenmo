@@ -400,7 +400,7 @@ public class UserController extends ToJson {
         File file = new File(tempPath, newFileName);
         FileUtils.copyInputStreamToFile(myfile.getInputStream(), file);
         if (!"".equals(imgUrls) && !";".equals(imgUrls)) {
-          imgUrls = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar+ userPhone + File.separatorChar + newFileName + ";" + imgUrls;
+          imgUrls = imgUrls+";"+HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar+ userPhone + File.separatorChar + newFileName;
         } else {
           imgUrls = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar+ userPhone + File.separatorChar + newFileName;
         }
