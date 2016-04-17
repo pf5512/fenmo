@@ -491,11 +491,11 @@ public class RoomController extends ToJson {
 //  }
 
   /**
-   * 修改群聊名称,修改群组的roomName只有群主才能修改,此处修改的群组为公开群
+   * 修改群聊名称,修改群组的roomName只有群主才能修改,不管是公有群还是私有群都适用
    * @param request
    * @param response
    */
-  @RequestMapping("/updateRoomName")
+  @RequestMapping(value = "updateRoomName", method = RequestMethod.POST)
   public String updateRoomName(@RequestParam String userPhone,@RequestParam String groupId,@RequestParam String roomName,HttpServletRequest request,HttpServletResponse response) throws IOException {
     if(getBeanFromRedis(userPhone)==null){
       toExMsg(response, UserCnst.NO_LOGIN);

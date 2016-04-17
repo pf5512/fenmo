@@ -115,6 +115,7 @@ public class UserController extends ToJson {
     viewPage.setListResult(userList);
     toViewPage(response, viewPage);
   }
+  
 
   /**
    * ÓÃ»§×¢²á
