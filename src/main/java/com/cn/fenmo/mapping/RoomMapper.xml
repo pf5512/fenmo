@@ -43,12 +43,12 @@
   </delete>
 
   <insert id="insert" parameterType="com.cn.fenmo.pojo.Room">
-    insert into fm_room (mainId, userName, roomName,description,subject, type, ispublic,maxUsers, createDate,groupId, userCounts,membersonly,headImgeUrl)
+    insert into fm_room (mainId, userName, roomName,description,subject, type, ispublic,maxUsers, createDate,groupId, userCounts,membersonly,headImgePath)
     values (#{mainid,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{roomName,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{ispublic,jdbcType=INTEGER}, 
       #{maxusers,jdbcType=INTEGER}, #{createdate,jdbcType=DATE},  
       #{groupId,jdbcType=VARCHAR}, #{userCounts,jdbcType=INTEGER}, 
-      #{membersonly,jdbcType=INTEGER},#{headImgeUrl,jdbcType=VARCHAR})
+      #{membersonly,jdbcType=INTEGER},#{headImgePath,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.cn.fenmo.pojo.Room">
     update fm_room
