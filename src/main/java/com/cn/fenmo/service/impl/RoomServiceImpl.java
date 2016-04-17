@@ -70,4 +70,8 @@ public class RoomServiceImpl implements IRoomService {
     public Room getMaxUseRoom(String userName) {
       return this.roomMapper.selectRoomMaxUsers(userName);
     }
+
+    public Room getRoomByParams(Map<String, Object> params) {
+      return this.roomMapper.selectRoomByParmas(params);
+    }
 }

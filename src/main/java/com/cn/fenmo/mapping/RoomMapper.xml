@@ -15,6 +15,7 @@
     <result column="groupId" jdbcType="BIGINT" property="groupId" />
     <result column="userCounts" jdbcType="INTEGER" property="userCounts" />
     <result column="membersonly" jdbcType="INTEGER" property="membersonly" />
+    <result column="bjImgUrl" jdbcType="VARCHAR" property="bjImgUrl" />
   </resultMap>
   <sql id="Base_Column_List" >
     mainId,userName,roomName,description,subject,type,ispublic,maxUsers,createDate,headImgePath,groupId,userCounts,membersonly
@@ -117,6 +118,13 @@
 	    from fm_room
 	    where groupId = #{groupId,jdbcType=VARCHAR}
    </select>
+   
+   <select id="selectRoomByParmas" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT A.*,B.bjImgUrl,B.userName userPhone from fm_room A,fm_room_bjImg B
+		where A.groupId =  #{groupId,jdbcType=VARCHAR} and B.userName=#{userPhone,jdbcType=VARCHAR} 
+		AND A.groupId =  B.groupId  
+   </select>
+   
    <select id="selectHotRooms" resultMap="BaseResultMap">
 	   select  <include refid="Base_Column_List" />
 	   from fm_room a

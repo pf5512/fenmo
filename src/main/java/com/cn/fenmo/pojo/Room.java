@@ -40,8 +40,18 @@ public class Room implements Serializable {
     private Integer membersonly;
     
     private String membersonlyStr;
+    
+    private String bjImgUrl;
 
     private static final long serialVersionUID = 1L;
+    
+    public String getBjImgUrl() {
+      return bjImgUrl;
+    }
+
+    public void setBjImgUrl(String bjImgUrl) {
+      this.bjImgUrl = bjImgUrl;
+    }
 
     public String getSubject() {
       return subject;

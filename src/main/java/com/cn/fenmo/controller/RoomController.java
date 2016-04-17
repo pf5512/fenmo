@@ -64,7 +64,7 @@ public class RoomController extends ToJson {
   private final String HTTPHEAD="http://";
   
   /**
-   * 上传用户群组背景图
+   * 上传群组背景图
    */
   @RequestMapping(value = "uploadBjImg", method = RequestMethod.POST)
   public String uploadBjImg(@RequestParam String userPhone,@RequestParam String groupId,@RequestParam MultipartFile myfile,HttpServletRequest request,HttpServletResponse response) throws IOException {
@@ -89,7 +89,7 @@ public class RoomController extends ToJson {
     if(roomBjImg!=null){
       oldPath = roomBjImg.getBjImgUrl();
       roomBjImg.setBjImgUrl(tpUrl);
-      //删除nginx服务器上原来的头像
+      //删除nginx服务器上原来的背景
       if(StringUtil.isNotNull(oldPath)){
         oldPath = oldPath.replace(HTTPHEAD+NginxUtil.getNginxIP(),NginxUtil.getNginxDisk());
         File file = new File(oldPath);
@@ -117,6 +117,23 @@ public class RoomController extends ToJson {
   @RequestMapping("/getRoomById")
   public String getRoomById(@RequestParam String groupId,HttpServletRequest request,HttpServletResponse response) throws IOException {
     Room room = this.roomService.getRoomByGroupId(groupId);
+    if(room!=null){
+      toJson(response, room);
+    }else{
+      toExMsg(response, "群组不存在");
+    }
+    return null;
+  }
+  
+  /**
+   * 获取群组详细信息，主要在于获取群组的背景图片
+   */
+  @RequestMapping("/getRoomByUserPhone")
+  public String getRoomByUserPhone(@RequestParam String groupId,@RequestParam String userPhone,HttpServletRequest request,HttpServletResponse response) throws IOException {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("groupId", groupId);
+    params.put("userPhone", userPhone);
+    Room room = this.roomService.getRoomByParams(params);
     if(room!=null){
       toJson(response, room);
     }else{
@@ -772,7 +789,7 @@ public class RoomController extends ToJson {
    * @throws IOException
    */
   @RequestMapping("/getRoomMembersFromLocal")
-  public String getRoomMembersFromLocal(@RequestParam String userPhone,@RequestParam String groupId,HttpServletRequest request,HttpServletResponse response) throws IOException{
+  public String getRoomMembersFromLocal(@RequestParam String groupId,HttpServletRequest request,HttpServletResponse response) throws IOException{
     List<UserBean> userList = this.userService.getRoomMembers(groupId);
     toArrayJson(response, userList);
     return null;

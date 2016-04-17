@@ -16,6 +16,8 @@ public interface RoomMapper {
     Room selectByPrimaryKey(Long mainid);
     
     Room selectRoomMaxUsers(String userName);
+    
+    Room selectRoomByParmas(Map<String,Object> params);
 
     int updateByPrimaryKeySelective(Room record);
 

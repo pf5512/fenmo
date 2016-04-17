@@ -18,6 +18,8 @@ public interface IRoomService {
 	public Room getRoomByGroupId(String groupId);
 	
   public Room getMaxUseRoom(String userName);
+  
+  public Room getRoomByParams(Map<String,Object> params);
 
 	public void deleteRoomByGroupId(String groupId);
 	
