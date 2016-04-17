@@ -69,6 +69,10 @@ public class NewsServiceImpl implements NewsService{
 	public boolean updateNews(News news) {
 		return this.newsMapper.update(news)==1?true:false;
 	}
+
+  public List<News> getInterfixNews(Map<String, Object> params) {
+    return this.newsMapper.selectInterfixNews(params);
+  }
   
 
 }

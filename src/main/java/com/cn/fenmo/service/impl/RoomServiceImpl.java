@@ -60,7 +60,7 @@ public class RoomServiceImpl implements IRoomService {
   	    Room room = list.get(i);
   	    room.setTypeStr(room.getType());
   	  }
-  	   return  list;
+  	  return list;
   	}
 
     public List<Room> getHotRooms() {

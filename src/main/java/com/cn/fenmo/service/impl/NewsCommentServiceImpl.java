@@ -44,7 +44,7 @@ public class NewsCommentServiceImpl implements NewsCommentService{
     if(newsComment==null){
       return false;
     }else{
-      int zcount = newsComment.getZcount();
+      int zcount = newsComment.getZcount()+1;
       Map<String,Object> parmsMap = new HashMap<String, Object>();
       parmsMap.put("zcount", zcount);
       parmsMap.put("mainId", mainId);

@@ -35,6 +35,10 @@ public interface NewsService {
   //查找新闻表中最新的新闻
   public List<News> getNewsHeadPage(Map<String,Object> params);
   
+  
+  //查找相关新闻
+  public List<News> getInterfixNews(Map<String,Object> params);
+  
     /**
    * 
    * @Description: 获取新闻详情

@@ -82,7 +82,15 @@
      	<if test="page!=null and rows !=null">
      		LIMIT #{page,jdbcType=INTEGER},#{rows,jdbcType=INTEGER}
      	</if>
-	     
+   </select>
+   
+    <!-- 获取相关新闻 -->
+   <select id="selectInterfixNews" resultMap="BaseResultMap" parameterType="java.util.Map">
+	     SELECT * From fm_news
+	     WHERE newsType = #{newsType,jdbcType=INTEGER}
+	     AND state=#{state,jdbcType=INTEGER}
+	     ORDER BY createDate desc
+	     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
    </select>
    
    <select id="selectNewsHeadPage" resultMap="BaseResultMap" parameterType="java.util.Map">

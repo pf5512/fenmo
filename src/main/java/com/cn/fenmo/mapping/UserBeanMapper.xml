@@ -124,6 +124,10 @@
 						userPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
 				)
 	) as u
+	where 1=1
+	<if test="searchKey!= null" >
+         and (phone like '${searchKey}%' or nickName like '${searchKey}%')
+    </if>
     ORDER BY starLevel DESC,registerTime DESC
     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
   </select>
