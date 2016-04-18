@@ -67,7 +67,7 @@
       membersonly = #{membersonly,jdbcType=INTEGER}
       where mainId = #{mainid,jdbcType=BIGINT}
   </update>
-  <select id="selectCount" resultType="Integer">
+  <select id="selectCount" resultType="Integer" parameterType="java.util.Map">
 	    select count(*)
 	    from fm_room
 	    where 1=1
@@ -102,6 +102,18 @@
         <if test="ispublic!=null" >
            and ispublic= #{ispublic,jdbcType=INTEGER}
         </if>
+	    order by createDate desc
+	    LIMIT #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
+   </select>
+   
+   <select id="selectMyJoinRoomCount" parameterType="java.util.Map" resultType="Integer">
+	    select count(*)
+	    from fm_room where groupId in (select groupId FROM fm_room_users where userName = #{userName,jdbcType=VARCHAR})
+   </select>
+   
+   <select id="selectMyJoinRoom" resultMap="BaseResultMap" parameterType="java.util.Map">
+	    select <include refid="Base_Column_List" />
+	    from fm_room where groupId in (select groupId FROM fm_room_users where userName = #{userName,jdbcType=VARCHAR})
 	    order by createDate desc
 	    LIMIT #{start,jdbcType=VARCHAR},#{limit,jdbcType=VARCHAR}
    </select>

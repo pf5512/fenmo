@@ -24,6 +24,8 @@ public interface UserBeanMapper {
   
   List<UserBean> selectPageBy(Map<String, Object> parmars);
   
+  List<UserBean> selectMembers(Map<String, Object> parmars);
+  
   int selectMyFriendCount(Map<String, Object> parmars);
   
   int selectMyFriendCountBy(Map<String, Object> parmars);

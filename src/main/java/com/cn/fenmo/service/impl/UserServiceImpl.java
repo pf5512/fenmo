@@ -54,9 +54,6 @@ public class UserServiceImpl implements IUserService {
   public int selectMyFriendCountBy(Map<String, Object> params) {
     return this.userBeanMapper.selectMyFriendCountBy(params);
   }
-  public List<UserBean> getRoomMembers(String groupId) {
-    return this.userBeanMapper.selectMembers(groupId);
-  }
   
   public UserBean getUserBeanByUserPhone(String userPhone) {
     String token = (String) RedisClient.get(userPhone);
@@ -90,5 +87,8 @@ public class UserServiceImpl implements IUserService {
   }
   public List<UserBean> selectMyFriendRequest(Map<String, Object> params) {
     return this.userBeanMapper.selectMyFriendRequest(params);
+  }
+  public List<UserBean> getRoomMembers(Map<String, Object> params) {
+    return this.userBeanMapper.selectMembers(params);
   }
 }

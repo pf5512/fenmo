@@ -25,6 +25,10 @@ public interface RoomMapper {
     
     List<Room> selectByName(String name);
     
+    int selectMyJoinRoomCount(Map<String,Object> params);
+    
+    List<Room> selectMyJoinRoom(Map<String,Object> params);
+    
     int selectCount(Map<String, Object> parmars);
     
     List<Room> selectPageBy(Map<String, Object> parmars);

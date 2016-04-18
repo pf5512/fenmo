@@ -229,9 +229,9 @@ public class RoomController extends ToJson {
       params.put("userName",userPhone);
     }
     List<Room> roomlist = new ArrayList<Room>();
-    int count = this.roomService.selectCount(params);
+    int count = this.roomService.getMyJoinRoomCount(params);
     if(count>0){
-      roomlist =  (List<Room>) this.roomService.getRooms(params);
+      roomlist =  (List<Room>) this.roomService.getMyJoinRoom(params);
       viewPage.setTotalCount(count);
       viewPage.setListResult(roomlist);
     }
@@ -644,7 +644,9 @@ public class RoomController extends ToJson {
         bean.setUserName(addUserName);
         bean.setStartdate(new Date());
         if(this.roomUsersService.save(bean)){
-          List<UserBean> userList = this.userService.getRoomMembers(groupId);
+          Map<String,Object> params =  new HashMap<String, Object>();
+          params.put("groupId", groupId);
+          List<UserBean> userList = this.userService.getRoomMembers(params);
           toArrayJson(response, userList);
         }
       }
@@ -790,7 +792,13 @@ public class RoomController extends ToJson {
    */
   @RequestMapping("/getRoomMembersFromLocal")
   public String getRoomMembersFromLocal(@RequestParam String groupId,HttpServletRequest request,HttpServletResponse response) throws IOException{
-    List<UserBean> userList = this.userService.getRoomMembers(groupId);
+    String searchKey = request.getParameter("searchKey");
+    Map<String,Object> parmas =  new HashMap<String, Object>();
+    parmas.put("groupId", groupId);
+    if(StringUtil.isNotNull(searchKey)){
+      parmas.put("searchKey", searchKey);
+    }
+    List<UserBean> userList = this.userService.getRoomMembers(parmas);
     toArrayJson(response, userList);
     return null;
   }

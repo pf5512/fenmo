@@ -159,6 +159,9 @@
 	    select <include refid="Base_Column_List" />
 	    from fm_user
 	    where userName in (select userName  from fm_room_users where groupId =#{groupId,jdbcType=VARCHAR})
+	    <if test="searchKey!= null" >
+         and (userName like '${searchKey}%' or nickName like '${searchKey}%' or fmNo like '${searchKey}%'  )
+        </if>
   </select>
   
    <select id="selectMyFriendCountBy" resultType="Integer" parameterType="java.util.Map" >

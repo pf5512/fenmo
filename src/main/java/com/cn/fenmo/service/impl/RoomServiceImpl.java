@@ -56,10 +56,6 @@ public class RoomServiceImpl implements IRoomService {
   
   	public List<Room> getRooms(Map<String, Object> params) {
   	  List<Room> list = this.roomMapper.selectPageBy(params);
-  	  for(int i=0;i<list.size();i++){
-  	    Room room = list.get(i);
-  	    room.setTypeStr(room.getType());
-  	  }
   	  return list;
   	}
 
@@ -73,5 +69,13 @@ public class RoomServiceImpl implements IRoomService {
 
     public Room getRoomByParams(Map<String, Object> params) {
       return this.roomMapper.selectRoomByParmas(params);
+    }
+
+    public List<Room> getMyJoinRoom(Map<String, Object> params) {
+      return this.roomMapper.selectMyJoinRoom(params);
+    }
+
+    public int getMyJoinRoomCount(Map<String, Object> params) {
+      return this.roomMapper.selectMyJoinRoomCount(params);
     }
 }

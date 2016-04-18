@@ -25,6 +25,10 @@ public interface IRoomService {
 	
 	public List<Room> getHotRooms();
 	
+	public int getMyJoinRoomCount(Map<String,Object> params);
+	
+	public List<Room> getMyJoinRoom(Map<String,Object> params);
+	
 	public List<Room> getRooms(Map<String, Object> params);
 	
 	public List<Room> getRoomByName(String roomName);

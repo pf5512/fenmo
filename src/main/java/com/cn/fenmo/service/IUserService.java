@@ -12,37 +12,38 @@ public interface IUserService {
   public int update(UserBean userBean);
   public int updateLocation(Map<String, Object> params);
   public List<UserBean> selectUserBy(Map<String,Object> params);
- 	public int selectCount(Map<String,Object> params);
- 	public UserBean getUserBeanByPhone(String phone);
+  public int selectCount(Map<String,Object> params);
+  public UserBean getUserBeanByPhone(String phone);
   public UserBean getUserByToken(String token); 
   public List<UserBean> getMyFriend(Map<String,Object> params);
   public int selectMyFriendCount(Map<String,Object> params);
   
   public List<UserBean> selectMyFriendRequest(Map<String,Object> params);
   
-  //根据userId获取对应的userbean
+  //鏍规嵁userId鑾峰彇瀵瑰簲鐨剈serbean
   public List<UserBean> getUserList(List<String> userIdList);
   
-  //根据10KM内的用户
+  //鏍规嵁10KM鍐呯殑鐢ㄦ埛
   public List<UserBean> getNearUsers(Map<String, Object> params);
   
-  //根据userPhoneList批量获取user
+  //鏍规嵁userPhoneList鎵归噺鑾峰彇user
   public List<UserBean> getUserListByUserPhoneList(List<String> userPhoneList);
   
   public int selectMyFriendCountBy(Map<String,Object> params);
-  //查找我的好友
+  //鏌ユ壘鎴戠殑濂藉弸
   public List<UserBean> searchMyfriend(Map<String,Object> params);
   
-  //查找群组中的成员
-  public List<UserBean> getRoomMembers(String groupId);
+  //鏌ユ壘缇ょ粍涓殑鎴愬憳
+  public List<UserBean> getRoomMembers(Map<String,Object> params);
   
-  //查找redis中的userBean 
+  
+  //鏌ユ壘redis涓殑userBean 
   public UserBean getUserBeanByUserPhone(String userPhone);
   
-  //根据fmNo查找用户 
+  //鏍规嵁fmNo鏌ユ壘鐢ㄦ埛 
   public UserBean getUserBeanByFmNo(String fmNo);
   
-  //根据startLevel获取用户列表
+  //鏍规嵁startLevel鑾峰彇鐢ㄦ埛鍒楄〃
   public List<UserBean> getUsersByStarLevel(int starLevel);
  
  }
