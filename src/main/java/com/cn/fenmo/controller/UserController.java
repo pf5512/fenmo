@@ -347,9 +347,7 @@ public class UserController extends ToJson {
 
   /** 用户上传头像 */
   @RequestMapping("/uploadTx")
-  public String uploadTx(@RequestParam String userPhone,
-      @RequestParam MultipartFile myfile, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public String uploadTx(@RequestParam String userPhone,@RequestParam MultipartFile myfile, HttpServletRequest request,HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
     if (bean == null) {
       toExMsg(response, UserCnst.NO_LOGIN);
@@ -357,19 +355,15 @@ public class UserController extends ToJson {
     }
     if (bean != null) {
       if (!myfile.isEmpty()) {
-        String tempPath = NginxUtil.getNginxDisk() + File.separatorChar
-            + userPhone;
+        String tempPath = NginxUtil.getNginxDisk() + File.separatorChar+ userPhone;
         String fileName = myfile.getOriginalFilename();
-        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1)
-            .toLowerCase();
+        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String newFileName = df.format(new Date()) + "_"
-            + new Random().nextInt(1000) + "." + fileExt;
+        String newFileName = df.format(new Date()) + "_"+ new Random().nextInt(1000) + "." + fileExt;
         // 此文件只能在linux下才能生成
         File file = new File(tempPath, newFileName);
         FileUtils.copyInputStreamToFile(myfile.getInputStream(), file);
-        String tpUrl = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar
-            + userPhone + File.separatorChar + newFileName;
+        String tpUrl = HTTPHEAD + NginxUtil.getNginxIP() + File.separatorChar + userPhone + File.separatorChar + newFileName;
         bean.setHeadImgPath(tpUrl);
       }
       if (this.userService.update(bean) == 1) {

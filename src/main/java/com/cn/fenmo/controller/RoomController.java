@@ -67,24 +67,12 @@ public class RoomController extends ToJson {
    * 上传群组背景图
    */
   @RequestMapping(value = "uploadBjImg", method = RequestMethod.POST)
-  public String uploadBjImg(@RequestParam String userPhone,@RequestParam String groupId,@RequestParam MultipartFile myfile,HttpServletRequest request,HttpServletResponse response) throws IOException {
+  public String uploadBjImg(@RequestParam String userPhone,@RequestParam String groupId,@RequestParam String tpUrl,HttpServletRequest request,HttpServletResponse response) throws IOException {
     if(getBeanFromRedis(userPhone)==null){
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }
-    String tpUrl="";
     String oldPath="";
-    if(!myfile.isEmpty()){  
-      String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+userPhone;
-      String  fileName = myfile.getOriginalFilename();
-      String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-      String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
-      //此文件只能在linux下才能生成
-      File file = new File(tempPath,newFileName);
-      FileUtils .copyInputStreamToFile(myfile.getInputStream(),file); 
-      tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+userPhone+File.separatorChar+newFileName;
-    }
     RoomBjImg roomBjImg = this.roomBjImgService.getBean(userPhone,groupId);
     if(roomBjImg!=null){
       oldPath = roomBjImg.getBjImgUrl();
@@ -122,6 +110,18 @@ public class RoomController extends ToJson {
     }else{
       toExMsg(response, "群组不存在");
     }
+    return null;
+  }
+  
+  /**
+   * 获取群组背景图片(备选)
+   */
+  @RequestMapping("/getRoomBjImgs")
+  public String getRoomBjImgs(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    List<String> list = new ArrayList<String>();
+    list.add("http://60.190.243.154/18680683004/20160417105803_81.jpg");
+    list.add("http://60.190.243.154/18680683004/20160415162926_732.jpg");
+    toArrayJson(response, list);
     return null;
   }
   
