@@ -124,35 +124,35 @@ public class EasemobChatGroups {
    * @return
    */
   public static ObjectNode updateChatGroups(ObjectNode dataObjectNode,String chatgroupid) {
-	    ObjectNode objectNode = factory.objectNode();
-	    // check appKey format
-	    if (!HTTPClientUtils.match("^(?!-)[0-9a-zA-Z\\-]+#[0-9a-zA-Z]+", APPKEY)) {
-	      LOGGER.error("Bad format of Appkey: " + APPKEY);
-	      objectNode.put("message", "Bad format of Appkey");
-	      return objectNode;
-	    }
-	    // check properties that must be provided
-	    if (!dataObjectNode.has("groupname")) {
-	      LOGGER.error("Property that named groupname must be provided .");
-	      objectNode.put("message",
-	          "Property that named groupname must be provided .");
-	      return objectNode;
-	    }
-	    if (!dataObjectNode.has("description")) {
-	      LOGGER.error("Property that named description must be provided .");
-	      objectNode.put("message", "Property that named description must be provided .");
-	      return objectNode;
-	    }
+      ObjectNode objectNode = factory.objectNode();
+      // check appKey format
+      if (!HTTPClientUtils.match("^(?!-)[0-9a-zA-Z\\-]+#[0-9a-zA-Z]+", APPKEY)) {
+        LOGGER.error("Bad format of Appkey: " + APPKEY);
+        objectNode.put("message", "Bad format of Appkey");
+        return objectNode;
+      }
+      // check properties that must be provided
+      if (!dataObjectNode.has("groupname")) {
+        LOGGER.error("Property that named groupname must be provided .");
+        objectNode.put("message",
+            "Property that named groupname must be provided .");
+        return objectNode;
+      }
+      if (!dataObjectNode.has("description")) {
+        LOGGER.error("Property that named description must be provided .");
+        objectNode.put("message", "Property that named description must be provided .");
+        return objectNode;
+      }
 
-	    try {
-	    	URL updateChatGroupsUrl = HTTPClientUtils.getURL(Constants.APPKEY.replace("#", "/")+ "/chatgroups/" + chatgroupid);
-	    	objectNode = HTTPClientUtils.sendHTTPRequest(updateChatGroupsUrl,credential, dataObjectNode, HTTPMethod.METHOD_PUT);
-	    } catch (Exception e) {
-	      e.printStackTrace();
-	    }
+      try {
+        URL updateChatGroupsUrl = HTTPClientUtils.getURL(Constants.APPKEY.replace("#", "/")+ "/chatgroups/" + chatgroupid);
+        objectNode = HTTPClientUtils.sendHTTPRequest(updateChatGroupsUrl,credential, dataObjectNode, HTTPMethod.METHOD_PUT);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
 
-	    return objectNode;
-	  }
+      return objectNode;
+    }
   
   /**
    * É¾³ýÈº×é
@@ -366,8 +366,7 @@ public class EasemobChatGroups {
      */
     String addToChatgroupid = "1405735927133519";
     String toAddUsername = "xiaojianguo002";
-    ObjectNode addUserToGroupNode = addUserToGroup(addToChatgroupid,
-        toAddUsername);
+    ObjectNode addUserToGroupNode = addUserToGroup(addToChatgroupid,toAddUsername);
     System.out.println(addUserToGroupNode.toString());
 
     /**
