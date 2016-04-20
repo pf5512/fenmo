@@ -141,6 +141,43 @@ public class FriendController extends ToJson{
      }
    }
    
+   
+   /*好友备注*/
+   @RequestMapping("/updateNick")
+   public String updateNick(@RequestParam String userPhone,@RequestParam String friendPhone,@RequestParam String nickName,HttpServletRequest request,HttpServletResponse response){
+     UserBean bean = getUserBeanFromRedis(userPhone);
+     if(bean==null){
+       toExMsg(response,UserCnst.NO_LOGIN);
+       return null;
+     }else{
+       Friend friend = this.friendService.getFreind(userPhone, friendPhone);
+       if(friend!=null){
+         friend.setNickName(nickName);
+         this.friendService.update(friend);
+         toJSON(response, bean);
+       }
+     }
+     return null;
+   }
+   
+   /*是否好友*/
+   @RequestMapping("/isFriend")
+   public String isFriend(@RequestParam String userPhone,@RequestParam String friendPhone,HttpServletRequest request,HttpServletResponse response){
+     UserBean bean = getUserBeanFromRedis(userPhone);
+     if(bean==null){
+       toExMsg(response,UserCnst.NO_LOGIN);
+       return null;
+     }else{
+       Friend friend = this.friendService.getFreind(userPhone, friendPhone);
+       if(friend!=null&&friend.getState()==3){
+         toExSucc(response,true);
+       }else{
+         toExSucc(response,false);
+       }
+     }
+     return null;
+   }
+   
    /** 拒绝好友请求(单个)*/
    @RequestMapping("/refuseFriend")
    public String refuseFriend(@RequestParam String userPhone,@RequestParam String friendPhone,HttpServletRequest request,HttpServletResponse response) throws IOException{

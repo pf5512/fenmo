@@ -290,22 +290,12 @@ public class UserController extends ToJson {
   /** 通过token获取用户 */
   @RequestMapping("/getUserByToken")
   public String getUserByToken(@RequestParam String token,HttpServletRequest request, HttpServletResponse response)throws IOException {
-    boolean isSuccess = RedisClient.TestRedisIsSuccess();
-    UserBean bean = null;
-    if (isSuccess) {
-      bean = (UserBean) RedisClient.getObject(token);
-    }
-    if (bean == null) {
-      bean = this.userService.getUserByToken(token);
-      if (bean == null) {
-        toExMsg(response, UserCnst.USER_NOT_EXIST);
-        return null;
-      } else {
-        RedisClient.setObject(bean.getToken(), bean);
-        toJson(response, bean);
-      }
-    } else {
-      toJson(response, bean);
+    UserBean  userBean = this.userService.getUserByToken(token);
+    if (userBean!= null) {
+      toJson(response, userBean);
+    }else{
+      toExMsg(response, UserCnst.USER_NOT_EXIST);
+      return null;
     }
     return null;
   }

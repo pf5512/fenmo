@@ -133,11 +133,21 @@ public class RoomController extends ToJson {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("groupId", groupId);
     params.put("userPhone", userPhone);
-    Room room = this.roomService.getRoomByParams(params);
-    if(room!=null){
-      toJson(response, room);
+    RoomBjImg roomBjImg = this.roomBjImgService.getBean(userPhone,groupId);
+    if(roomBjImg==null){
+      Room room = this.roomService.getRoomByGroupId(groupId);
+      if(room!=null){
+        toJson(response, room);
+      }else{
+        toExMsg(response, "群组不存在");
+      }
     }else{
-      toExMsg(response, "群组不存在");
+      Room room = this.roomService.getRoomByParams(params);
+      if(room!=null){
+        toJson(response, room);
+      }else{
+        toExMsg(response, "群组不存在");
+      }
     }
     return null;
   }
@@ -307,7 +317,7 @@ public class RoomController extends ToJson {
     datanode.put("allowinvites", true);
     //是否只有群成员可以进来发言，true 是 ， false 否
     datanode.put("membersonly", false );
-    datanode.put("owner",Md5Util.getMd5Value(userPhone));
+    datanode.put("owner",userPhone);
     ObjectNode node = EasemobChatGroups.creatChatGroups(datanode);
     if (node != null) {
       String statusCode = node.get("statusCode").toString();
@@ -328,6 +338,12 @@ public class RoomController extends ToJson {
         bean.setHeadImgePath(headImgeUrl);
         if(this.roomService.save(bean)){
           toJson(response, bean);
+          //向本地数据库fm_room_users中插入一条记录（把自己加入到群组中）
+          RoomUsers roomUser=  new RoomUsers();
+          roomUser.setGroupId(groupId);
+          roomUser.setUserName(userPhone);
+          roomUser.setStartdate(new Date());
+          this.roomUsersService.save(roomUser);
         }
       }else if("400".equals(statusCode)){
         String error_description = node.get("error_description").toString();
@@ -366,7 +382,7 @@ public class RoomController extends ToJson {
     datanode.put("allowinvites", true);
     //是否只有群成员可以进来发言，true 是 ， false 否
     datanode.put("membersonly", false );
-    datanode.put("owner",Md5Util.getMd5Value(userbean.getUsername()));
+    datanode.put("owner",userbean.getUsername());
     ObjectNode node = EasemobChatGroups.creatChatGroups(datanode);
     if (node != null) {
       String statusCode = node.get("statusCode").toString();
@@ -397,6 +413,12 @@ public class RoomController extends ToJson {
             bean.setHeadImgePath(tpUrl);
         }
         this.roomService.save(bean);
+        //向本地数据库fm_room_users中插入一条记录（把自己加入到群组中）
+        RoomUsers roomUser=  new RoomUsers();
+        roomUser.setGroupId(groupId);
+        roomUser.setUserName(userbean.getUsername());
+        roomUser.setStartdate(new Date());
+        this.roomUsersService.save(roomUser);
       }
     }
     return null;
@@ -410,7 +432,8 @@ public class RoomController extends ToJson {
    */
   @RequestMapping("/createPrivateRoom")
   public String createPrivateRoom(@RequestParam String userPhone,@RequestParam String members,HttpServletRequest request,HttpServletResponse response) throws IOException {
-    if(getBeanFromRedis(userPhone)==null){
+    UserBean userbean = getBeanFromRedis(userPhone);
+    if(userbean==null){
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }
@@ -426,10 +449,10 @@ public class RoomController extends ToJson {
     datanode.put("allowinvites",true);
     //是否只有群成员可以进来发言，true 是 ， false 否
     datanode.put("membersonly",true);
-    datanode.put("owner",Md5Util.getMd5Value(userPhone));
+    datanode.put("owner",userPhone);
     // 群组成员members，  群组成员为以$符号分隔的username字符串
     String[] array = null;
-    List<UserBean> userList = null;
+    List<UserBean> userList = new ArrayList<UserBean>();
     if(StringUtil.isNotNull(members)) {
       array = members.split("\\$");
       userList = this.userService.getUserListByUserPhoneList(Arrays.asList(array));
@@ -440,7 +463,7 @@ public class RoomController extends ToJson {
       ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
       String[] temp = new String[userList.size()];
       for(int i=0;i<userList.size();i++){
-        temp[i] = Md5Util.getMd5Value(userList.get(i).getUsername());
+        temp[i] =userList.get(i).getUsername();
         arrayNode.add(temp[i]);
       }
       datanode.put("members", arrayNode);
@@ -465,6 +488,13 @@ public class RoomController extends ToJson {
         if(this.roomService.save(bean)){
           //群组创建成功之后再往群组成员表中插入各个成员，此处是批量插入
           List<RoomUsers> list = new ArrayList<RoomUsers>();
+          RoomUsers roomUser = new RoomUsers();
+          roomUser.setMainid(new Date().getTime()+new Random().nextLong());
+          roomUser.setGroupId(groupId);
+          roomUser.setUserName(userPhone);
+          roomUser.setStartdate(new Date());
+          roomUser.setUserRemark("".equals(userbean.getNickname())?userPhone:userbean.getNickname());
+          list.add(roomUser);
           for(int i = 0; i < array.length; i++) {
             RoomUsers roomUsers = new RoomUsers();
             roomUsers.setMainid((long)userList.get(i).getMainid()+new Date().getTime());
@@ -630,11 +660,22 @@ public class RoomController extends ToJson {
    */
   @RequestMapping("/addUser")
   public String addUser(@RequestParam String userPhone,@RequestParam String addUserName,@RequestParam String groupId,HttpServletRequest request, HttpServletResponse response)throws IOException {
-    if(getBeanFromRedis(userPhone)==null){
+    UserBean user = getBeanFromRedis(userPhone);
+    if(user==null){
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }
-    ObjectNode node = EasemobChatGroups.addUserToGroup(groupId, Md5Util.getMd5Value(addUserName));
+    RoomUsers  usermember = this.roomUsersService.getRoomUsers(userPhone, groupId);
+    if(usermember==null){
+      toExMsg(response, "邀请者不在群组中无法邀请");
+      return null;
+    }
+    RoomUsers  member = this.roomUsersService.getRoomUsers(addUserName, groupId);
+    if(member!=null){
+      toExMsg(response, "群组中已经有该成员了");
+      return null;
+    }
+    ObjectNode node = EasemobChatGroups.addUserToGroup(groupId, addUserName);
     if (node != null) {
       String statusCode = node.get("statusCode").toString();
       if ("200".equals(statusCode)) {// 如果添加成功
@@ -643,13 +684,16 @@ public class RoomController extends ToJson {
         bean.setGroupId(groupId);
         bean.setUserName(addUserName);
         bean.setStartdate(new Date());
+        bean.setUserRemark(addUserName);
         if(this.roomUsersService.save(bean)){
-          Map<String,Object> params =  new HashMap<String, Object>();
-          params.put("groupId", groupId);
-          List<UserBean> userList = this.userService.getRoomMembers(params);
-          toArrayJson(response, userList);
+          toExSuccMsg(response, userPhone+"邀请了"+addUserName+"进入群聊");
+        }else{
+          toExSucc(response,false);
         }
       }
+    }else{
+      toExMsg(response, "群组中已经有该成员了");
+      return null;
     }
     return null;
   }
@@ -666,8 +710,22 @@ public class RoomController extends ToJson {
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }
+    RoomUsers  usermember = this.roomUsersService.getRoomUsers(userPhone, groupId);
+    if(usermember==null){
+      toExMsg(response, "邀请者不在群组中无法邀请");
+      return null;
+    }
     String[] array = members.split("\\$");
-    List<UserBean> userList = this.userService.getUserListByUserPhoneList(Arrays.asList(array));
+    //排除群组中已经有的成员
+    List<String> listStr = Arrays.asList(array);
+    List<String> arrayList = new ArrayList<String>(listStr);
+    for(int i=0;i<listStr.size();i++){
+      RoomUsers member = this.roomUsersService.getRoomUsers(listStr.get(i), groupId);
+      if(member!=null){
+        arrayList.remove(i);
+      }
+    }
+    List<UserBean> userList = this.userService.getUserListByUserPhoneList(arrayList);
     if(userList==null||userList.size()==0){
       toExMsg(response, UserCnst.USER_NOT_EXIST);
       return null;
@@ -675,7 +733,7 @@ public class RoomController extends ToJson {
     String[] temp=new String[userList.size()];
     ArrayNode usernames = JsonNodeFactory.instance.arrayNode();
     for(int i=0;i<userList.size();i++){
-      temp[i] = Md5Util.getMd5Value(userList.get(i).getUsername());
+      temp[i] = userList.get(i).getUsername();
       usernames.add(temp[i]);
     }
     ObjectNode usernamesNode = JsonNodeFactory.instance.objectNode();
@@ -686,11 +744,11 @@ public class RoomController extends ToJson {
       if ("200".equals(statusCode)) {// 如果添加成功
         //群组创建成功之后再往群组成员表中插入各个成员，此处是批量插入
         List<RoomUsers> list = new ArrayList<RoomUsers>();
-        for(int i = 0; i < array.length; i++) {
+        for(int i = 0; i <arrayList.size(); i++) {
           RoomUsers roomUsers = new RoomUsers();
           roomUsers.setMainid((long)userList.get(i).getMainid()+new Date().getTime());
           roomUsers.setGroupId(groupId);
-          roomUsers.setUserName(array[i]);
+          roomUsers.setUserName(userList.get(i).getUsername());
           roomUsers.setStartdate(new Date());
           roomUsers.setUserRemark(userList.get(i).getNickname());
           list.add(roomUsers);
@@ -700,6 +758,8 @@ public class RoomController extends ToJson {
           toArrayJson(response,userlist);
         }
       }
+    }else{
+      toExMsg(response,"用户已经在群组中");
     }
     return null;
   }
@@ -717,10 +777,7 @@ public class RoomController extends ToJson {
   }
 
   /**
-   * 删除群组成员【单人】,只有群主才能删除人
-   * @param request
-   * @param response
-   * @return
+   * 删除群组成员【单人】,(1)群主可以删人，自己可以主动退出
    * @throws IOException
    */
   @RequestMapping("/deleteUser")
@@ -731,21 +788,50 @@ public class RoomController extends ToJson {
     }
     Room room = this.roomService.getRoomByGroupId(groupId);
     if(room!=null&&!room.getUserName().equals(userPhone)){
-      toJson(response,"没有删除成员的权限");
-      return null;
-    }
-    ObjectNode node = EasemobChatGroups.deleteUserFromGroup(groupId,Md5Util.getMd5Value(delUserName));
-    if (node != null) {
-      String statusCode = node.get("statusCode").toString();
-      if ("200".equals(statusCode)) {// 如果删除成功
-        if(this.roomUsersService.deleteRoomUser(groupId, delUserName)){
-          toJson(response, "删除成功");
+      ObjectNode node = EasemobChatGroups.deleteUserFromGroup(groupId,delUserName);
+      if (node != null) {
+        String statusCode = node.get("statusCode").toString();
+        if ("200".equals(statusCode)) {// 如果删除成功
+          if(this.roomUsersService.deleteRoomUser(groupId, delUserName)){
+            toJson(response, "删除成功");
+          }
         }
       }
+    }else {
+      toJson(response,"没有删除成员的权限");
+      return null;
     }
     return null;
   }
 
+  
+  /**
+   * 自己主动退出群组;
+   * @throws IOException
+   */
+  @RequestMapping(value = "exitFromGroup", method = RequestMethod.POST)
+  public String exitFromGroup(@RequestParam String userPhone,@RequestParam String groupId,HttpServletRequest request,HttpServletResponse response) throws IOException {
+    if(getBeanFromRedis(userPhone)==null){
+      toExMsg(response, UserCnst.NO_LOGIN);
+      return null;
+    }
+    Room room = this.roomService.getRoomByGroupId(groupId);
+    if(room!=null){
+      ObjectNode node = EasemobChatGroups.deleteUserFromGroup(groupId,userPhone);
+      if (node != null) {
+        String statusCode = node.get("statusCode").toString();
+        if ("200".equals(statusCode)) {// 如果删除成功
+          if(this.roomUsersService.deleteRoomUser(groupId, userPhone)){
+            toJson(response, "退出成功");
+          }
+        }
+      }
+    }else {
+      toJson(response,"群组不存在");
+      return null;
+    }
+    return null;
+  }
   /**
    * 获取群组所有成员(环信数据库)
    * @param request
