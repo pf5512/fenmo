@@ -2580,6 +2580,14 @@ public class DateUtil {
   } 
 
  	public static void main(String[] agrs) {
-	    System.out.println(getConstellation(1,22));
+	    try {
+	      Date date = DateUtil.parseDateDayDashFormat("2016-04-22");
+	      int month = date.getMonth() + 1;
+        int day = date.getDate();
+        System.out.println("month="+month+";="+day );
+      } catch (ParseException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 	}
 }

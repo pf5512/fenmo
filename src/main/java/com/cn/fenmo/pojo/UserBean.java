@@ -118,7 +118,7 @@ public class UserBean implements Serializable {
     }
 
     public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
+        this.username = username == null ? "" : username.trim();
     }
 
     public String getPassword() {
@@ -126,7 +126,7 @@ public class UserBean implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+        this.password = password == null ? "" : password.trim();
     }
 
     public String getImgUrls() {
@@ -173,7 +173,7 @@ public class UserBean implements Serializable {
     }
 
     public void setConstellation(String constellation) {
-      this.constellation = constellation;
+      this.constellation = constellation!=null?constellation:"";
     }
 
     public String getHxid() {
@@ -197,7 +197,7 @@ public class UserBean implements Serializable {
     }
 
     public void setIdol(String idol) {
-        this.idol = idol == null ? null : idol.trim();
+      this.idol = idol!=null?idol:"";
     }
 
     public String getNationality() {
@@ -205,7 +205,7 @@ public class UserBean implements Serializable {
     }
 
     public void setNationality(String nationality) {
-      this.nationality = nationality;
+      this.nationality = nationality!=null?nationality:"";
     }
 
     public String getOccupation() {
@@ -213,7 +213,7 @@ public class UserBean implements Serializable {
     }
 
     public void setOccupation(String occupation) {
-      this.occupation = occupation;
+      this.occupation = occupation!=null?occupation:"";
     }
 
     public String  getBirthday() {

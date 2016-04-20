@@ -18,9 +18,9 @@
     where userName = #{userName,jdbcType=VARCHAR} and  groupId = #{groupId,jdbcType=VARCHAR}
   </select>
   
-  <delete id="deleteOneUserOfRoom" parameterType="java.lang.String" >
+  <delete id="deleteOneUserOfRoom" parameterType="java.util.Map">
     delete from fm_room_users
-    where userName = #{userName,jdbcType=VARCHAR} and groupId = #{groupId,jdbcType=VARCHAR}
+    where userName = #{userPhone,jdbcType=VARCHAR} and groupId = #{groupId,jdbcType=VARCHAR}
   </delete>
   
   <update id="updateUserRemark" parameterType="com.cn.fenmo.pojo.RoomUsers" >

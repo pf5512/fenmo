@@ -92,6 +92,22 @@ public class ToJson {
     }
   }
   
+  public void toExSucc(HttpServletResponse response,boolean isSuccess){
+    response.setContentType("text/html;charset=utf-8");
+    PrintWriter out = null;
+    JSONObject jsonObj = new JSONObject();
+    try {
+      out = response.getWriter();
+      jsonObj.put("code",200);
+      jsonObj.put("message",isSuccess);
+      out.println(jsonObj);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally{
+      out.close();
+    }
+  }
+  
   public void toExSuccMsg(HttpServletResponse response,String str){
     response.setContentType("text/html;charset=utf-8");
     PrintWriter out = null;

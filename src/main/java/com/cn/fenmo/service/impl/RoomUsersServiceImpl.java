@@ -2,6 +2,7 @@ package com.cn.fenmo.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,11 @@ public class RoomUsersServiceImpl implements RoomUsersService{
   @Autowired
   private RoomUsersMapper roomUsersMapper;
 
-  public boolean deleteRoomUser(String groupId,String userName) {
-    return this.roomUsersMapper.deleteOneUserOfRoom(groupId,userName)==1?true:false;
+  public boolean deleteRoomUser(String groupId,String userPhone) {
+    Map<String,Object> parmas = new HashMap<String,Object>();
+    parmas.put("groupId", groupId);
+    parmas.put("userPhone", userPhone);
+    return this.roomUsersMapper.deleteOneUserOfRoom(parmas)==1?true:false;
   }
 
   public boolean save(RoomUsers bean) {
@@ -24,7 +28,7 @@ public class RoomUsersServiceImpl implements RoomUsersService{
   }
 
   public boolean addBatchRecord(List<RoomUsers> list) {
-    return this.roomUsersMapper.insertBatchRecord(list)>1?true:false;
+    return this.roomUsersMapper.insertBatchRecord(list)>0?true:false;
   }
 
   public RoomUsers getRoomUsers(String userName,String groupId) {

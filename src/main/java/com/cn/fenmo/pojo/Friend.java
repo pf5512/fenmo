@@ -10,8 +10,29 @@ public class Friend implements Serializable {
     private String friendphone;
 
     private Integer state;
+    
+    private String nickName;
+    
+    private String friendNickName;
 
     private static final long serialVersionUID = 1L;
+
+    
+    public String getFriendNickName() {
+      return friendNickName;
+    }
+
+    public void setFriendNickName(String friendNickName) {
+      this.friendNickName = friendNickName;
+    }
+
+    public String getNickName() {
+      return nickName;
+    }
+
+    public void setNickName(String nickName) {
+      this.nickName = nickName;
+    }
 
     public Long getMainid() {
         return mainid;

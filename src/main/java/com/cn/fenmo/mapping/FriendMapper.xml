@@ -6,6 +6,8 @@
     <result column="userPhone" jdbcType="VARCHAR" property="userphone" />
     <result column="friendPhone" jdbcType="VARCHAR" property="friendphone" />
     <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="nickName" jdbcType="VARCHAR" property="nickName" />
+    <result column="friendNickName" jdbcType="VARCHAR" property="friendNickName" />
   </resultMap>
   <sql id="Base_Column_List">
     mainId, userPhone, friendPhone, state
@@ -53,9 +55,22 @@
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
+      <if test="state != null">
+        nickName = #{nickName,jdbcType=VARCHAR},
+      </if>
     </set>
     where mainId = #{mainid,jdbcType=BIGINT}
   </update>
+  <update id="updateNickName" parameterType="com.cn.fenmo.pojo.Friend">
+       update fm_friend set nickName =#{nickName,jdbcType=VARCHAR} 
+       where  userPhone = #{userphone,jdbcType=VARCHAR} and friendPhone = #{friendphone,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateFriendNickName" parameterType="com.cn.fenmo.pojo.Friend">
+       update fm_friend set friendNickName =#{friendNickName,jdbcType=VARCHAR} 
+       where  userPhone = #{friendphone,jdbcType=VARCHAR} and friendPhone = #{userPhone,jdbcType=VARCHAR}
+  </update>
+  
   <update id="updateByPrimaryKey" parameterType="com.cn.fenmo.pojo.Friend">
     update fm_friend
     set userPhone = #{userphone,jdbcType=VARCHAR},
