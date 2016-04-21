@@ -34,6 +34,7 @@ import sun.misc.BASE64Decoder;
 import com.cn.fenmo.file.NginxUtil;
 import com.cn.fenmo.pojo.News;
 import com.cn.fenmo.pojo.NewsComment;
+import com.cn.fenmo.pojo.NewsCommentUser;
 import com.cn.fenmo.pojo.UserBean;
 import com.cn.fenmo.service.IUserService;
 import com.cn.fenmo.service.NewsCommentService;
@@ -119,7 +120,7 @@ public class NewsController extends ToJson {
   }
   /*获取某人发布的新闻*/
   @RequestMapping("/getNewsPage")
-  public void getPage(@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void getNewsPage(@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
     String start = request.getParameter("start");
     String limit = request.getParameter("limit");
     Map<String,Object> params = new HashMap<String,Object>();
@@ -152,6 +153,17 @@ public class NewsController extends ToJson {
     } 
     toViewPage(response,viewPage);
   }
+  /*获取相关新闻(3条)，根据newType相等*/
+  @RequestMapping("/getInterfixNews")
+  public void getInterfixNews(@RequestParam String newsType,HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Map<String,Object> params = new HashMap<String,Object>();
+    params.put("newsType",Integer.parseInt(newsType));
+    params.put("state",NewsCnst.PUBLISH);
+    params.put("start",0);
+    params.put("limit",3);
+    List<News> list = this.newsService.getInterfixNews(params);
+    toArrayJson(response, list);
+  }
   
   /*获取一个新闻*/
   @RequestMapping("/getBean")
@@ -162,101 +174,6 @@ public class NewsController extends ToJson {
     }else {
       toExMsg(response,UserCnst.INFO_NO_EXIST);
     }
-  }
-  /*保存发布新闻时上传的图片*/
-  @RequestMapping(value="/uploadNewsImg", method={RequestMethod.POST,RequestMethod.GET})  
-  public String uploadNewsImg(@Context HttpServletRequest request,@Context HttpServletResponse response) throws IOException{  
-    List<String> imgurlList=new ArrayList<String>();
-  /*  for(MultipartFile myfile:image){  
-      if(!myfile.isEmpty()){  
-        String  tempPath = NginxUtil.getNginxDisk()+File.separatorChar+"news";
-        String  fileName = myfile.getOriginalFilename();
-        String  fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        String newFileName = df.format(new Date()) + "_" + new Random().nextInt(1000) + "." + fileExt;
-        //此文件只能在linux下才能生成
-        File file = new File(tempPath,newFileName);
-        FileUtils.copyInputStreamToFile(myfile.getInputStream(),file); 
-        String tpUrl=HTTPHEAD+NginxUtil.getNginxIP()+File.separatorChar+"news"+File.separatorChar+newFileName;
-        imgurlList.add(tpUrl);
-      }
-    }
-    toArrayJson(response,imgurlList);*/
-    
-    
-    
-    //得到上传文件的保存目录，将上传的文件存放于WEB-INF目录下，不允许外界直接访问，保证上传文件的安全
-    String savePath = NginxUtil.getNginxDisk()+File.separatorChar+"news";
-    File file = new File(savePath);
-    //判断上传文件的保存目录是否存在
-    if (!file.exists() && !file.isDirectory()) {
-        System.out.println(savePath+"目录不存在，需要创建");
-        //创建目录
-        file.mkdir();
-    }
-    //消息提示
-    String message = "";
-    try{
-        //使用Apache文件上传组件处理文件上传步骤：
-        //1、创建一个DiskFileItemFactory工厂
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        //2、创建一个文件上传解析器
-        ServletFileUpload upload = new ServletFileUpload(factory);
-         //解决上传文件名的中文乱码
-        upload.setHeaderEncoding("UTF-8"); 
-        //3、判断提交上来的数据是否是上传表单的数据
-//        if(!ServletFileUpload.isMultipartContent(request)){
-//            //按照传统方式获取数据
-//            return null;
-//        }
-        //4、使用ServletFileUpload解析器解析上传数据，解析结果返回的是一个List<FileItem>集合，每一个FileItem对应一个Form表单的输入项
-        List<FileItem> list = upload.parseRequest(request);
-        for(FileItem item : list){
-            //如果fileitem中封装的是普通输入项的数据
-            if(item.isFormField()){
-                String name = item.getFieldName();
-                //解决普通输入项的数据的中文乱码问题
-                String value = item.getString("UTF-8");
-                //value = new String(value.getBytes("iso8859-1"),"UTF-8");
-                System.out.println(name + "=" + value);
-            }else{//如果fileitem中封装的是上传文件
-                //得到上传的文件名称，
-                String filename = item.getName();
-                System.out.println(filename);
-                if(filename==null || filename.trim().equals("")){
-                    continue;
-                }
-                //注意：不同的浏览器提交的文件名是不一样的，有些浏览器提交上来的文件名是带有路径的，如：  c:\a\b\1.txt，而有些只是单纯的文件名，如：1.txt
-                //处理获取到的上传文件的文件名的路径部分，只保留文件名部分
-                filename = filename.substring(filename.lastIndexOf("\\")+1);
-                //获取item中的上传文件的输入流
-                InputStream in = item.getInputStream();
-                //创建一个文件输出流
-                FileOutputStream out = new FileOutputStream(savePath + "\\" + filename);
-                //创建一个缓冲区
-                byte buffer[] = new byte[1024];
-                //判断输入流中的数据是否已经读完的标识
-                int len = 0;
-                //循环将输入流读入到缓冲区当中，(len=in.read(buffer))>0就表示in里面还有数据
-                while((len=in.read(buffer))>0){
-                    //使用FileOutputStream输出流将缓冲区的数据写入到指定的目录(savePath + "\\" + filename)当中
-                    out.write(buffer, 0, len);
-                }
-                //关闭输入流
-                in.close();
-                //关闭输出流
-                out.close();
-                //删除处理文件上传时生成的临时文件
-                item.delete();
-                message = "文件上传成功！";
-            }
-        }
-    }catch (Exception e) {
-        message= "文件上传失败！";
-        e.printStackTrace();
-        
-    }
-    return null;  
   }
   
   
@@ -395,6 +312,37 @@ public class NewsController extends ToJson {
     ViewPage viewPage = new ViewPage();
     if(StringUtil.isNumeric(start)){
       params.put("start", Integer.parseInt(start));
+      viewPage.setPageStart(Integer.parseInt(start));
+    }else{
+      params.put("start", viewPage.getPageStart());
+    }
+    if(StringUtil.isNumeric(limit)){
+      params.put("limit", Integer.parseInt(limit));
+      viewPage.setPageLimit(Integer.parseInt(limit));
+    }else{
+      params.put("limit", viewPage.getPageLimit());
+    }
+    params.put("newsId", newsId);
+    params.put("field", "createDate");
+    int count = this.newsCommentService.getNewsComentCount(params);
+    List<NewsCommentUser> list = new ArrayList<NewsCommentUser>();
+    if(count>0){
+      viewPage.setTotalCount(count);
+      list = this.newsCommentService.getNewsComentPage(params);
+      viewPage.setListResult(list);
+    }
+    toViewPage(response,viewPage);
+  }
+  
+  /*分页获取某条新闻下的最热评论(按点赞数倒序排列)，需要获取评论者的相关信息，如头像*/
+  @RequestMapping("/getHotNewsCommentPage")
+  public void getHotNewsCommentPage(@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String start = request.getParameter("start");
+    String limit = request.getParameter("limit");
+    Map<String,Object> params = new HashMap<String,Object>();
+    ViewPage viewPage = new ViewPage();
+    if(StringUtil.isNumeric(start)){
+      params.put("start", Integer.parseInt(start));
     }else{
       params.put("start", viewPage.getPageStart());
     }
@@ -404,8 +352,9 @@ public class NewsController extends ToJson {
       params.put("limit", viewPage.getPageLimit());
     }
     params.put("newsId", newsId);
+    params.put("field", "zcount");
     int count = this.newsCommentService.getNewsComentCount(params);
-    List list = null;
+    List<NewsCommentUser> list = new ArrayList<NewsCommentUser>();
     if(count>0){
       viewPage.setTotalCount(count);
       list = this.newsCommentService.getNewsComentPage(params);
@@ -422,6 +371,7 @@ public class NewsController extends ToJson {
   /*为新闻评论点赞，没有登陆也可以点赞*/
   @RequestMapping("/admireComent")
   public void admireComent(@RequestParam long mainid,HttpServletRequest request, HttpServletResponse response) throws IOException {
+    System.out.println("收到请求：admireComent");
     if(!this.newsCommentService.updateZcount(mainid)){
       toExMsg(response,UserCnst.INFO_UPDATE_FAIL);
     }else{
@@ -475,20 +425,20 @@ public class NewsController extends ToJson {
   @RequestMapping("/updateNews")
   public void updateNews(HttpServletRequest request, HttpServletResponse response){
 	  
-	boolean success = false;
-	
-	try {
+		boolean success = false;
 		
-		News news = RequestUtil.getBean(request, News.class);
+		try {
+			
+			News news = RequestUtil.getBean(request, News.class);
+	
+			success = this.newsService.updateNews(news);
+	
+		} catch (Exception e) {
+			logger.error("----updateNews---生成News对象出错",e);
+			e.printStackTrace();
+		}
 
-		success = this.newsService.updateNews(news);
-
-	} catch (Exception e) {
-		logger.error("----updateNews---生成News对象出错",e);
-		e.printStackTrace();
-	}
-
-	toExSuccMsg(response, String.valueOf(success));
+		toExSuccMsg(response, String.valueOf(success));
   }
   
   
@@ -502,11 +452,15 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/getNewsList")
   public void getNewsList(HttpServletRequest request,HttpServletResponse response){
-//	  List<News> news = this.newsService.selectBeanBy(params);
-	  String page = request.getParameter("page");//当前页
-	  String row = request.getParameter("rows");//每页多少行
-	  String title = request.getParameter("title"); //标题
-	  String newsType = request.getParameter("newsType"); //新闻类型
+  	
+    Map<String,Object> params = RequestUtil.getRequestParamMap(request);
+  	
+	  List<News> news = this.newsService.selectBeanBy(params);
+	  
+	  int total = this.newsService.selectCount(params);
+	  
+	  toViewPageForWeb(response, news, total);
+	  
   }
   
   
