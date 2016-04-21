@@ -1,65 +1,47 @@
-<%@ page language="java" import="java.util.*" pageEncoding="gbk"%>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>Full Layout - jQuery EasyUI Demo</title>
+	<title>å†…å®¹ç®¡ç†</title>
 	<link rel="stylesheet" type="text/css" href="plugin/easyUI/themes/default/easyui.css">
 	<link rel="stylesheet" type="text/css" href="plugin/easyUI/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="plugin/easyUI/demo/demo.css">
 	<script type="text/javascript" src="plugin/easyUI/jquery.min.js"></script>
 	<script type="text/javascript" src="plugin/easyUI/jquery.easyui.min.js"></script>
 </head>
+<script type="text/javascript">
+   $(document).ready(function(){
+	  $("#news").show();
+   });
+   
+   function newsGl(){
+	  $("#mainIframe").attr("src", "news/newsList.jsp");
+   }
+   
+   function roomsGl(){
+	  $("#mainIframe").attr("src", "room/roomsList.jsp");
+   }
+</script>
 <body class="easyui-layout">
 	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">north region</div>
-	<div data-options="region:'west',split:true,title:'Ä¿Â¼Ê÷'" style="width:150px;padding:10px;">
+	<div data-options="region:'west',split:true,title:'ç›®å½•æ ‘'" style="width:150px;padding:10px;">
 	  <div class="easyui-panel" >
 		<ul class="easyui-tree">
 			<li>
-				<span>ÄÚÈİ¹ÜÀí</span>
+				<span>å†…å®¹ç®¡ç†</span>
 				<ul>
-					<li>Èº×é¹ÜÀí</li>
-				    <li>ĞÂÎÅ¹ÜÀí</li>
-				    <li>ÓÃ»§¹ÜÀí</li>
-				    <li>¶¯Ì¬¹ÜÀí</li>
+					<li><a onclick="roomsGl();return false;">ç¾¤ç»„ç®¡ç†</a></li>
+				    <li><a onclick="newsGl();return false;">æ–°é—»ç®¡ç†</a></li>
+				    <li>ç”¨æˆ·ç®¡ç†</li>
+				    <li>åŠ¨æ€ç®¡ç†</li>
 				</ul>
 			</li>
 		</ul>
 	</div>
 	</div>
-	<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">µ×²¿</div>
-	<div data-options="region:'center',title:'Ãæ°å'">
-	     <div id="tb" style="padding:5px;height:auto">
-			<div>
-				ÀàĞÍ: 
-				<select class="easyui-combobox" panelHeight="auto" style="width:100px">
-				    <option value="0"></option>
-					<option value="yl">ÓéÀÖ</option>
-					<option value="cl">²Æ¾­</option>
-					<option value="fc">·¿²ú</option>
-					<option value="zmt">×ÔÃ½Ìå</option>
-				</select>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a>
-			    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true"></a>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true"></a>
-				<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true"></a>
-			</div>
-	    </div>
-	   	<table id = "dg" class="easyui-datagrid" title="Èº×é¹ÜÀí" style="width:100%;height:100%;"
-			data-options="rownumbers:true,singleSelect:true,pagination:true,url:'${pageContext.request.contextPath}/room/searchPageRooms.do',method:'get'">
-			<thead>
-				<tr>
-					<th data-options="field:'groupId',hidden:true"></th>
-					<th data-options="field:'roomName',width:100,align:'center'">Èº×éÃû³Æ</th>
-					<th data-options="field:'userName',width:100,align:'center'">´´½¨Õß</th>
-					<th data-options="field:'typeStr',width:100,align:'center'">Èº×éÀàĞÍ</th>
-					<th data-options="field:'createdate',width:120,align:'center'">´´½¨Ê±¼ä</th>
-					<th data-options="field:'maxusers',width:100,align:'center'">Èº×éÉÏÏŞ</th>
-					<th data-options="field:'subject',width:160,align:'left'">Èº×éÖ÷Ìâ</th>
-				</tr>
-			</thead>
-	    </table>
-
+	<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">åº•éƒ¨</div>
+	<div data-options="region:'center',title:'é¢æ¿'" id = "panel" style="width:100%;height:100%;">
+	    <iframe id="mainIframe" src="news/newsList.jsp" style="width:99%;height:99%;"></iframe>
 	</div>
 </body>
 </html>

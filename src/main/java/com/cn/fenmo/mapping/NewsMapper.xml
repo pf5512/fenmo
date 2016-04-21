@@ -102,6 +102,9 @@
 		      <if test="newsrc != null" >
 		        newSrc = #{newsrc,jdbcType=VARCHAR},
 		      </if>
+		      <if test="newstype != null" >
+		        newstype = #{newstype,jdbcType=VARCHAR},
+		      </if>
 		      <if test="content != null" >
 		        content = #{content,jdbcType=VARCHAR},
 		      </if>
