@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cn.fenmo.disruptor.BoatDisruptor;
@@ -20,12 +21,10 @@ import com.cn.fenmo.gt.client.PushClient;
 import com.cn.fenmo.gt.push.PushObject;
 import com.cn.fenmo.pojo.Friend;
 import com.cn.fenmo.pojo.UserBean;
-import com.cn.fenmo.redis.RedisClient;
 import com.cn.fenmo.service.FriendService;
 import com.cn.fenmo.service.IUserService;
 import com.cn.fenmo.test.ExceptionHandler;
 import com.cn.fenmo.test.PushEventHandler;
-import com.cn.fenmo.util.CNST;
 import com.cn.fenmo.util.StringUtil;
 import com.cn.fenmo.util.ToJson;
 import com.cn.fenmo.util.UserCnst;
@@ -89,6 +88,9 @@ public class FriendController extends ToJson{
      return null;
    }
    
+   
+   
+   
    /** 通过好友请求(单个)*/
    @RequestMapping("/passFriend")
    public String passFriend(@RequestParam String userPhone,@RequestParam String friendPhone,HttpServletRequest request,HttpServletResponse response) throws IOException{
@@ -140,10 +142,8 @@ public class FriendController extends ToJson{
        }
      }
    }
-   
-   
    /*好友备注*/
-   @RequestMapping("/updateNick")
+   @RequestMapping(value = "updateNick", method = RequestMethod.POST)
    public String updateNick(@RequestParam String userPhone,@RequestParam String friendPhone,@RequestParam String nickName,HttpServletRequest request,HttpServletResponse response){
      UserBean bean = getUserBeanFromRedis(userPhone);
      if(bean==null){
@@ -151,10 +151,25 @@ public class FriendController extends ToJson{
        return null;
      }else{
        Friend friend = this.friendService.getFreind(userPhone, friendPhone);
-       if(friend!=null){
-         friend.setNickName(nickName);
-         this.friendService.update(friend);
-         toJSON(response, bean);
+       if(friend!=null) {
+           boolean success=false;
+           if (userPhone.equals(friend.getUserphone())) {
+               //表示我要修改好友的备注，正逻辑关系
+               friend.setFriendNickName(nickName);
+               success=this.friendService.updateFriendNickName(friend);
+           } else if (userPhone.equals(friend.getFriendphone())) {
+               //此时
+               friend.setNickName(nickName);
+               success=this.friendService.updateNickName(friend);
+           }
+           if (success){
+//               修改成功了返回啥
+             toExSucc(response, true);
+           }else{
+             toExSucc(response, false);
+           }  
+       }else{
+         toExMsg(response,"对方不是好友，无法备注");
        }
      }
      return null;

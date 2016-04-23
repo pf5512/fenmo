@@ -37,5 +37,24 @@ public class FriendServiceImpl implements FriendService {
     params.put("friendPhone", friendPhone);
     return this.friendMapper.deleteFriend(params)==1?true:false;
   }
+  
+  
+  public boolean updateNickName(Friend bean) {
+    Map<String, Object> params =  new HashMap<String, Object>();
+    params.put("userPhone", bean.getUserphone());
+    params.put("friendPhone", bean.getFriendphone());
+    params.put("nickName", bean.getNickName());
+    return this.friendMapper.updateNickName(params)==1?true:false;
+  }
+
+
+  public boolean updateFriendNickName(Friend bean) {
+    Map<String, Object> params =  new HashMap<String, Object>();
+    params.put("userPhone", bean.getUserphone());
+    params.put("friendPhone", bean.getFriendphone());
+    params.put("friendName", bean.getFriendNickName());
+    return this.friendMapper.updateFriendNickName(params)==1?true:false;
+  }
+  
 
 }

@@ -12,14 +12,13 @@
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
     <result column="zcount" property="zcount" jdbcType="INTEGER" />
-    <result column="comments" property="comments" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List">
      mainId, title, newSrc, newsType, summary, userName, createDate,state,content,zcount
   </sql>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    SELECT p.*,(select COUNT(1) FROM fm_news_comment t where t.newsId = p.mainId) comments
+    SELECT p.*
     From fm_news p
     where mainId = #{mainId,jdbcType=BIGINT}
   </select>
@@ -59,23 +58,22 @@
   
   <!-- 分页查询新闻 -->
    <select id="selectPageBy" resultMap="BaseResultMap" parameterType="java.util.Map">
-	     SELECT p.*,(select COUNT(1) FROM fm_news_comment t where t.newsId = p.mainId) comments
-         From fm_news p
+	     select A.* from fm_news A
 	     <where>
 		      <if test="userName != null" >
-		        userName = #{userName,jdbcType=VARCHAR}
+		        A.userName = #{userName,jdbcType=VARCHAR}
 		      </if>
 		      <if test="state != null" >
-		        and state = #{state,jdbcType=INTEGER}
+		        and A.state = #{state,jdbcType=INTEGER}
 		      </if>
 		      <if test="title != null" >
-		        and title like '%${title}%'
+		        and A.title like '%${title}%'
 		      </if>
 		      <if test="newsType != null" >
-		        and newsType = #{newsType,jdbcType=INTEGER}
+		        and A.newsType = #{newsType,jdbcType=INTEGER}
 		      </if>
 	     </where>
-	     ORDER BY p.createDate desc
+	     ORDER BY A.createDate desc
      	<if test="start!=null and limit !=null">
      		LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
      	</if>
@@ -108,6 +106,9 @@
 		      </if>
 		      <if test="newsrc != null" >
 		        newSrc = #{newsrc,jdbcType=VARCHAR},
+		      </if>
+		      <if test="newstype != null" >
+		        newstype = #{newstype,jdbcType=VARCHAR},
 		      </if>
 		      <if test="content != null" >
 		        content = #{content,jdbcType=VARCHAR},

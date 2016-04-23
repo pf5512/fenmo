@@ -1,3 +1,11 @@
+
+var userPhone;
+var type;
+function setPhoneAndType(p,t){
+	userPhone=p;
+	type=t;
+	alert("userphone—>"+userPhone+"type->"+type);
+}
 $(function() {
 	"use strict";
 	var p='<p>请输入文章正文内容</p>';
@@ -21,11 +29,9 @@ $(function() {
 			alert("抱歉，图片上传失败，请重新上传！");
 		}
 	});
-
 	$("#publish").click(function(){
 		var content=$('#content').getValue();
 		var title=$('#title').val();
-		var userName=$('#userName').val();
 		if (content==p||content.trim().length==0) {
 			alert("请输入文章内容");
 			return ;
@@ -40,7 +46,8 @@ $(function() {
 		     url: '/fenmo/news/addNews.do' ,
 		     data: {
 		    	 title:title,
-		    	 userName:userName,
+		    	 userName:userPhone,
+		    	 newstype:type,
 		    	 content:content
 		     } ,
 		     dataType: 'json',

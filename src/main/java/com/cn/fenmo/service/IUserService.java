@@ -43,6 +43,9 @@ public interface IUserService {
   //根据fmNo查找用户 
   public UserBean getUserBeanByFmNo(String fmNo);
   
+  //根据fmNo查找用户 
+  public UserBean getFreind(Map<String,Object> parmas);
+  
   //根据startLevel获取用户列表
   public List<UserBean> getUsersByStarLevel(int starLevel);
  

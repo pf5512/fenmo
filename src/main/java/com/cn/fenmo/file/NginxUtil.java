@@ -26,30 +26,19 @@ public class NginxUtil {
   	
   	if(osName.indexOf("Windows")>=0){
   			try {
-  				
   				//暂时在根目录下建立临时文件夹，不在web-inf下建立临时的图片上传目录，因为没有文件服务器，图片将会访问不到。
 					String path = PathUtil.combineFilePath(PathUtil.getRootPath(),UPLOADDIR);
-					
 					return path; 
-					
 				} catch (Exception e) {
-					
 					logger.error("----getNginxDisk----获取图片上传路径出错",e);
-					
 					e.printStackTrace();
 				}
-  			
   			return "";
   	}else{
-  		
   			ParseXML pasexml = new ParseXML();
-  			
   	    pasexml.parse("nginx.xml");
-  	    
   	    Properties properties = pasexml.getProps();
-  	    
   	    return properties.getProperty("nginxdisk");
-  	    
   	}
   }
   
@@ -71,22 +60,15 @@ public class NginxUtil {
    * @return
    */
   public static String buildNginxUrl(HttpServletRequest request,String userPhone,String fileName){
-  	
   	Properties prop = System.getProperties();
-  	
   	String osName = prop.getProperty("os.name");
-  	
   	if(osName.indexOf("Windows")>=0){
   		//相当于 http://ip:port/fenmo
   		String url = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()
-  				+ request.getServletContext().getContextPath()+ "/" + UPLOADDIR + "/" + userPhone+"/"+fileName;
-  		
+      + request.getServletContext().getContextPath()+ "/" + UPLOADDIR + "/" + userPhone+"/"+fileName;
   		return url;
-  		
   	}else{
-  		
   		String url = RequestUtil.HTTPHEAD + NginxUtil.getNginxIP()+ "/" + File.separatorChar + userPhone +  "/"  + fileName;
-  		
   		return url;
   	}
   }

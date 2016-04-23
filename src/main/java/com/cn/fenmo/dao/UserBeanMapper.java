@@ -17,6 +17,8 @@ public interface UserBeanMapper {
   UserBean selectByToken(String token);
   
   UserBean selectByFmNo(String fmNo);
+  
+  UserBean selectFriend(Map<String,Object> params);
 
   int update(UserBean record);
   

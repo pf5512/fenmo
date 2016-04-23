@@ -61,14 +61,15 @@
     </set>
     where mainId = #{mainid,jdbcType=BIGINT}
   </update>
-  <update id="updateNickName" parameterType="com.cn.fenmo.pojo.Friend">
+  
+  <update id="updateNickName" parameterType="java.util.Map">
        update fm_friend set nickName =#{nickName,jdbcType=VARCHAR} 
-       where  userPhone = #{userphone,jdbcType=VARCHAR} and friendPhone = #{friendphone,jdbcType=VARCHAR}
+       where  userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}
   </update>
   
-  <update id="updateFriendNickName" parameterType="com.cn.fenmo.pojo.Friend">
-       update fm_friend set friendNickName =#{friendNickName,jdbcType=VARCHAR} 
-       where  userPhone = #{friendphone,jdbcType=VARCHAR} and friendPhone = #{userPhone,jdbcType=VARCHAR}
+  <update id="updateFriendNickName" parameterType="java.util.Map">
+       update fm_friend set friendNickName =#{friendName,jdbcType=VARCHAR} 
+       where  userPhone = #{userPhone,jdbcType=VARCHAR} and friendPhone = #{friendPhone,jdbcType=VARCHAR}
   </update>
   
   <update id="updateByPrimaryKey" parameterType="com.cn.fenmo.pojo.Friend">

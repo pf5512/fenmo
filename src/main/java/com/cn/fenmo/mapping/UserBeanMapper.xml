@@ -25,6 +25,7 @@
     <result column="lng" property="lng" jdbcType="DOUBLE" />
     <result column="starLevel" property="starLevel" jdbcType="INTEGER" />
     <result column="registerTime" property="registerTime" jdbcType="TIMESTAMP" />
+    <result column="beizhu" property="beizhu" jdbcType="VARCHAR" />
   </resultMap>
    <sql id="Base_Column_List" >
      mainId, userName, passWord, imgUrls, specificSign, age, sex, phone, constellation,hxId,fmNo,
@@ -59,74 +60,22 @@
   <select id="selectMyFriendCount" resultType="Integer" parameterType="java.util.Map" >
     SELECT
        count(*)
-    FROM
-	(
-		SELECT
-			*
-		FROM
-			fm_user
-		WHERE
-			phone IN (
-				SELECT
-					userPhone
-				FROM
-					fm_friend
-				WHERE
-					friendPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
-			)
-		UNION
-			SELECT
-				*
-			FROM
-				fm_user
-			WHERE
-				phone IN (
-					SELECT
-						friendPhone
-					FROM
-						fm_friend
-					WHERE
-						userPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
-				)
-	) as u
+    FROM fm_friend fmf,fm_user fmu
+   	WHERE ((fmf.userPhone =  #{userPhone,jdbcType=BIGINT} AND fmf.friendPhone = fmu.phone)
+	OR (fmf.friendPhone =  #{userPhone,jdbcType=BIGINT} AND fmf.userPhone = fmu.phone))
+	AND state = #{state,jdbcType=INTEGER}
+	<if test="searchKey!= null" >
+        and (fmu.phone like '${searchKey}%' or fmf.nickName like '${searchKey}%')
+    </if>
   </select>
   
   <select id="selectMyFriend" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    SELECT
-        <include refid="Base_Column_List" />
-    FROM
-	(
-		SELECT
-			*
-		FROM
-			fm_user
-		WHERE
-			phone IN (
-				SELECT
-					userPhone
-				FROM
-					fm_friend
-				WHERE
-					friendPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
-			)
-		UNION
-			SELECT
-				*
-			FROM
-				fm_user
-			WHERE
-				phone IN (
-					SELECT
-						friendPhone
-					FROM
-						fm_friend
-					WHERE
-						userPhone = #{userPhone,jdbcType=BIGINT} and state = #{state,jdbcType=INTEGER}
-				)
-	) as u
-	where 1=1
+    SELECT  fmu.*,fmf.nickName beizhu from fm_friend fmf,fm_user fmu
+	WHERE ((fmf.userPhone =  #{userPhone,jdbcType=BIGINT} AND fmf.friendPhone = fmu.phone)
+	OR (fmf.friendPhone =  #{userPhone,jdbcType=BIGINT} AND fmf.userPhone = fmu.phone))
+	AND state = #{state,jdbcType=INTEGER}
 	<if test="searchKey!= null" >
-         and (phone like '${searchKey}%' or nickName like '${searchKey}%')
+        and (fmu.phone like '${searchKey}%' or fmf.nickName like '${searchKey}%')
     </if>
     ORDER BY starLevel DESC,registerTime DESC
     LIMIT #{start,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
@@ -213,7 +162,7 @@
     select 
     <include refid="Base_Column_List" />
     from fm_user
-    where phone = #{phone,jdbcType=VARCHAR}
+    where phone = #{phone,jdbcType=VARCHAR} 
   </select>
   
    <select id="selectByToken" resultMap="BaseResultMap" parameterType="java.lang.String" >

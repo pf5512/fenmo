@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.cn.fenmo.util.DateUtil;
-import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
 
 public class UserBean implements Serializable {
     private Long mainid;
@@ -55,8 +54,18 @@ public class UserBean implements Serializable {
     
     private double distance;
     
+    private String beizhu;
+    
     private static final long serialVersionUID = 1L;
     
+    public String getBeizhu() {
+      return beizhu;
+    }
+
+    public void setBeizhu(String beizhu) {
+      this.beizhu = beizhu;
+    }
+
     public int getStarLevel() {
       return starLevel;
     }

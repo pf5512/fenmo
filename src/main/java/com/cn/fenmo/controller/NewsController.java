@@ -84,15 +84,15 @@ public class NewsController extends ToJson {
       }
       String imgArg[]=imgCode.split(",");
       if (imgArg == null||imgArg.length!=2||imgArg[1]==null){
-    	    return; //图像数据为空
+          return; //图像数据为空
       }
       String filePath =""; 
       Properties props=System.getProperties(); //获得系统属性集    
       String osName = props.getProperty("os.name"); //操作系统名称    
       if(osName.indexOf("win")>0){
-    	 filePath = req.getServletContext().getRealPath("/")+"news/";
+       filePath = req.getServletContext().getRealPath("/")+"news/";
       }else{
-    	 filePath = NginxUtil.getNginxDisk() + File.separatorChar+"news/";
+       filePath = NginxUtil.getNginxDisk() + File.separatorChar+"news/";
       }
       if (!new File(filePath).exists()){
         new File(filePath).mkdirs();
@@ -109,9 +109,9 @@ public class NewsController extends ToJson {
       ImageIO.write(image, "png", f);
       HashMap hashMap=new HashMap();
       if(osName.indexOf("win")>0){
-     	  hashMap.put("path","http://localhost:8088"+req.getContextPath()+"/news/"+name);
+        hashMap.put("path","http://localhost:8088"+req.getContextPath()+"/news/"+name);
        }else{
-    	  hashMap.put("path","http://60.190.243.154:80/news/"+name);
+        hashMap.put("path","http://60.190.243.154:80/news/"+name);
        }
       resp.getOutputStream().print(gson.toJson(hashMap));
       } catch (Exception e) {
@@ -382,66 +382,58 @@ public class NewsController extends ToJson {
  /**
    * 
    * @Description: 新增新闻
-   * @author weiwj	
+   * @author weiwj  
    * @date 2016-4-9 上午11:02:25
    */
   @RequestMapping("/addNews")
   public void addNews(HttpServletRequest request, HttpServletResponse response){
-		boolean success = false;
-		try {
-			News news = RequestUtil.getBean(request, News.class);
-			success = this.newsService.save(news);
-		} catch (Exception e) {
-			logger.error("----addNews---生成News对象出错",e);
-			e.printStackTrace();
-		}
-		toExSuccMsg(response, String.valueOf(success));
+    boolean success = false;
+    try {
+      News news = RequestUtil.getBean(request, News.class);
+      success = this.newsService.save(news);
+    } catch (Exception e) {
+      logger.error("----addNews---生成News对象出错",e);
+      e.printStackTrace();
+    }
+    toExSuccMsg(response, String.valueOf(success));
   }
   
   /**
    * 
    * @Description: 根据id获取新闻详情
-   * @author weiwj	
-   * @date 2016-4-9 上午11:24:27	
+   * @author weiwj  
+   * @date 2016-4-9 上午11:24:27  
    * @param mainid 新闻主键
    * @param request
    * @param response
    */
   @RequestMapping("/getNewsById")
   public void getNewsById(@RequestParam long mainId, HttpServletRequest request, HttpServletResponse response){
-	  News news = this.newsService.selectByPrimaryKey(mainId);
-	  toJSON(response, news);
+    News news = this.newsService.selectByPrimaryKey(mainId);
+    toJSON(response, news);
   }
   
   
   /**
    * 
    * @Description: 更新新闻内容
-   * @author weiwj	
-   * @date 2016-4-9 下午5:14:26	
+   * @author weiwj  
+   * @date 2016-4-9 下午5:14:26 
    * @param request
    * @param response
    */
   @RequestMapping("/updateNews")
   public void updateNews(HttpServletRequest request, HttpServletResponse response){
-	  
-		boolean success = false;
-		
-		try {
-			
-			News news = RequestUtil.getBean(request, News.class);
-	
-			success = this.newsService.updateNews(news);
-	
-		} catch (Exception e) {
-			logger.error("----updateNews---生成News对象出错",e);
-			e.printStackTrace();
-		}
-
-		toExSuccMsg(response, String.valueOf(success));
+    boolean success = false;
+    try {
+      News news = RequestUtil.getBean(request, News.class);
+      success = this.newsService.updateNews(news);
+    } catch (Exception e) {
+      logger.error("----updateNews---生成News对象出错",e);
+      e.printStackTrace();
+    }
+    toExSuccMsg(response, String.valueOf(success));
   }
-  
-  
   /**
    * 
    * @description 获取新闻列表
@@ -452,16 +444,9 @@ public class NewsController extends ToJson {
    */
   @RequestMapping("/getNewsList")
   public void getNewsList(HttpServletRequest request,HttpServletResponse response){
-  	
     Map<String,Object> params = RequestUtil.getRequestParamMap(request);
-  	
-	  List<News> news = this.newsService.selectBeanBy(params);
-	  
-	  int total = this.newsService.selectCount(params);
-	  
-	  toViewPageForWeb(response, news, total);
-	  
+    List<News> news = this.newsService.selectBeanBy(params);
+    int total = this.newsService.selectCount(params);
+    toViewPageForWeb(response, news, total);
   }
-  
-  
 }

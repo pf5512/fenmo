@@ -17,7 +17,11 @@
     <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
     <script type="text/javascript" charset="utf-8" src="./../plugin/ueditor/lang/zh-cn/zh-cn.js"></script>
 	
-    
+    <style type="text/css">
+    	.titlespan{
+    		width:100px;
+    	}
+    </style>
 	<script type="text/javascript">
 	
 		//查询
@@ -50,18 +54,18 @@
 		
 		//编辑新闻
 		function editNews(mainId){
+			clearForm();
 			if(mainId){
 				loadRemote(mainId);
 			}
 			$("#newsWin").window('open');
-			//doSearch();
 		}
 	
-		/* ue.ready(function() {
-			if(mainId){
-				loadRemote();
-			}
-        }); */
+		//清除表单数据
+		function clearForm(){
+			$("#newsForm").form('clear');
+			setContent('');
+		}
 		
 		//加载数据
 		function loadRemote(mainId){
@@ -84,6 +88,8 @@
 			if(mainId){
 				url = "../news/updateNews.do";
 			}
+			var newstype = $("#newstype").combobox("getValue");
+			var newSrc = $("#newstype").combobox("getText");
 			$.ajax({
 				url:url,
 				type:"POST",
@@ -94,12 +100,15 @@
 					userName:$("#userName").val(),
 					mainId:mainId,
 					state:state,
-					newSrc:"自媒体" //暂时默认是这个 
+					newstype:newstype,
+					newSrc:newSrc
 				},
 				success:function(data){
 					if(data){
 						alert("保存成功");
 					}
+					$("#newsWin").window('close');
+					doSearch();
 				},
 				error:function(error){
 				}
@@ -121,7 +130,8 @@
 			<span>新闻标题:</span>
 			<input name="title" style="line-height:26px;border:1px solid #ccc">
 			<span>新闻类型:</span>
-			<select name="newsType" class="easyui-combobox" panelHeight="auto" style="width:100px">
+			<select name="newsType" data-options="editable:false" class="easyui-combobox"  panelHeight="auto"  style="width:100px">
+			    <option value="">请选择</option>
 				<option value="1">娱乐</option>
 				<option value="2">财经</option>
 				<option value="3">房地产</option>
@@ -133,9 +143,9 @@
 			<a href="javascript:void(0);" onclick="editNews()" class="easyui-linkbutton" iconCls="icon-add" >新增新闻</a>
 		</div>
 	</div>
-	<table id="fmDataGrid" class="easyui-datagrid" title="新闻列表" style="width:100%;height:800px;"
+	<table id="fmDataGrid" class="easyui-datagrid" title="新闻列表" style="width:100%;height:80%;"
 			data-options="rownumbers:true,singleSelect:true,url:'../news/getNewsList.do',
-				pagination:true,method:'post',toolbar:searchTool">
+				pagination:true,method:'post',toolbar:searchTool,pageSize:20">
 		<thead>
 			<tr>
 				<th data-options="field:'title',width:200,align:'center'">新闻标题</th>
@@ -148,29 +158,40 @@
 		</thead>
 	</table>
 	
-	<div id="newsWin" class="easyui-window" title="新闻" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:100%;height:800px;padding:0;margin:0;">
+	<div id="newsWin" class="easyui-window" title="新闻" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:1000px;height:500px;padding:0;margin:0;">
 		<div class="easyui-panel"  style="width:100%;height:100%;" >
-		<div  align="center" style="padding:10px 0;">
+		<div  align="center" style="padding:10px 0;width:99%;height:97%;">
 		    <form id="newsForm" method="post">
 		    	<input type="hidden" id="mainid" name="mainid" /> 
 		    	<table cellpadding="5" >
 		    		<tr>
-		    			<td class="titlespan" >新闻标题:</td>
+		    			<td class="" norwap>新闻标题:</td>
 		    			<td align="left" >
-		    				<input class="easyui-textbox inputText"  type="text" name="title" id="title" data-options="required:true" />
+		    				<input class="easyui-textbox inputText" style="width:700px;" type="text" name="title" id="title" data-options="required:true" />
 	    				</td>
 		    		</tr>
 		    		<tr>
-		    			<td class="titlespan" >新闻作者:</td>
+		    			<td class="titlespan" norwap>新闻作者:</td>
 		    			<td align="left" >
-		    				<input class="easyui-textbox inputText" type="text" name="userName" id="userName" data-options="required:true" />
+		    				<input class="easyui-textbox inputText" style="width:700px;" type="text" name="userName" id="userName" data-options="required:true" />
 	    				</td>
 		    		</tr>
 		    		<tr>
-		    			<td class="titlespan" >新闻内容:</td>
+		    			<td class="titlespan" norwap>新闻类型:</td>
+		    			<td align="left" >
+		    				<select name="newstype" id="newstype"  data-options="editable:false,required:true" class="easyui-combobox"  panelHeight="auto"  style="width:200px">
+								<option value="1">娱乐</option>
+								<option value="2">财经</option>
+								<option value="3">房地产</option>
+								<option value="4">自媒体</option>
+							</select>
+	    				</td>
+		    		</tr>
+		    		<tr>
+		    			<td class="titlespan" norwap>新闻内容:</td>
 		    			<td>
 		    				<div>
-			    				<script id="editor" type="text/plain" style="width:800px;height:500px;"></script>
+			    				<script id="editor" type="text/plain" style="width:700px;height:450px;"></script>
 		    				</div>
 		    			</td>
 		    		</tr>

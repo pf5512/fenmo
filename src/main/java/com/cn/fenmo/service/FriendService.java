@@ -13,4 +13,8 @@ public interface FriendService {
   
   public boolean deleteFriend(String userPhone,String friendPhone);
   
+  public boolean updateNickName(Friend bean);
+  
+  public boolean updateFriendNickName(Friend bean);
+  
 }

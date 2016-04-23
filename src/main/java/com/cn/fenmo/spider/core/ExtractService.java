@@ -24,12 +24,9 @@ public class ExtractService
 	 * @param rule
 	 * @return
 	 */
-	public static List<LinkTypeData> extract(Rule rule)
-	{
-
+	public static List<LinkTypeData> extract(Rule rule){
 		// 进行对rule的必要校验
 		validateRule(rule);
-
 		List<LinkTypeData> datas = new ArrayList<LinkTypeData>();
 		LinkTypeData data = null;
 		try
@@ -43,10 +40,8 @@ public class ExtractService
 			String resultTagName = rule.getResultTagName();
 			int type = rule.getType();
 			int requestType = rule.getRequestMoethod();
-
 			Connection conn = Jsoup.connect(url);
 			// 设置查询参数
-
 			if (params != null)
 			{
 				for (int i = 0; i < params.length; i++)
@@ -88,21 +83,17 @@ public class ExtractService
 					results = doc.getElementsByTag("body");
 				}
 			}
-
 			for (Element result : results)
 			{
 				Elements links = result.getElementsByTag("a");
-
 				for (Element link : links)
 				{
 					//必要的筛选
 					String linkHref = link.attr("href");
 					String linkText = link.text();
-
 					data = new LinkTypeData();
 					data.setLinkHref(linkHref);
 					data.setLinkText(linkText);
-
 					datas.add(data);
 				}
 			}

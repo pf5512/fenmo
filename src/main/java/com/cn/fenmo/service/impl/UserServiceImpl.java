@@ -91,4 +91,7 @@ public class UserServiceImpl implements IUserService {
   public List<UserBean> getRoomMembers(Map<String, Object> params) {
     return this.userBeanMapper.selectMembers(params);
   }
+  public UserBean getFreind(Map<String, Object> parmas) {
+    return  this.userBeanMapper.selectFriend(parmas);
+  }
 }

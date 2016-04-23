@@ -302,14 +302,32 @@ public class UserController extends ToJson {
 
   /** 通过手机号获取用户信息 */
   @RequestMapping("/getUserByPhone")
-  public String getUser(@RequestParam String userPhone,
-      HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public String getUserByPhone(@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response)throws IOException {
     if (!StringUtil.isMobileNO(userPhone)) {
       toExMsg(response, UserCnst.PARMARS_NOT_ALLOWED);
       return null;
     }
     UserBean  userBean = this.userService.getUserBeanByPhone(userPhone);
+    if (userBean != null) {
+      toJson(response, userBean);
+    }else{
+      toExMsg(response, UserCnst.USER_NOT_EXIST);
+      return null;
+    }
+    return null;
+  }
+  
+  /** 通过好友的手机号获取好友昵称 */
+  @RequestMapping("/getUserByFriendPhone")
+  public String getUserByFriendPhone(@RequestParam String userPhone,@RequestParam String freindPhone,HttpServletRequest request, HttpServletResponse response)throws IOException {
+    if (!StringUtil.isMobileNO(userPhone)) {
+      toExMsg(response, UserCnst.PARMARS_NOT_ALLOWED);
+      return null;
+    }
+    Map<String,Object> parmas = new HashMap<String,Object>();
+    parmas.put("userPhone", userPhone);
+    parmas.put("freindPhone", freindPhone);
+    UserBean  userBean = this.userService.getFreind(parmas);
     if (userBean != null) {
       toJson(response, userBean);
     }else{

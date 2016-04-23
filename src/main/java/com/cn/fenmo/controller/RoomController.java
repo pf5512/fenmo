@@ -119,8 +119,30 @@ public class RoomController extends ToJson {
   @RequestMapping("/getRoomBjImgs")
   public String getRoomBjImgs(HttpServletRequest request,HttpServletResponse response) throws IOException {
     List<String> list = new ArrayList<String>();
-    list.add("http://60.190.243.154/18680683004/20160417105803_81.jpg");
-    list.add("http://60.190.243.154/18680683004/20160415162926_732.jpg");
+    list.add("http://60.190.243.154/roombj/01.png");
+    list.add("http://60.190.243.154/roombj/02.png");
+    list.add("http://60.190.243.154/roombj/03.png");
+    list.add("http://60.190.243.154/roombj/04.png");
+    list.add("http://60.190.243.154/roombj/05.png");
+    list.add("http://60.190.243.154/roombj/06.png");
+    list.add("http://60.190.243.154/roombj/07.png");
+    list.add("http://60.190.243.154/roombj/08.png");
+    list.add("http://60.190.243.154/roombj/09.png");
+    toArrayJson(response, list);
+    return null;
+  }
+  
+  /**
+   * 获取首页背景图片(备选)
+   */
+  @RequestMapping("/getheadBjImgs")
+  public String getheadBjImgs(HttpServletRequest request,HttpServletResponse response) throws IOException {
+    List<String> list = new ArrayList<String>();
+    list.add("http://60.190.243.154/headbj/01.png");
+    list.add("http://60.190.243.154/headbj/02.png");
+    list.add("http://60.190.243.154/headbj/03.png");
+    list.add("http://60.190.243.154/headbj/04.png");
+    list.add("http://60.190.243.154/headbj/05.png");
     toArrayJson(response, list);
     return null;
   }

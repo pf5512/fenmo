@@ -2,6 +2,7 @@ package com.cn.fenmo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import com.cn.fenmo.service.DynamicService;
 import com.cn.fenmo.service.IUserService;
 import com.cn.fenmo.util.Dis;
 import com.cn.fenmo.util.DynamicCnst;
+import com.cn.fenmo.util.RequestUtil;
 import com.cn.fenmo.util.StringUtil;
 import com.cn.fenmo.util.ToJson;
 import com.cn.fenmo.util.UserCnst;
@@ -144,13 +146,15 @@ public class DynamicController extends ToJson {
   }
   
   /*直接发布一个动态*/
-  @RequestMapping(value="/publishDynamic", method=RequestMethod.POST)  
+  @RequestMapping(value="/publishDynamic")  
   public String publishDynamic(@RequestParam String content,@RequestParam String imgUrl,@RequestParam String userPhone,HttpServletRequest request,HttpServletResponse response) throws IOException{  
     UserBean bean = getUserBeanFromRedis(userPhone);
     if (bean == null) {
       toExMsg(response, UserCnst.NO_LOGIN);
       return null;
     }
+    content = RequestUtil.getValue(request, "content");
+
     Dynamic dynamic =  new Dynamic();
     dynamic.setMainid(new Date().getTime());
     dynamic.setContent(content);  

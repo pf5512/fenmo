@@ -19,5 +19,11 @@ public interface FriendMapper {
     int updateByPrimaryKey(Friend record);
     
     int deleteFriend(Map<String,Object> params);
+    
+    int updateNickName(Map<String,Object> params);
+    
+    int updateFriendNickName(Map<String,Object> params);
+    
+    
 
 }
