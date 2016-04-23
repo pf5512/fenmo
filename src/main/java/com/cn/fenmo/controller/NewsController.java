@@ -65,7 +65,7 @@ public class NewsController extends ToJson {
   private final int HEAD_LIMIT=3;
   
   
-  //»ñÈ¡Ê×Ò³ÉÏÏÔÊ¾µÄĞÂÎÅ(Ä¿Ç°Ö»ÏÔÊ¾×îĞÂµÄÈıÌõĞÂÎÅ) 
+  //è·å–é¦–é¡µä¸Šæ˜¾ç¤ºçš„æ–°é—»(ç›®å‰åªæ˜¾ç¤ºæœ€æ–°çš„ä¸‰æ¡æ–°é—») 
   @RequestMapping("/getNewsHeadPage")
   public void getNewsHeadPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Map<String,Object> params = new HashMap<String,Object>();
@@ -84,11 +84,11 @@ public class NewsController extends ToJson {
       }
       String imgArg[]=imgCode.split(",");
       if (imgArg == null||imgArg.length!=2||imgArg[1]==null){
-          return; //Í¼ÏñÊı¾İÎª¿Õ
+          return; //å›¾åƒæ•°æ®ä¸ºç©º
       }
       String filePath =""; 
-      Properties props=System.getProperties(); //»ñµÃÏµÍ³ÊôĞÔ¼¯    
-      String osName = props.getProperty("os.name"); //²Ù×÷ÏµÍ³Ãû³Æ    
+      Properties props=System.getProperties(); //è·å¾—ç³»ç»Ÿå±æ€§é›†    
+      String osName = props.getProperty("os.name"); //æ“ä½œç³»ç»Ÿåç§°    
       if(osName.indexOf("win")>0){
        filePath = req.getServletContext().getRealPath("/")+"news/";
       }else{
@@ -98,7 +98,7 @@ public class NewsController extends ToJson {
         new File(filePath).mkdirs();
       }
       String name=System.currentTimeMillis()+".png";
-      String imgFilePath = filePath+name;//ĞÂÉú³ÉµÄÍ¼Æ¬
+      String imgFilePath = filePath+name;//æ–°ç”Ÿæˆçš„å›¾ç‰‡
       BASE64Decoder decoder = new BASE64Decoder();
       byte[] decodedBytes = decoder.decodeBuffer(imgArg[1]);
       BufferedImage image = ImageIO.read(new ByteArrayInputStream(decodedBytes));
@@ -118,7 +118,7 @@ public class NewsController extends ToJson {
           e.printStackTrace();
       }  
   }
-  /*»ñÈ¡Ä³ÈË·¢²¼µÄĞÂÎÅ*/
+  /*è·å–æŸäººå‘å¸ƒçš„æ–°é—»*/
   @RequestMapping("/getNewsPage")
   public void getNewsPage(@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
     String start = request.getParameter("start");
@@ -153,7 +153,7 @@ public class NewsController extends ToJson {
     } 
     toViewPage(response,viewPage);
   }
-  /*»ñÈ¡Ïà¹ØĞÂÎÅ(3Ìõ)£¬¸ù¾İnewTypeÏàµÈ*/
+  /*è·å–ç›¸å…³æ–°é—»(3æ¡)ï¼Œæ ¹æ®newTypeç›¸ç­‰*/
   @RequestMapping("/getInterfixNews")
   public void getInterfixNews(@RequestParam String newsType,HttpServletRequest request, HttpServletResponse response) throws IOException {
     Map<String,Object> params = new HashMap<String,Object>();
@@ -165,7 +165,7 @@ public class NewsController extends ToJson {
     toArrayJson(response, list);
   }
   
-  /*»ñÈ¡Ò»¸öĞÂÎÅ*/
+  /*è·å–ä¸€ä¸ªæ–°é—»*/
   @RequestMapping("/getBean")
   public void getBean(@RequestParam long mainId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     News news  = this.newsService.getBeanById(mainId);
@@ -177,7 +177,7 @@ public class NewsController extends ToJson {
   }
   
   
-  /*±£´æĞÂÎÅ*/
+  /*ä¿å­˜æ–°é—»*/
   @RequestMapping("/save")
   public void save(@RequestParam String userPhone,@RequestParam String content,HttpServletRequest request, HttpServletResponse response) throws IOException {
     News bean =  new News();
@@ -192,7 +192,7 @@ public class NewsController extends ToJson {
       toExMsg(response,UserCnst.INFO_SAVE_FAIL);
     }
   }
-  /*Ö±½Ó·¢±íĞÂÎÅ,ÊÖ»ú¿Í·ş¶Ë·¢²¼µÄĞÂÎÅ¶¼ÈÏÎªÊÇ×ÔÃ½ÌåĞÂÎÅ£¬ÓéÀÖ£¬²Æ¾­£¬·¿²úµÈĞÂÎÅÓÉºóÌ¨·¢²¼*/
+  /*ç›´æ¥å‘è¡¨æ–°é—»,æ‰‹æœºå®¢æœç«¯å‘å¸ƒçš„æ–°é—»éƒ½è®¤ä¸ºæ˜¯è‡ªåª’ä½“æ–°é—»ï¼Œå¨±ä¹ï¼Œè´¢ç»ï¼Œæˆ¿äº§ç­‰æ–°é—»ç”±åå°å‘å¸ƒ*/
   @RequestMapping("/publishNews")
   public String publishNews(@RequestParam String title,@RequestParam String content,@RequestParam String userPhone,HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
@@ -220,17 +220,17 @@ public class NewsController extends ToJson {
     return null;
   }
   
-  /*ÎªĞÂÎÅµãÔŞ£¬Ã»ÓĞµÇÂ½Ò²¿ÉÒÔµãÔŞ*/
+  /*ä¸ºæ–°é—»ç‚¹èµï¼Œæ²¡æœ‰ç™»é™†ä¹Ÿå¯ä»¥ç‚¹èµ*/
   @RequestMapping("/admire")
   public void admire(@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     if(!this.newsService.updateZCount(newsId)){
       toExMsg(response,UserCnst.INFO_UPDATE_FAIL);
     }else{
-      toExSuccMsg(response, "Ğ»Ğ»µãÔŞ");
+      toExSuccMsg(response, "è°¢è°¢ç‚¹èµ");
     }
   }
   
-  /*É¾³ı×Ô¼º·¢±íµÄĞÂÎÅ,¼¶ÁªÉ¾³ıÏà¹ØµÄÆÀÂÛ*/
+  /*åˆ é™¤è‡ªå·±å‘è¡¨çš„æ–°é—»,çº§è”åˆ é™¤ç›¸å…³çš„è¯„è®º*/
   @RequestMapping("/deleteNews")
   public void deleteNews(@RequestParam String userPhone,@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
@@ -240,23 +240,23 @@ public class NewsController extends ToJson {
     }else{
       News cbean =  this.newsService.getBeanById(newsId);
       if(cbean==null){
-        toExMsg(response, "¼ÇÂ¼²»´æÔÚ");
+        toExMsg(response, "è®°å½•ä¸å­˜åœ¨");
         return;
       }
       if(!cbean.getUserName().equals(userPhone)){
-        toExMsg(response, "Ã»ÓĞÈ¨ÏŞ");
+        toExMsg(response, "æ²¡æœ‰æƒé™");
         return;
       }else{
         if(this.newsService.delete(newsId)){
-          toExSuccMsg(response, "É¾³ı³É¹¦");
+          toExSuccMsg(response, "åˆ é™¤æˆåŠŸ");
         }else {
-          toExMsg(response, "É¾³ıÊ§°Ü");
+          toExMsg(response, "åˆ é™¤å¤±è´¥");
         }
       }
     }
   }
   
-  /*ÓÃ»§ÎªĞÂÎÅ½øĞĞÆÀÂÛ,±ØĞëµÇÂ½*/
+  /*ç”¨æˆ·ä¸ºæ–°é—»è¿›è¡Œè¯„è®º,å¿…é¡»ç™»é™†*/
   @RequestMapping("/discuss")
   public void discuss(@RequestParam String userPhone,@RequestParam String content,@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
@@ -271,14 +271,14 @@ public class NewsController extends ToJson {
       cbean.setUserName(userPhone);
       cbean.setCreatedate(new  Date());
       if(this.newsCommentService.save(cbean)){
-        toExSuccMsg(response, "ÆÀÂÛ³É¹¦");
+        toExSuccMsg(response, "è¯„è®ºæˆåŠŸ");
       }else{
-        toExMsg(response, "ÆÀÂÛÊ§°Ü");
+        toExMsg(response, "è¯„è®ºå¤±è´¥");
       }
     }
   }
   
-  /*É¾³ı×Ô¼º·¢±íµÄĞÂÎÅÆÀÂÛ*/
+  /*åˆ é™¤è‡ªå·±å‘è¡¨çš„æ–°é—»è¯„è®º*/
   @RequestMapping("/deleteNewsComment")
   public void deleteNewsComment(@RequestParam String userPhone,@RequestParam long commentId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserBean bean = getUserBeanFromRedis(userPhone);
@@ -288,22 +288,22 @@ public class NewsController extends ToJson {
     }else{
       NewsComment cbean =  this.newsCommentService.getBeanById(commentId);
       if(cbean==null){
-        toExMsg(response, "¼ÇÂ¼²»´æÔÚ");
+        toExMsg(response, "è®°å½•ä¸å­˜åœ¨");
         return;
       }
       if(!cbean.getUserName().equals(userPhone)){
-        toExMsg(response, "Ã»ÓĞÈ¨ÏŞ");
+        toExMsg(response, "æ²¡æœ‰æƒé™");
         return;
       }else{
         if(this.newsCommentService.delete(commentId)){
-          toExSuccMsg(response, "É¾³ıÆÀÂÛ³É¹¦");
+          toExSuccMsg(response, "åˆ é™¤è¯„è®ºæˆåŠŸ");
         }else {
-          toExMsg(response, "É¾³ıÆÀÂÛÊ§°Ü");
+          toExMsg(response, "åˆ é™¤è¯„è®ºå¤±è´¥");
         }
       }
     }
   }
-  /*·ÖÒ³»ñÈ¡Ä³ÌõĞÂÎÅÏÂµÄÆÀÂÛ£¬ĞèÒª»ñÈ¡ÆÀÂÛÕßµÄÏà¹ØĞÅÏ¢£¬ÈçÍ·Ïñ*/
+  /*åˆ†é¡µè·å–æŸæ¡æ–°é—»ä¸‹çš„è¯„è®ºï¼Œéœ€è¦è·å–è¯„è®ºè€…çš„ç›¸å…³ä¿¡æ¯ï¼Œå¦‚å¤´åƒ*/
   @RequestMapping("/getNewsCommentPage")
   public void getNewsCommentPage(@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     String start = request.getParameter("start");
@@ -334,7 +334,7 @@ public class NewsController extends ToJson {
     toViewPage(response,viewPage);
   }
   
-  /*·ÖÒ³»ñÈ¡Ä³ÌõĞÂÎÅÏÂµÄ×îÈÈÆÀÂÛ(°´µãÔŞÊıµ¹ĞòÅÅÁĞ)£¬ĞèÒª»ñÈ¡ÆÀÂÛÕßµÄÏà¹ØĞÅÏ¢£¬ÈçÍ·Ïñ*/
+  /*åˆ†é¡µè·å–æŸæ¡æ–°é—»ä¸‹çš„æœ€çƒ­è¯„è®º(æŒ‰ç‚¹èµæ•°å€’åºæ’åˆ—)ï¼Œéœ€è¦è·å–è¯„è®ºè€…çš„ç›¸å…³ä¿¡æ¯ï¼Œå¦‚å¤´åƒ*/
   @RequestMapping("/getHotNewsCommentPage")
   public void getHotNewsCommentPage(@RequestParam long newsId,HttpServletRequest request, HttpServletResponse response) throws IOException {
     String start = request.getParameter("start");
@@ -368,10 +368,10 @@ public class NewsController extends ToJson {
     return user;
   }
   
-  /*ÎªĞÂÎÅÆÀÂÛµãÔŞ£¬Ã»ÓĞµÇÂ½Ò²¿ÉÒÔµãÔŞ*/
+  /*ä¸ºæ–°é—»è¯„è®ºç‚¹èµï¼Œæ²¡æœ‰ç™»é™†ä¹Ÿå¯ä»¥ç‚¹èµ*/
   @RequestMapping("/admireComent")
   public void admireComent(@RequestParam long mainid,HttpServletRequest request, HttpServletResponse response) throws IOException {
-    System.out.println("ÊÕµ½ÇëÇó£ºadmireComent");
+    System.out.println("æ”¶åˆ°è¯·æ±‚ï¼šadmireComent");
     if(!this.newsCommentService.updateZcount(mainid)){
       toExMsg(response,UserCnst.INFO_UPDATE_FAIL);
     }else{
@@ -381,9 +381,9 @@ public class NewsController extends ToJson {
 
  /**
    * 
-   * @Description: ĞÂÔöĞÂÎÅ
+   * @Description: æ–°å¢æ–°é—»
    * @author weiwj  
-   * @date 2016-4-9 ÉÏÎç11:02:25
+   * @date 2016-4-9 ä¸Šåˆ11:02:25
    */
   @RequestMapping("/addNews")
   public void addNews(HttpServletRequest request, HttpServletResponse response){
@@ -392,7 +392,7 @@ public class NewsController extends ToJson {
       News news = RequestUtil.getBean(request, News.class);
       success = this.newsService.save(news);
     } catch (Exception e) {
-      logger.error("----addNews---Éú³ÉNews¶ÔÏó³ö´í",e);
+      logger.error("----addNews---ç”ŸæˆNewså¯¹è±¡å‡ºé”™",e);
       e.printStackTrace();
     }
     toExSuccMsg(response, String.valueOf(success));
@@ -400,10 +400,10 @@ public class NewsController extends ToJson {
   
   /**
    * 
-   * @Description: ¸ù¾İid»ñÈ¡ĞÂÎÅÏêÇé
+   * @Description: æ ¹æ®idè·å–æ–°é—»è¯¦æƒ…
    * @author weiwj  
-   * @date 2016-4-9 ÉÏÎç11:24:27  
-   * @param mainid ĞÂÎÅÖ÷¼ü
+   * @date 2016-4-9 ä¸Šåˆ11:24:27  
+   * @param mainid æ–°é—»ä¸»é”®
    * @param request
    * @param response
    */
@@ -416,37 +416,45 @@ public class NewsController extends ToJson {
   
   /**
    * 
-   * @Description: ¸üĞÂĞÂÎÅÄÚÈİ
+   * @Description: æ›´æ–°æ–°é—»å†…å®¹
    * @author weiwj  
-   * @date 2016-4-9 ÏÂÎç5:14:26 
+   * @date 2016-4-9 ä¸‹åˆ5:14:26 
    * @param request
    * @param response
    */
   @RequestMapping("/updateNews")
   public void updateNews(HttpServletRequest request, HttpServletResponse response){
-    boolean success = false;
-    try {
-      News news = RequestUtil.getBean(request, News.class);
-      success = this.newsService.updateNews(news);
-    } catch (Exception e) {
-      logger.error("----updateNews---Éú³ÉNews¶ÔÏó³ö´í",e);
-      e.printStackTrace();
-    }
-    toExSuccMsg(response, String.valueOf(success));
+		boolean success = false;
+		try {
+			
+			News news = RequestUtil.getBean(request, News.class);
+	
+			success = this.newsService.updateNews(news);
+	
+		} catch (Exception e) {
+			logger.error("----updateNews---ç”ŸæˆNewså¯¹è±¡å‡ºé”™",e);
+			e.printStackTrace();
+		}
+		toExSuccMsg(response, String.valueOf(success));
   }
   /**
    * 
-   * @description »ñÈ¡ĞÂÎÅÁĞ±í
+   * @description è·å–æ–°é—»åˆ—è¡¨
    * @author weiwj
-   * @date ÏÂÎç7:51:23
+   * @date ä¸‹åˆ7:51:23
    * @param request
    * @param response
    */
   @RequestMapping("/getNewsList")
   public void getNewsList(HttpServletRequest request,HttpServletResponse response){
-    Map<String,Object> params = RequestUtil.getRequestParamMap(request);
-    List<News> news = this.newsService.selectBeanBy(params);
-    int total = this.newsService.selectCount(params);
-    toViewPageForWeb(response, news, total);
+  	
+  	Map<String,Object> params = RequestUtil.getRequestParamMap(request);
+  	
+	  List<News> news = this.newsService.selectBeanBy(params);
+	  
+	  int total = this.newsService.selectCount(params);
+	  
+	  toViewPageForWeb(response, news, total);
+	  
   }
 }
