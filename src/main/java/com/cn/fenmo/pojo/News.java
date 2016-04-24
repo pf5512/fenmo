@@ -26,11 +26,21 @@ public class News implements Serializable {
     
     private String newHeadImgUrl;
     
+    private String newsHttpUrl;
+    
     private int zcount;
     
     private int comments;
 
     private static final long serialVersionUID = 1L;
+
+    public String getNewsHttpUrl() {
+      return newsHttpUrl;
+    }
+
+    public void setNewsHttpUrl(String newsHttpUrl) {
+      this.newsHttpUrl = newsHttpUrl==null?"":newsHttpUrl;
+    }
 
     public int getZcount() {
       return zcount;

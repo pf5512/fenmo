@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cn.fenmo.dao.NewsMapper" >
   <resultMap id="BaseResultMap" type="com.cn.fenmo.pojo.News" >
-    <id column="mainId" property="mainid" jdbcType="BIGINT" />
+    <id column="mainid" property="mainid" jdbcType="BIGINT" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="newSrc" property="newsrc" jdbcType="VARCHAR" />
@@ -12,15 +12,24 @@
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
     <result column="zcount" property="zcount" jdbcType="INTEGER" />
+    <result column="newsHttpUrl" property="newsHttpUrl" jdbcType="VARCHAR" />
+    <result column="newHeadImgUrl" property="newHeadImgUrl" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List">
-     mainId, title, newSrc, newsType, summary, userName, createDate,state,content,zcount
+     mainid, title, newSrc, newsType, summary, userName, createDate,state,content,zcount,newHeadImgUrl,newsHttpUrl
   </sql>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     SELECT p.*
-    From fm_news p
+    FROM fm_news p
     where mainId = #{mainId,jdbcType=BIGINT}
+  </select>
+  
+    
+  <select id="selectByUniqueKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT p.*
+    FROM fm_news p
+    WHERE newsHttpUrl = #{newsHttpUrl,jdbcType=VARCHAR}
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
@@ -29,11 +38,11 @@
   </delete>
   
   <insert id="insert" parameterType="com.cn.fenmo.pojo.News" >
-      insert into fm_news (mainId, title, newSrc,newsType,summary, userName,state,createDate,content,zcount)
+      insert into fm_news (mainid, title, newSrc,newsType,summary, userName,state,createDate,content,zcount,newHeadImgUrl,newsHttpUrl)
       values (#{mainid,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{newsrc,jdbcType=VARCHAR}, 
       #{newstype,jdbcType=INTEGER},#{summary,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
        #{state,jdbcType=INTEGER}, #{createdate,jdbcType=TIMESTAMP}, 
-      #{content,jdbcType=VARCHAR}, #{zcount,jdbcType=INTEGER})
+      #{content,jdbcType=VARCHAR}, #{zcount,jdbcType=INTEGER},#{newHeadImgUrl,jdbcType=VARCHAR},#{newsHttpUrl,jdbcType=VARCHAR})
   </insert>
   
    <!--查询新闻总数 -->
@@ -140,4 +149,14 @@
     </set>
      where mainId = #{mainId,jdbcType=BIGINT}
   </update>
+  <!-- 批量插入从百度搜索出来的新闻,无效暂时不用 -->
+   <insert  id="insertBatchRecord"  parameterType="java.util.List">  
+      insert into fm_news (mainid,title,newSrc,newsHttpUrl,startDate,userName,createDate) values
+      <foreach collection="list" item="item" index="index" separator=",">  
+        (#{item.mainid},#{item.title},#{item.newSrc},#{item.newsHttpUrl},#{item.startDate},#{item.userName},#{item.createDate})  
+      </foreach>  
+      <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="mainid">  
+            select LAST_INSERT_ID();  
+       </selectKey>   
+   </insert> 
 </mapper>

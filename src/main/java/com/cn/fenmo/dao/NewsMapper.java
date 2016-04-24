@@ -9,8 +9,13 @@ public interface NewsMapper {
     int deleteByPrimaryKey(Long mainId);
 
     int insert(News record);
+    
+    int insertBatchRecord(List<News> list);
 
     News selectByPrimaryKey(Long mainId);
+    
+    
+    News selectByUniqueKey(String httpUrl);
 
     int update(News record);
     

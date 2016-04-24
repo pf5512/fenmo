@@ -65,6 +65,11 @@ public class NewsServiceImpl implements NewsService{
 	public News selectByPrimaryKey(Long mainId) {
 		return this.newsMapper.selectByPrimaryKey(mainId);
 	}
+	
+
+  public News selectByUniqueKey(String newsHttpUrl) {
+    return this.newsMapper.selectByUniqueKey(newsHttpUrl);
+  }
 
 	public boolean updateNews(News news) {
 		return this.newsMapper.update(news)==1?true:false;
@@ -73,6 +78,11 @@ public class NewsServiceImpl implements NewsService{
   public List<News> getInterfixNews(Map<String, Object> params) {
     return this.newsMapper.selectInterfixNews(params);
   }
+
+  public int addAatchNews(List<News> list) {
+    return this.newsMapper.insertBatchRecord(list);
+  }
+
   
 
 }

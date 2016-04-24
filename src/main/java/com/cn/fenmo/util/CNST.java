@@ -11,10 +11,12 @@ public final class CNST {
   public final static int CIRCLE_CJ          = 2;
   public final static int CIRCLE_FDC         = 3;
   public final static int CIRCLE_ZMT         = 4;
+  public final static int CIRCLE_HLW         = 5;
   public final static String CIRCLE_YL_STR      = "娱乐";
   public final static String CIRCLE_CJ_STR      = "财经";
   public final static String CIRCLE_FDC_STR     = "房地产";
   public final static String CIRCLE_ZMT_STR     = "自媒体";
+  public final static String CIRCLE_HLW_STR     = "自媒体";
   
   
   public final static int TOKEN_CANCEL=12*60*60*1000;//一天

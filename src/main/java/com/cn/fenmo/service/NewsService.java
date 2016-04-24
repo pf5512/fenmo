@@ -48,8 +48,17 @@ public interface NewsService {
    * @return
    */
   public News selectByPrimaryKey(Long mainId);
-
   
+  
+    /**
+   * 
+   * @Description: 获取新闻详情
+   * @author hegy
+   * @date 2016-4-24 上午11:28:34  
+   * @param newsHttpUrl
+   * @return
+   */
+  public News selectByUniqueKey(String newsHttpUrl);
   /**
    * 
    * @Description:更新新闻内容
@@ -59,5 +68,12 @@ public interface NewsService {
    * @return
    */
   public boolean updateNews(News news);
+  
+  
+  public int addAatchNews(List<News> list);
+  
+  
+  
+    
   
 }
