@@ -34,10 +34,14 @@ public class Test{
 
 	public void printf(List<LinkTypeData> datas){
 		for (LinkTypeData data : datas){
-			System.out.println(data.getLinkText());
+			System.out.println("text="+data.getLinkText());
 			System.out.println("***********************************");
-			System.out.println(data.getLinkHref());
+			
+			System.out.println("href="+data.getLinkHref());
 			System.out.println("***********************************");
+			
+	    System.out.println("content="+data.getContent());
+	    System.out.println("***********************************");
 		}
 	}
 	
@@ -47,7 +51,7 @@ public class Test{
 	public void getDatasByCssQueryUserBaidu()  
 	{  
 	    Rule rule = new Rule("http://news.baidu.com/ns",  
-	            new String[] { "word","tn","from" }, new String[] {"刘德华","news","news"},  
+	            new String[] { "word","tn","from" }, new String[] {"柳岩","news","news"},  
 	            null, -1, Rule.GET);  
 	    List<LinkTypeData> extracts = ExtractService.extract(rule);  
 	    printf(extracts);  
